@@ -33,18 +33,18 @@ class Tile {
             image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
         }
         // draw top wall
-        if (this.walls[0]) {
-            let texture = this.type.textures[wallMap[1]];
-            image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-128,Tile.WIDTH,Tile.HEIGHT);
+        if (this.walls[1]) {
+            // let texture = this.type.textures[wallMap[1]];
+            // image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-128,Tile.WIDTH,Tile.HEIGHT);
         }
         // draw right wall
-        if (this.walls[0]) {
+        if (this.walls[2]) {
             let texture = this.type.textures[wallMap[2]];
             image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-128,Tile.WIDTH,Tile.HEIGHT);
             image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
         }
         // draw bottom wall
-        if (this.walls[0]) {
+        if (this.walls[3]) {
             let texture = this.type.textures[wallMap[3]];
             image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
         }

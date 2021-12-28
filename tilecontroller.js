@@ -114,7 +114,7 @@ class TileController {
     // display tiles to the screen
     drawTiles() {
         // iterate through each tile cell
-        perimeterTiles.forEach(tile=>{
+        tiles.forEach(tile=>{
             tile.draw();
         })
     }
