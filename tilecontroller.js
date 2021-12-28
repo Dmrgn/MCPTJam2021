@@ -1,5 +1,7 @@
 // all tiles as an unordered array
 let tiles = [];
+// all perimeter tiles as an unordered array in view range
+let perimeterTiles = [];
 // tiles in range to be rendered as an unordered array
 let renderedTiles = [];
 // tiles positioned in a two dimentional array with indicies of their x,y coords
@@ -15,7 +17,7 @@ const wallMap = {
 
 // percentage chance a tile will generate without
 // putting a wall on any given side
-let airation = 50;
+let airation = 90;
 
 // A class that contains functions for
 // minipulting and generating tiles 
@@ -86,9 +88,35 @@ class TileController {
             }
         }
     }
+    // Uses the maze generator to generate and push tiles
+    // around the passed point in a box with side length
+    // k (Controls the logic distance)
+    preparePerimeter(r, c, k){
+        console.log(perimeterTiles.length);
+        perimeterTiles = [];
+        for (let i = r-floor(k/2); i < r+floor(k/2)+1; i++) {
+            for (let j = c-floor(k/2); j < c+floor(k/2)+1; j++) {
+                if (!tilesMap[i]?.[j]) {
+                    this.createTile(i,j);
+                }
+                perimeterTiles.push(tilesMap[i][j]);
+            }
+        }
+    }
+    // Creates the tile at r,c and returns it
+    // also adds it to tiles and tilemap array
+    createTile(r,c){
+        let walls = [];
+        for (let i = 0 ; i < 4; i++)
+            walls.push(maze.hasWall(r,c,i));
+        if (!tilesMap[r]?.[c]) tilesMap[r] = [];
+        tilesMap[r][c] = new Tile(r,c,this.tileData.brick,walls);
+        tiles.push(tilesMap[r][c]);
+        return tilesMap[r][c];
+    }
     // display tiles to the screen
     drawTiles() {
-        tiles.forEach(tile=>{
+        perimeterTiles.forEach(tile=>{
             tile.draw();
         });
     }
