@@ -4,6 +4,8 @@ class Tile {
     static WIDTH = 128;
     static HEIGHT = 128;
     static WALL_WIDTH = Tile.WIDTH / 10;
+
+    wallEntities;
     // constructor
     constructor(_x, _y, _type, _walls) {
         this.x = _x;
@@ -14,6 +16,12 @@ class Tile {
         // left top right and bottom
         // wall values respectively
         this.walls = _walls;
+        this.wallEntities = []
+        let [rx, ry] = [this.x * Tile.WIDTH, this.y * Tile.HEIGHT];
+        if(this.walls[0]) this.wallEntities.push(new Entity(rx, ry, Tile.WALL_WIDTH, Tile.HEIGHT));
+        if(this.walls[1]) this.wallEntities.push(new Entity(rx, ry, Tile.WIDTH, Tile.WALL_WIDTH));
+        if(this.walls[2]) this.wallEntities.push(new Entity(rx + Tile.WIDTH - Tile.WALL_WIDTH, ry, Tile.WALL_WIDTH, Tile.HEIGHT));
+        if(this.walls[3]) this.wallEntities.push(new Entity(rx, ry + Tile.HEIGHT - Tile.WALL_WIDTH, Tile.WIDTH, Tile.WALL_WIDTH));
     }
     // draw this tile to the screen
     draw() {
@@ -27,12 +35,13 @@ class Tile {
             }
         });
     }
-    // checks for collision
+
+    /**
+     * checks for collision between an entity and
+     * @param entity the entity to check for
+     * @returns {*} whether or not entity collided with one of this tile's walls
+     */
     wallCollide(entity){
-        let [cx, cy] = [this.x, this.y];
-        return this.walls[0] && entity.isTouching(new Entity(cx, cy, Tile.WALL_WIDTH, Tile.HEIGHT))
-        || this.walls[1] && entity.isTouching(new Entity(cx, cy, Tile.WIDTH, Tile.WALL_WIDTH))
-        || this.walls[2] && entity.isTouching(new Entity(cx + Tile.WIDTH - Tile.WALL_WIDTH, cy, Tile.WALL_WIDTH, Tile.HEIGHT))
-        || this.walls[3] && entity.isTouching(new Entity(cx, cy + Tile.HEIGHT - Tile.WALL_WIDTH, Tile.WIDTH, Tile.WALL_WIDTH));
+        return this.wallEntities.some((el) => el.isTouching(entity));
     }
 }

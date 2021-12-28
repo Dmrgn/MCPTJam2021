@@ -1,6 +1,5 @@
 function preload() {
     // initialize tools
-    tools.init(); // utils/tools.js
     tileController.init(); // tilecontroller.js
 }
 
@@ -26,6 +25,7 @@ let prevmousepos = {
 }
 
 function draw() {
+    world.tick();
     background(0);
     world.render();
 }
@@ -35,7 +35,7 @@ function mousePressed() {
 }
 
 function keyPressed(){
-    world.keyPressed();
+
 }
 
 // when the window is resized
