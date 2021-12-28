@@ -1,3 +1,9 @@
+/*
+* TODO test maze
+* TODO create infinite maze generation
+* TODO create tiles
+ */
+
 /**
  * MazeRand class - returns random numbers
  */
@@ -81,52 +87,59 @@ function compCoords(r, c, cols){
  *      for directions, 0: left, 1: up, 2: right, 3: down
  */
 function newMaze(rows, cols, rGen){
-    // 3D array -> arr[row][col][dir] = hasEdge
+    // 3D array -> arr[row][col][dir] = hasEdge from (row, col) in [dir] direction
     let arr = []
+    // fill in the array
     for(let i = 0; i < rows; i++){
+        // create a 2D array for the current row - everything should be false (a completely blocked grid)
         let cur = []
         for(let c = 0; c < cols; c++){
-            cur.push(new Array(4).fill(true));
+            cur.push(new Array(4).fill(false));
         }
-        if(i === 0) cur.map((el) => {el[1] = false; return el;});
-        if(i === rows - 1) cur.map((el) => {el[3] = false; return el;});
-        cur[0][0] = false;
-        cur[cols - 1][2] = false;
+        // add the current row
         arr.push(cur);
     }
-    let cost = []
-    for(let i = 0; i < rows; i++){
-        let cur = []
-        for(let c = 0; c < cols; c++){
-            cur.push(new Array(4).map(rGen.rand));
-        }
-        cost.push(cur);
-    }
+    // a list of valid edges
     let edges = []
+    // a list of directions (corresponds to the directions outlined in the function doc)
     let dir = [[0, -1], [-1, 0], [0, 1], [1, 0]]
+    // iterate through each row ,column, and direction
     for(let r = 0; r < rows; r++){
         for(let c = 0; c < cols; c++){
             for(let i = 0; i < dir; i++){
-                edges.push([r, c, i, cost[r][c][i]]);
+                let [nr, nc] = [r + dir[i][0], c + dir[i][1]];
+                if(0 <= nr && nr < rows && 0 <= nc && nc < cols){
+                    // add the current edge if it leads to a valid square
+                    edges.push([r, c, i])
+                }
             }
         }
     }
-    // sort edges in increasing order of cost
-    edges.sort((a, b) => a[3] - b[3]);
+    // sort edges in a random order
+    edges.sort(() => rGen.rand() - 0.5);
+    // Disjoint set union - can "combine" groups of nodes & see if two nodes are in the same group
     let dsu = new DSU(rows * cols + cols + 200);
+
+    // add each edge if it doesn't cause two nodes in the same group to combine
     edges.forEach(el => {
+        // current coords & direction, next coords
         let [cr, cc, i] = el;
         let [nr, nc] = [cr + dir[i][0], cc + dir[i][1]];
+        // compress the coordinates for usage in the DSU
         let curComp = compCoords(cr, cc, cols);
         let nexComp = compCoords(nr, nc, cols);
+
+        // if the two coordinates are not in the same "group"
         if(!dsu.conn(curComp, nexComp)){
+            // combine the nodes (i.e add them to the same group, or destroy the wall between them
             arr[cr][cc][i] = true;
-            if(0 <= nr && nr < rows && 0 <= nc && nc < cols){
-                arr[nr][nc][(i + 2) % 4] = true;
-            }
+            // (i + 2) % 4 gives the opposite direction
+            arr[nr][nc][(i + 2) % 4] = true;
+            // join the two groups in our dsu
             dsu.join(curComp, nexComp);
         }
     });
+    // return the array
     return arr;
 }
 
