@@ -14,7 +14,7 @@ function setup() {
     ctx.imageSmoothingEnabled = false; // draw pixel art without antialiasing
     // create maze
     maze = new Maze(10, Math.floor(Math.random() * 87238127893));
-    tileController.generateMap();
+    // tileController.generateMap();
 }
 
 function draw() {

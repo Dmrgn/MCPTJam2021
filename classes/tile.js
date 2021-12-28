@@ -2,7 +2,7 @@
 class Tile {
     // width and height of each tile
     static WIDTH = 128;
-    static HEIGHT = 128; 
+    static HEIGHT = 128;
     // constructor
     constructor(_x, _y, _type, _walls) {
         this.x = _x;

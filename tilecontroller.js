@@ -15,12 +15,8 @@ const wallMap = {
     4: "0000", //floor
 };
 
-// percentage chance a tile will generate without
-// putting a wall on any given side
-let airation = 90;
-
 // A class that contains functions for
-// minipulting and generating tiles 
+// manipulating and generating tiles
 class TileController {
     // contains the stats of all tile types
     tileData = {};
@@ -43,8 +39,12 @@ class TileController {
         }
     }
     */
+    maze;
+
     // constructor
-    constructor() {};
+    constructor(seed) {
+        this.maze = new Maze(10, seed);
+    };
     // load tile data from Json
     init() {
         // load manifest
@@ -66,28 +66,28 @@ class TileController {
             });
         });
     }
-    // random function which returns whether a wall 
-    // should be generated based on predefined odds
-    // see const airation above
-    odds() {
-        return floor(random(0, 100)) <= airation ? 0 : 1;
-    }
+    // // random function which returns whether a wall 
+    // // should be generated based on predefined odds
+    // // see const airation above
+    // odds() {
+    //     return floor(random(0, 100)) <= airation ? 0 : 1;
+    // }
     // generates a static grid of tiles
     // super temporary
-    generateMap() {
-        tilesMap = [];
-        for(let i = 0 ; i*Tile.WIDTH < width; i++) {
-            tilesMap.push([]);
-            for(let j = 0 ; j*Tile.HEIGHT < height; j++) {
-                // FIX
-                // currently each tile is hard coded to have type brick
-                // in the future, create mechanism of determining which
-                // types are availible based on which walls are present
-                tilesMap[i].push(new Tile(i,j,this.tileData.brick, [this.odds(),this.odds(),this.odds(),this.odds()]));
-                tiles.push(tilesMap[i][j]);
-            }
-        }
-    }
+    // generateMap() {
+    //     tilesMap = [];
+    //     for(let i = 0 ; i*Tile.WIDTH < width; i++) {
+    //         tilesMap.push([]);
+    //         for(let j = 0 ; j*Tile.HEIGHT < height; j++) {
+    //             // FIX
+    //             // currently each tile is hard coded to have type brick
+    //             // in the future, create mechanism of determining which
+    //             // types are availible based on which walls are present
+    //             tilesMap[i].push(new Tile(i,j,this.tileData.brick, [this.odds(),this.odds(),this.odds(),this.odds()]));
+    //             tiles.push(tilesMap[i][j]);
+    //         }
+    //     }
+    // }
     // Uses the maze generator to generate and push tiles
     // around the passed point in a box with side length
     // k (Controls the logic distance)
@@ -106,21 +106,19 @@ class TileController {
     // Creates the tile at r,c and returns it
     // also adds it to tiles and tilemap array
     createTile(r,c){
-        let walls = [];
-        for (let i = 0 ; i < 4; i++)
-            walls.push(maze.hasWall(r,c,i));
         if (!tilesMap[r]?.[c]) tilesMap[r] = [];
-        tilesMap[r][c] = new Tile(r,c,this.tileData.brick,walls);
+        tilesMap[r][c] = new Tile(r,c,this.tileData.brick,this.maze.getTile(r,c));
         tiles.push(tilesMap[r][c]);
         return tilesMap[r][c];
     }
     // display tiles to the screen
     drawTiles() {
+        // iterate through each tile cell
         perimeterTiles.forEach(tile=>{
             tile.draw();
-        });
+        })
     }
 }
 
 // Tile Controller instance
-const tileController = new TileController();
+const tileController = new TileController(8732487234);
