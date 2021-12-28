@@ -49,8 +49,12 @@ class DSU{
     par;
     siz;
     constructor(els){
-        this.par = new Array(els).map((el, ind) => ind);
-        this.siz = new Array(els).fill(1);
+        this.par = new Array(els);
+        this.siz = new Array(els);
+        for(let i = 0; i < els; i++){
+            this.par[i] = i;
+            this.siz[i] = 1;
+        }
     }
     find(i){
         return this.par[i] === i ? i : this.par[i] = this.find(this.par[i]);
@@ -106,7 +110,7 @@ function newMaze(rows, cols, rGen){
     // iterate through each row ,column, and direction
     for(let r = 0; r < rows; r++){
         for(let c = 0; c < cols; c++){
-            for(let i = 0; i < dir; i++){
+            for(let i = 0; i < 4; i++){
                 let [nr, nc] = [r + dir[i][0], c + dir[i][1]];
                 if(0 <= nr && nr < rows && 0 <= nc && nc < cols){
                     // add the current edge if it leads to a valid square
@@ -118,7 +122,7 @@ function newMaze(rows, cols, rGen){
     // sort edges in a random order
     edges.sort(() => rGen.rand() - 0.5);
     // Disjoint set union - can "combine" groups of nodes & see if two nodes are in the same group
-    let dsu = new DSU(rows * cols + cols + 200);
+    let dsu = new DSU(rows * cols + 10 * cols + 10 * rows + 200);
 
     // add each edge if it doesn't cause two nodes in the same group to combine
     edges.forEach(el => {
@@ -147,11 +151,26 @@ $(function(){
     test();
 })
 
-function test(){
-    let ran = new MazeRand(20, 4950, 1238781827387)
-    let ran2 = new MazeRand(19, 1449, 1238781827387);
-    for(let i = 0; i < 1000; i++){
-        console.log(ran.rand());
-        console.log(ran2.rand());
+const testWindow = (p) => {
+    let thing = newMaze(20, 20, new MazeRand(0, 0, 1238781827387));
+    p.setup = function(){
+        p.createCanvas(800, 800)
     }
+
+    p.draw = function(){
+        p.background(0);
+        p.stroke(255);
+        p.strokeWeight(3);
+        for(let r = 0; r < 20; ++r) for(let c = 0; c < 20; ++c){
+            if(!thing[r][c][0]) p.line(40 * c, 40 * r, 40 * c, 40 * r + 40);
+            if(!thing[r][c][1]) p.line(40 * c, 40 * r, 40 * (c + 1), 40 * r);
+            if(!thing[r][c][2]) p.line(40 * (c + 1), 40 * r, 40 * (c + 1), 40 * r + 40);
+            if(!thing[r][c][3]) p.line(40 * c, 40 * (r + 1), 40 * (c + 1), 40 * (r + 1));
+        }
+    }
+}
+
+function test(){
+
+    new p5(testWindow);
 }
