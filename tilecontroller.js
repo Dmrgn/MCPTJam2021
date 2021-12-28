@@ -66,7 +66,7 @@ class TileController {
             });
         });
     }
-    // // random function which returns whether a wall 
+    // // random function which returns whether a wall
     // // should be generated based on predefined odds
     // // see const airation above
     // odds() {
@@ -92,7 +92,6 @@ class TileController {
     // around the passed point in a box with side length
     // k (Controls the logic distance)
     preparePerimeter(r, c, k){
-        console.log(perimeterTiles.length);
         perimeterTiles = [];
         for (let i = r-floor(k/2); i < r+floor(k/2)+1; i++) {
             for (let j = c-floor(k/2); j < c+floor(k/2)+1; j++) {

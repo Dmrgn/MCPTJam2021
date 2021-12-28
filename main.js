@@ -6,6 +6,8 @@ function preload() {
     tileController.init(); // tilecontroller.js
 }
 
+let world = new World(1237123);
+
 function setup() {
     // create canvas so that it is the same size as its parent
     let parEl = $("#gameContainer");
@@ -29,21 +31,15 @@ let prevmousepos = {
 
 function draw() {
     background(0);
-    // temp
-    mousepos = {
-        x:floor(mouseX/Tile.WIDTH),
-        y:floor(mouseY/Tile.HEIGHT)
-    }
-    if (prevmousepos.x != mousepos.x || prevmousepos.y != mousepos.y) {
-        tileController.preparePerimeter(mousepos.x, mousepos.y, 5);
-        console.log("Drawing tiles")
-        prevmousepos = mousepos;
-    }
-    tileController.drawTiles();
+    world.render();
 }
 
 function mousePressed() {
 
+}
+
+function keyPressed(){
+    world.keyPressed();
 }
 
 // when the window is resized
