@@ -79,6 +79,9 @@ function compCoords(r, c, cols){
     return (r + 5) * (cols + 7) + (c + 5);
 }
 
+// a list of directions (corresponds to the directions outlined in the function doc)
+let mazeDir = [[0, -1], [-1, 0], [0, 1], [1, 0]]
+
 /**
  * creates a new maze
  * note: mazes are self contained - this means that there is a "border" (i.e no edge from any node to an node "outside" the grid")
@@ -105,16 +108,16 @@ function newMaze(rows, cols, rGen){
     }
     // a list of valid edges
     let edges = []
-    // a list of directions (corresponds to the directions outlined in the function doc)
-    let dir = [[0, -1], [-1, 0], [0, 1], [1, 0]]
     // iterate through each row ,column, and direction
     for(let r = 0; r < rows; r++){
         for(let c = 0; c < cols; c++){
             for(let i = 0; i < 4; i++){
-                let [nr, nc] = [r + dir[i][0], c + dir[i][1]];
+                let [nr, nc] = [r + mazeDir[i][0], c + mazeDir[i][1]];
                 if(0 <= nr && nr < rows && 0 <= nc && nc < cols){
                     // add the current edge if it leads to a valid square
                     edges.push([r, c, i])
+                } else {
+                    arr[r][c][i] = rGen.rand() > 0.5;
                 }
             }
         }
@@ -128,7 +131,7 @@ function newMaze(rows, cols, rGen){
     edges.forEach(el => {
         // current coords & direction, next coords
         let [cr, cc, i] = el;
-        let [nr, nc] = [cr + dir[i][0], cc + dir[i][1]];
+        let [nr, nc] = [cr + mazeDir[i][0], cc + mazeDir[i][1]];
         // compress the coordinates for usage in the DSU
         let curComp = compCoords(cr, cc, cols);
         let nexComp = compCoords(nr, nc, cols);
@@ -147,14 +150,75 @@ function newMaze(rows, cols, rGen){
     return arr;
 }
 
+class Maze{
+    chunkSize;
+    seed;
+    chunks;
+    tiles;
+    constructor(chunkSize, seed){
+        this.chunkSize = chunkSize;
+        this.seed = seed;
+        this.chunks = new Set();
+        this.tiles = new Map();
+    }
+    compChunk(r, c){
+        console.assert(r < Math.pow(2, 20) && c < Math.pow(2, 25));
+        return r * Math.pow(2, 25) + c;
+    }
+    compTile(r, c, dir){
+        console.assert(r < Math.pow(2, 20) && c < Math.pow(2, 20) && dir < 4);
+        return r * Math.pow(2, 30) + c * 8 + dir;
+    }
+    fixArea(r, c){
+        for(let dir = 0; dir < 4; dir++){
+            let [nr, nc, nd] = [r + mazeDir[dir][0], c + mazeDir[dir][1], (dir + 2) % 4]
+            let curConn = this.tiles.get(this.compTile(r, c, dir));
+            let oConn = this.tiles.get(this.compTile(nr, nc, nd));
+            if(curConn && oConn){
+                if(curConn) this.tiles.set(this.compTile(nr, nc, nd), true);
+                if(oConn) this.tiles.set(this.compTile(r, c, dir), true);
+            }
+        }
+    }
+    newChunk(r, c){
+        console.assert(!this.chunks.has(this.compChunk(r, c)));
+        let curChunk = newMaze(this.chunkSize, this.chunkSize, new MazeRand(r, c, this.seed));
+        for(let ir = 0; ir < this.chunkSize; ir++){
+            for(let ic = 0; ic < this.chunkSize; ic++){
+                for(let dir = 0; dir < 4; dir++){
+                    this.tiles.set(this.compTile(this.chunkSize * r + ir, this.chunkSize * c + ic, dir),
+                        curChunk[ir][ic][dir]);
+                }
+            }
+        }
+        for(let cr = this.chunkSize * r; cr < this.chunkSize * (r + 1); cr++){
+            this.fixArea(cr, this.chunkSize * c);
+            this.fixArea(cr, this.chunkSize * (c + 1) - 1);
+        }
+        for(let cc = this.chunkSize * c; cc < this.chunkSize * (c + 1); cc++){
+            this.fixArea(cc, this.chunkSize * r);
+            this.fixArea(cc, this.chunkSize * (r + 1) - 1);
+        }
+        this.chunks.add(this.compChunk(r, c));
+    }
+    hasWall(r, c, dir){
+        let [cr, cc] = [Math.floor(r / this.chunkSize), Math.floor(c / this.chunkSize)]
+        if(!this.chunks.has(this.compChunk(cr, cc))){
+            this.newChunk(cr, cc);
+        }
+        return this.tiles.get(this.compTile(r, c, dir));
+    }
+}
+
 $(function(){
     test();
 })
 
 const testWindow = (p) => {
-    let thing = newMaze(20, 20, new MazeRand(0, 0, 1238781827387));
+    let maze;
     p.setup = function(){
         p.createCanvas(800, 800)
+        maze = new Maze(10, 1239213);
     }
 
     p.draw = function(){
@@ -162,10 +226,10 @@ const testWindow = (p) => {
         p.stroke(255);
         p.strokeWeight(3);
         for(let r = 0; r < 20; ++r) for(let c = 0; c < 20; ++c){
-            if(!thing[r][c][0]) p.line(40 * c, 40 * r, 40 * c, 40 * r + 40);
-            if(!thing[r][c][1]) p.line(40 * c, 40 * r, 40 * (c + 1), 40 * r);
-            if(!thing[r][c][2]) p.line(40 * (c + 1), 40 * r, 40 * (c + 1), 40 * r + 40);
-            if(!thing[r][c][3]) p.line(40 * c, 40 * (r + 1), 40 * (c + 1), 40 * (r + 1));
+            if(!maze.hasWall(r, c, 0)) p.line(40 * c, 40 * r, 40 * c, 40 * r + 40);
+            if(!maze.hasWall(r, c, 1)) p.line(40 * c, 40 * r, 40 * (c + 1), 40 * r);
+            if(!maze.hasWall(r, c, 2)) p.line(40 * (c + 1), 40 * r, 40 * (c + 1), 40 * r + 40);
+            if(!maze.hasWall(r, c, 3)) p.line(40 * c, 40 * (r + 1), 40 * (c + 1), 40 * (r + 1));
         }
     }
 }
