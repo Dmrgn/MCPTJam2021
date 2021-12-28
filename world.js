@@ -27,7 +27,6 @@ class World {
     }
 
     tick(){
-        console.log(this.curPlayer.x + " " + this.curPlayer.y);
         if(keyIsDown(87)) this.move(this.curPlayer, 0, -5);
         if(keyIsDown(65)) this.move(this.curPlayer, -5, 0);
         if(keyIsDown(83)) this.move(this.curPlayer, 0, 5);
