@@ -17,9 +17,28 @@ function setup() {
     // tileController.generateMap();
 }
 
+// temp
+let mousepos = {
+    x:0,
+    y:0
+}
+let prevmousepos = {
+    x:-1,
+    y:-1
+}
+
 function draw() {
     background(0);
-    tileController.preparePerimeter(floor(mouseX/Tile.WIDTH),floor(mouseY/Tile.HEIGHT), 9);
+    // temp
+    mousepos = {
+        x:floor(mouseX/Tile.WIDTH),
+        y:floor(mouseY/Tile.HEIGHT)
+    }
+    if (prevmousepos.x != mousepos.x || prevmousepos.y != mousepos.y) {
+        tileController.preparePerimeter(mousepos.x, mousepos.y, 5);
+        console.log("Drawing tiles")
+        prevmousepos = mousepos;
+    }
     tileController.drawTiles();
 }
 
