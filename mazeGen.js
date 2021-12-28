@@ -144,12 +144,12 @@ function newMaze(rows, cols, rGen){
 }
 
 $(function(){
-    // test();
+    test();
 })
 
 function test(){
-    let ran = new MazeRand(20, 4950)
-    let ran2 = new MazeRand(19, 1449);
+    let ran = new MazeRand(20, 4950, 1238781827387)
+    let ran2 = new MazeRand(19, 1449, 1238781827387);
     for(let i = 0; i < 1000; i++){
         console.log(ran.rand());
         console.log(ran2.rand());
