@@ -1,6 +1,4 @@
 /*
-* TODO test maze
-* TODO create infinite maze generation
 * TODO create tiles
  */
 
@@ -162,12 +160,10 @@ class Maze{
         this.tiles = new Map();
     }
     compChunk(r, c){
-        console.assert(r < Math.pow(2, 20) && c < Math.pow(2, 25));
-        return r * Math.pow(2, 25) + c;
+        return "" + r + " " + c;
     }
     compTile(r, c, dir){
-        console.assert(r < Math.pow(2, 20) && c < Math.pow(2, 20) && dir < 4);
-        return r * Math.pow(2, 30) + c * 8 + dir;
+        return "" + r + " " + c + " " + dir;
     }
     fixArea(r, c){
         for(let dir = 0; dir < 4; dir++){
@@ -218,7 +214,7 @@ const testWindow = (p) => {
     let maze;
     p.setup = function(){
         p.createCanvas(800, 800)
-        maze = new Maze(10, 1239213);
+        maze = new Maze(10, 28348273847);
     }
 
     p.draw = function(){
