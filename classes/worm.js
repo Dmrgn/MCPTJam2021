@@ -1,7 +1,7 @@
 // A pathfinding worm to ensure only rendering possibly visible tiles
 
 // update tiles within vision distance to be drawn
-const vision = 3;
+const vision = 4;
 
 // the direction, its index, and its opposites index
 const dirdata = [
