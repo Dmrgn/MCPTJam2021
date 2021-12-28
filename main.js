@@ -1,30 +1,50 @@
+// Tools class
 class Tools {
-    images={}
+    // stores the images
+    images={};
     constructor(){
+        // loads images from the json file
         loadJSON("data/manifest.json", function(manifest){
             for(let name in manifest){
-                tool.images[name] = loadImage("data/" + manifest[name])
+                tool.images[name] = loadImage("data/" + manifest[name]);
             }
-        })
+        });
     }
 }
 
-let tool;
-let img;
+let tool; // tools
+let img; // shorthand for getting an image
 
 function preload() {
+    // initialize tools and our img function
     tool = new Tools();
-    img = function(id) {return tool.images[id]}
+    img = function(id) {return tool.images[id]};
 }
 
 function setup() {
-    createCanvas(512, 512);
+    // create canvas so that it is the same size as its parent
+    let parEl = $("#gameContainer");
+    createCanvas(parEl.width(), parEl.height()).parent("gameContainer");
     background(0);
 }
 
+// sample animation for draw
+let x = 0
+
 function draw() {
-    background(0)
-    fill(255)
-    rect(200, 100, 100, 100)
-    image(img("player"), 0, 0, 100, 100)
+    background(0);
+    fill(255);
+    rect(x, 100, 100, 100);
+    x++;
+}
+
+function mousePressed(){
+
+}
+
+// when the window is resized
+function windowResized(){
+    // resize the canvas to fill the parent element
+    let parEl = $("#gameContainer");
+    resizeCanvas(parEl.width(), parEl.height(), true);
 }
