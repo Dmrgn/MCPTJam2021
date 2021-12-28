@@ -1,0 +1,14 @@
+[
+    {
+        "name":"brick",
+        "varients":[
+            1,1,1,1,1
+        ]
+    },
+    {
+        "name":"crackedbrick",
+        "varients":[
+            0,1,0,0,0
+        ]
+    }
+]
