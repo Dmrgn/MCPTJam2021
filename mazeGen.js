@@ -235,8 +235,8 @@ class Maze {
 
     /**
      * exterior function for querying if a wall exists
-     * @param x the row of the current tile
-     * @param y the column of the current tile
+     * @param x the x coordinate of the current tile
+     * @param y the y coordinate of the current tile
      * @param dir the direction of the wall relative to the tile (0: left, 1: up, 2: right, 3: down)
      * @returns {*} whether or not there is a wall from tile (r, c) in the [dir] direction
      */
