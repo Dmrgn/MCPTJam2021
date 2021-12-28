@@ -115,6 +115,7 @@ function newMaze(rows, cols, rGen){
                     // add the current edge if it leads to a valid square
                     edges.push([r, c, i])
                 } else {
+                    // set some of the edges to be open outside the chunk
                     arr[r][c][i] = rGen.rand() > 0.5;
                 }
             }
@@ -148,9 +149,15 @@ function newMaze(rows, cols, rGen){
     return arr;
 }
 
+/**
+ * Stores an infinite Maze
+ * should usually only use constructor() and hasWall()
+ */
 class Maze{
     chunkSize;
     seed;
+
+    // stores the loaded chunks & tiles
     chunks;
     tiles;
     constructor(chunkSize, seed){
@@ -159,26 +166,43 @@ class Maze{
         this.chunks = new Set();
         this.tiles = new Map();
     }
+    // compresses 2d & 3d coordinates into a string for sets
     compChunk(r, c){
         return "" + r + " " + c;
     }
     compTile(r, c, dir){
         return "" + r + " " + c + " " + dir;
     }
+
+    // "fixes" an a tile - if one side is open but the other tile has it closed, then make the wall open
     fixArea(r, c){
         for(let dir = 0; dir < 4; dir++){
             let [nr, nc, nd] = [r + mazeDir[dir][0], c + mazeDir[dir][1], (dir + 2) % 4]
+            // whether this tile "thinks" the wall is open
             let curConn = this.tiles.get(this.compTile(r, c, dir));
+            // whether to other tile "thinks" the wall is open
             let oConn = this.tiles.get(this.compTile(nr, nc, nd));
-            if(curConn && oConn){
+
+            // if both tiles exist
+            if(curConn !== undefined && oConn !== undefined){
+                // set the wall to be whether either of the tiles think it's open
                 if(curConn) this.tiles.set(this.compTile(nr, nc, nd), true);
                 if(oConn) this.tiles.set(this.compTile(r, c, dir), true);
             }
         }
     }
+
+    /**
+     * Creates a new chunk
+     * @param r the row of the chunk
+     * @param c the column of the chunk
+     */
     newChunk(r, c){
         console.assert(!this.chunks.has(this.compChunk(r, c)));
+        // create the current chunk
         let curChunk = newMaze(this.chunkSize, this.chunkSize, new MazeRand(r, c, this.seed));
+
+        // store the tiles in the chunk into the "central database"
         for(let ir = 0; ir < this.chunkSize; ir++){
             for(let ic = 0; ic < this.chunkSize; ic++){
                 for(let dir = 0; dir < 4; dir++){
@@ -187,6 +211,8 @@ class Maze{
                 }
             }
         }
+
+        // fix the edges so that it is compatible with the other chunks
         for(let cr = this.chunkSize * r; cr < this.chunkSize * (r + 1); cr++){
             this.fixArea(cr, this.chunkSize * c);
             this.fixArea(cr, this.chunkSize * (c + 1) - 1);
@@ -195,13 +221,25 @@ class Maze{
             this.fixArea(cc, this.chunkSize * r);
             this.fixArea(cc, this.chunkSize * (r + 1) - 1);
         }
+
+        // add the chunk to the "chunks database"
         this.chunks.add(this.compChunk(r, c));
     }
+
+    /**
+     * exterior function for querying if a wall exists
+     * @param r the row of the current tile
+     * @param c the column of the current tile
+     * @param dir the direction of the wall relative to the tile (0: left, 1: up, 2: right, 3: down)
+     * @returns {*} whether or not there is a wall from tile (r, c) in the [dir] direction
+     */
     hasWall(r, c, dir){
+        // if the chunk doesn't exist, create the chunk
         let [cr, cc] = [Math.floor(r / this.chunkSize), Math.floor(c / this.chunkSize)]
         if(!this.chunks.has(this.compChunk(cr, cc))){
             this.newChunk(cr, cc);
         }
+        // return the current wall
         return this.tiles.get(this.compTile(r, c, dir));
     }
 }
@@ -214,7 +252,7 @@ const testWindow = (p) => {
     let maze;
     p.setup = function(){
         p.createCanvas(800, 800)
-        maze = new Maze(10, 28348273847);
+        maze = new Maze(10, Math.floor(Math.random() * 87238127893));
     }
 
     p.draw = function(){
