@@ -39,11 +39,9 @@ class TileController {
         }
     }
     */
-    maze;
 
     // constructor
-    constructor(seed) {
-        this.maze = new Maze(10, seed);
+    constructor() {
     };
     // load tile data from Json
     init() {
@@ -91,12 +89,12 @@ class TileController {
     // Uses the maze generator to generate and push tiles
     // around the passed point in a box with side length
     // k (Controls the logic distance)
-    preparePerimeter(r, c, k){
+    preparePerimeter(r, c, k, maze){
         perimeterTiles = [];
         for (let i = r-floor(k/2); i < r+floor(k/2)+1; i++) {
             for (let j = c-floor(k/2); j < c+floor(k/2)+1; j++) {
                 if (!tilesMap[i]?.[j]) {
-                    this.createTile(i,j);
+                    this.createTile(i,j, maze);
                 }
                 perimeterTiles.push(tilesMap[i][j]);
             }
@@ -104,9 +102,9 @@ class TileController {
     }
     // Creates the tile at r,c and returns it
     // also adds it to tiles and tilemap array
-    createTile(r,c){
+    createTile(r,c, maze){
         if (!tilesMap[r]?.[c]) tilesMap[r] = [];
-        tilesMap[r][c] = new Tile(r,c,this.tileData.brick,this.maze.getTile(r,c));
+        tilesMap[r][c] = new Tile(r,c,this.tileData.brick,maze.getTile(r,c));
         tiles.push(tilesMap[r][c]);
         return tilesMap[r][c];
     }
@@ -120,4 +118,4 @@ class TileController {
 }
 
 // Tile Controller instance
-const tileController = new TileController(8732487234);
+const tileController = new TileController();
