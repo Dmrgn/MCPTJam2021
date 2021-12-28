@@ -6,19 +6,22 @@ class MazeRand{
     mod = 18465223057;
     row;
     col;
+    seed;
     prev = 0;
 
     /**
      * constructs a MazeRand class
      * @param row the current row (one parameter in the random generation)
      * @param col the current column (the other parameters in the random generation)
+     * @param seed this seed for the random number generator
      * @param optional optional parameters - such as base and modulo
      */
-    constructor(row, col, optional){
+    constructor(row, col, seed, optional){
         if(optional){
             this.base = optional["base"]
             this.mod = optional["mod"]
         }
+        this.seed = seed;
         this.row = (row * row - this.base) * this.base  % this.mod;
         this.col = (col * col - this.base) * this.base % this.mod;
     }
@@ -27,10 +30,11 @@ class MazeRand{
      * returns a random number from 0...1 based on the row, column, and current index
      */
     rand(){
-        let b=this.base, m=this.mod, r=this.row, c=this.col; // shorthands for base and mod
+        let b=this.base, m=this.mod, r=this.row, c=this.col, s=this.seed; // shorthands for base and mod
         // transform this.prev to get next number
         this.prev = (((this.prev << 12) % m * b - 123781232343 + 32849 * r % m - 3478278 * c % m) % m + m) % m;
-        this.prev = ((this.prev + r % m * b % m * b % m + c % m * b % m) % m + m) % m;
+        this.prev = (this.prev + r % m * b % m * b % m + c % m * b % m) % m;
+        this.prev = ((this.prev * s % m + r * s % m * s % m - 273223748 * s % m + c * s % m) % m + m) % m;
         return this.prev / m;
     }
 }
@@ -61,10 +65,14 @@ class DSU{
     }
 }
 
+function compCoords(r, c, cols){
+    return (r + 5) * (cols + 7) + (c + 5);
+}
+
 /**
  * creates a new maze
- * note: mazes are compatible with each other - this means that they can always be placed side by side
- *      This is because the function returns mazes in terms of nodes, so they can be placed beside a previous node
+ * note: mazes are self contained - this means that there is a "border" (i.e no edge from any node to an node "outside" the grid")
+ *      You should remember to fix the chunks by adding/opening edges between tiles in different squares
  * @param rows number of rows
  * @param cols number of columns
  * @param rGen A MazeRand object for creating random numbers
@@ -80,6 +88,10 @@ function newMaze(rows, cols, rGen){
         for(let c = 0; c < cols; c++){
             cur.push(new Array(4).fill(true));
         }
+        if(i === 0) cur.map((el) => {el[1] = false; return el;});
+        if(i === rows - 1) cur.map((el) => {el[3] = false; return el;});
+        cur[0][0] = false;
+        cur[cols - 1][2] = false;
         arr.push(cur);
     }
     let cost = []
@@ -102,11 +114,19 @@ function newMaze(rows, cols, rGen){
     }
     // sort edges in increasing order of cost
     edges.sort((a, b) => a[3] - b[3]);
-    let b = cols + 20; // base for compressing 2d coordinates into a 1d coordinate
-    let dsu = new DSU(rows * b + 100);
+    let dsu = new DSU(rows * cols + cols + 200);
     edges.forEach(el => {
-        let comp = el[0] * b + el[1];
-
+        let [cr, cc, i, cost] = el;
+        let [nr, nc] = [cr + dir[i][0], cc + dir[i][1]];
+        let curComp = compCoords(cr, cc, cols);
+        let nexComp = compCoords(nr, nc, cols);
+        if(!dsu.conn(curComp, nexComp)){
+            arr[cr][cc][i] = true;
+            if(0 <= nr && nr < rows && 0 <= nc && nc < cols){
+                arr[nr][nc][(i + 2) % 4] = true;
+            }
+            dsu.join(curComp, nexComp);
+        }
     });
     return arr;
 }
