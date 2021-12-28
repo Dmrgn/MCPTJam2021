@@ -1,9 +1,8 @@
-function preload() {
-    // initialize tools
-    tileController.init(); // tilecontroller.js
-}
+let world;
 
-let world = new World(1237123);
+function preload() {
+    world = new World(1237123);
+}
 
 function setup() {
     // create canvas so that it is the same size as its parent

@@ -1,11 +1,7 @@
-// all tiles as an unordered array
-let tiles = [];
 // all perimeter tiles as an unordered array in view range
 let perimeterTiles = [];
 // tiles in range to be rendered as an unordered array
 let renderedTiles = [];
-// tiles positioned in a two dimentional array with indicies of their x,y coords
-let tilesMap = [];
 // Map 0-4 to a corresponding wall side
 const wallMap = {
     0: "1000", //left wall
@@ -20,6 +16,7 @@ const wallMap = {
 class TileController {
     // contains the stats of all tile types
     tileData = {};
+    maze;
     /* e.g
     tileData = {
         "brick":{
@@ -41,10 +38,10 @@ class TileController {
     */
 
     // constructor
-    constructor() {
-    };
+    constructor() {};
     // load tile data from Json
-    init() {
+    init(_maze) {
+        this.maze = _maze;
         // load manifest
         loadJSON("data/tiles/manifest.json", (manifest) => {
             // for each tile type
@@ -89,16 +86,11 @@ class TileController {
     // Uses the maze generator to generate and push tiles
     // around the passed point in a box with side length
     // k (Controls the logic distance)
-    preparePerimeter(r, c, k, maze){
+    preparePerimeter(r, c, k){
         perimeterTiles = [];
         for (let i = r-floor(k/2); i < r+floor(k/2)+1; i++) {
             for (let j = c-floor(k/2); j < c+floor(k/2)+1; j++) {
-                // console.log(tilesMap);
-                if (tilesMap?.[i]?.[j] == undefined) {
-                    this.createTile(i,j, maze);
-                    // console.log("Here");
-                }
-                perimeterTiles.push(tilesMap[i][j]);
+                perimeterTiles.push(new Tile(i, j, this.tileData.brick, this.maze.getTile(i, j)));
             }
         }
     }
@@ -110,15 +102,8 @@ class TileController {
         // set all tiles that the worms visited to rendered
         renderedTiles = [];
         worms.forEach((worm)=>{
-            renderedTiles.push(tilesMap[worm.x][worm.y]);
+            renderedTiles.push(new Tile(worm.x, worm.y, this.tileData.brick, this.maze.getTile(worm.x, worm.y)));
         });
-    }
-    // Creates the tile at r,c and returns it
-    // also adds it to tiles and tilemap array
-    createTile(r,c, maze){
-        if (tilesMap[r] == undefined) tilesMap[r] = [];
-        tilesMap[r][c] = new Tile(r,c,this.tileData.brick,maze.getTile(r,c));
-        tiles.push(tilesMap[r][c]);
     }
     // display tiles to the screen
     drawTiles() {

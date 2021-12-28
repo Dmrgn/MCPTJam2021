@@ -7,6 +7,7 @@ class World {
         this.camera = new Camera(0, 0);
         this.maze = new Maze(10, seed);
         this.curPlayer = new Player(new PlayerData(100), 20, 20);
+        tileController.init(this.maze);
     }
     move(toMove, x, y) {
         let tiles = [];
@@ -26,15 +27,15 @@ class World {
     }
 
     tick(){
-        if(keyIsDown(87)) this.move(this.curPlayer, 0, -10);
-        if(keyIsDown(65)) this.move(this.curPlayer, -10, 0);
-        if(keyIsDown(83)) this.move(this.curPlayer, 0, 10);
-        if(keyIsDown(68)) this.move(this.curPlayer, 10, 0);
+        console.log(this.curPlayer.x + " " + this.curPlayer.y);
+        if(keyIsDown(87)) this.move(this.curPlayer, 0, -5);
+        if(keyIsDown(65)) this.move(this.curPlayer, -5, 0);
+        if(keyIsDown(83)) this.move(this.curPlayer, 0, 5);
+        if(keyIsDown(68)) this.move(this.curPlayer, 5, 0);
         this.camera.x = this.curPlayer.x - width / 2;
         this.camera.y = this.curPlayer.y - height / 2;
-        let [wmx, wmy] = this.camera.toWorld(mouseX, mouseY);
-        tileController.preparePerimeter(floor(wmx / Tile.WIDTH), floor(wmy / Tile.HEIGHT), 5, this.maze);
-        tileController.prepareRendered(floor(wmx / Tile.WIDTH), floor(wmy / Tile.HEIGHT));
+        tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
+            floor((this.curPlayer.y + this.curPlayer.height / 2) / Tile.HEIGHT));
     }
 
     render(){

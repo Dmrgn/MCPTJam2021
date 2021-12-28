@@ -221,12 +221,9 @@ class Maze {
 
         // fix the edges so that it is compatible with the other chunks
         for (let cr = this.chunkSize * r; cr < this.chunkSize * (r + 1); cr++) {
-            this.fixArea(cr, this.chunkSize * c);
-            this.fixArea(cr, this.chunkSize * (c + 1) - 1);
-        }
-        for (let cc = this.chunkSize * c; cc < this.chunkSize * (c + 1); cc++) {
-            this.fixArea(cc, this.chunkSize * r);
-            this.fixArea(cc, this.chunkSize * (r + 1) - 1);
+            for (let cc = this.chunkSize * c; cc < this.chunkSize * (c + 1); cc++) {
+                this.fixArea(cr, cc);
+            }
         }
 
         // add the chunk to the "chunks database"
