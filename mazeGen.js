@@ -107,7 +107,6 @@ function newMaze(rows, cols, rGen){
     for(let r = 0; r < rows; r++){
         for(let c = 0; c < cols; c++){
             for(let i = 0; i < dir; i++){
-                let nr = r + dir[i][0], nc = c + dir[i][1];
                 edges.push([r, c, i, cost[r][c][i]]);
             }
         }
@@ -116,7 +115,7 @@ function newMaze(rows, cols, rGen){
     edges.sort((a, b) => a[3] - b[3]);
     let dsu = new DSU(rows * cols + cols + 200);
     edges.forEach(el => {
-        let [cr, cc, i, cost] = el;
+        let [cr, cc, i] = el;
         let [nr, nc] = [cr + dir[i][0], cc + dir[i][1]];
         let curComp = compCoords(cr, cc, cols);
         let nexComp = compCoords(nr, nc, cols);
