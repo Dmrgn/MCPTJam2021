@@ -13,6 +13,7 @@ class World {
         this.camera.alterMatrix();
         let [wmx, wmy] = this.camera.toWorld(mouseX, mouseY);
         tileController.preparePerimeter(floor(wmx / Tile.WIDTH), floor(wmy / Tile.HEIGHT), 5, this.maze);
+        tileController.prepareRendered(floor(wmx / Tile.WIDTH), floor(wmy / Tile.HEIGHT));
         tileController.drawTiles();
         pop();
     }

@@ -93,27 +93,45 @@ class TileController {
         perimeterTiles = [];
         for (let i = r-floor(k/2); i < r+floor(k/2)+1; i++) {
             for (let j = c-floor(k/2); j < c+floor(k/2)+1; j++) {
-                if (!tilesMap[i]?.[j]) {
+                // console.log(tilesMap);
+                if (tilesMap?.[i]?.[j] == undefined) {
                     this.createTile(i,j, maze);
+                    // console.log("Here");
                 }
                 perimeterTiles.push(tilesMap[i][j]);
             }
         }
     }
+    // Gets all perimeter tiles that should be visible from a
+    // given point and adds them to the renderedTiles array
+    prepareRendered(c, r) {
+        worms = [];
+        worms.push(new Worm(c,r,0));
+        // set all tiles that the worms visited to rendered
+        renderedTiles = [];
+        worms.forEach((worm)=>{
+            renderedTiles.push(tilesMap[worm.x][worm.y]);
+        });
+    }
     // Creates the tile at r,c and returns it
     // also adds it to tiles and tilemap array
     createTile(r,c, maze){
-        if (!tilesMap[r]?.[c]) tilesMap[r] = [];
+        if (tilesMap[r] == undefined) tilesMap[r] = [];
         tilesMap[r][c] = new Tile(r,c,this.tileData.brick,maze.getTile(r,c));
         tiles.push(tilesMap[r][c]);
-        return tilesMap[r][c];
     }
     // display tiles to the screen
     drawTiles() {
         // iterate through each tile cell
-        perimeterTiles.forEach(tile=>{
+        // perimeterTiles.forEach(tile=>{
+        //     tile.draw();
+        // })
+
+        // blendMode(MULTIPLY);
+        renderedTiles.forEach(tile=>{
             tile.draw();
         })
+        // blendMode(BLEND);
     }
 }
 
