@@ -10,8 +10,6 @@ function setup() {
     createCanvas(parEl.width(), parEl.height()).parent("gameContainer");
     ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false; // draw pixel art without antialiasing
-    // create tile grid
-    tileController.generateMap();
 }
 
 function draw() {
