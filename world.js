@@ -12,7 +12,7 @@ class World {
         if(keyIsDown(68)) this.camera.x += 10;
         this.camera.alterMatrix();
         let [wmx, wmy] = this.camera.toWorld(mouseX, mouseY);
-        tileController.preparePerimeter(floor(wmx / Tile.WIDTH), floor(wmy / Tile.HEIGHT), 5, maze);
+        tileController.preparePerimeter(floor(wmx / Tile.WIDTH), floor(wmy / Tile.HEIGHT), 5, this.maze);
         tileController.drawTiles();
         pop();
     }

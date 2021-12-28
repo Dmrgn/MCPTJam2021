@@ -1,5 +1,3 @@
-let maze;
-
 function preload() {
     // initialize tools
     tools.init(); // utils/tools.js
@@ -14,8 +12,6 @@ function setup() {
     createCanvas(parEl.width(), parEl.height()).parent("gameContainer");
     ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false; // draw pixel art without antialiasing
-    // create maze
-    maze = new Maze(10, Math.floor(Math.random() * 87238127893));
     // tileController.generateMap();
 }
 
