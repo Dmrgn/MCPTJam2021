@@ -121,10 +121,10 @@ class World {
             for(let cy = y * this.maze.chunkSize; cy < (y + 1) * this.maze.chunkSize; cy++){
                 this.tiles.set(this.strOf(cx, cy), new Tile(cx, cy, tileController.tileData.brick, this.maze.getTile(cx, cy)));
                 if(new MazeRand(cx, cy, this.coalSeed).rand() < World.coalProb){
-                    this.addEntity(new Coal(cx * Tile.WIDTH + Tile.WIDTH / 2, cy * Tile.HEIGHT + Tile.HEIGHT / 2, 10, 10, this, 20));
+                    this.addEntity(new Coal(cx * Tile.WIDTH + Tile.WIDTH / 2, cy * Tile.HEIGHT + Tile.HEIGHT / 2, this, 20));
                 }
                 if(new MazeRand(cx, cy, this.gemSeed).rand() < World.gemProb){
-                    this.addEntity(new Gemstone(cx * Tile.WIDTH + Tile.WIDTH / 3, cy * Tile.HEIGHT + Tile.HEIGHT / 3, 10, 10, 1, this));
+                    this.addEntity(new Gemstone(cx * Tile.WIDTH + Tile.WIDTH / 3, cy * Tile.HEIGHT + Tile.HEIGHT / 3, 1, this));
                 }
             }
         }

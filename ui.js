@@ -11,13 +11,15 @@ class UIState{
 
 class Default extends UIState{
     curPlayer;
+    world;
     selectedItem;
     slots;
     static hMargin=5;
     static vMargin = 6;
-    constructor(_player){
+    constructor(_world){
         super();
-        this.curPlayer = _player;
+        this.world = _world;
+        this.curPlayer = this.world.curPlayer;
         this.selectedItem = undefined;
         this.updateSlots();
     }
@@ -47,7 +49,10 @@ class Default extends UIState{
                 this.selectedItem = undefined;
             }
         }
-
+        if(this.selectedItem){
+            this.world.addEntity(this.selectedItem.physicalItem(this.curPlayer.x + this.curPlayer.width / 2, this.curPlayer.y + this.curPlayer.height / 2, this.world));
+            this.selectedItem = undefined;
+        }
     }
 
     render(){

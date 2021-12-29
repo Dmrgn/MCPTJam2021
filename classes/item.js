@@ -27,8 +27,10 @@ class Item extends Entity{
 
 class Gemstone extends Item{
     tier;
-    constructor(_x, _y, _width, _height, _tier, _world){
-        super(_x, _y, _width, _height, _world);
+    static WIDTH = 10;
+    static HEIGHT = 10;
+    constructor(_x, _y, _tier, _world){
+        super(_x, _y, Gemstone.WIDTH, Gemstone.HEIGHT, _world);
         this.tier = _tier;
     }
     itemOf(){
@@ -44,8 +46,10 @@ class Gemstone extends Item{
 
 class Coal extends Item{
     amt;
-    constructor(_x, _y, _width, _height, _world, _amt){
-        super(_x, _y, _width, _height, _world, false);
+    static WIDTH=10;
+    static HEIGHT=10;
+    constructor(_x, _y, _world, _amt){
+        super(_x, _y, Coal.WIDTH, Coal.HEIGHT, _world, false);
         this.amt = _amt;
     }
     onTouch(other){
@@ -69,6 +73,9 @@ class InventoryItem{
     drawIcon(x, y, width, height){
 
     }
+    physicalItem(x, y, world){
+
+    }
 }
 
 class Gem extends InventoryItem{
@@ -85,5 +92,8 @@ class Gem extends InventoryItem{
         textAlign(CENTER);
         fill(0);
         text(this.tier === 1 ? "I" : this.tier === 2 ? "II" : this.tier === 3 ? "III" : "IV", x, y + height / 2 - 5, width, height);
+    }
+    physicalItem(x, y, world){
+        return new Gemstone(x - Gemstone.WIDTH / 2, y - Gemstone.HEIGHT / 2, this.tier, world);
     }
 }

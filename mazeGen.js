@@ -159,7 +159,7 @@ class BlankRoom extends RoomGen {
         let [centerX, centerY] = [(x + BlankRoom.COLS / 2) * Tile.WIDTH, (y + BlankRoom.ROWS / 2) * Tile.HEIGHT];
         for(let cx = centerX - Tile.WIDTH; cx <= centerX + Tile.WIDTH; cx += Tile.WIDTH / 3){
             for(let cy = centerY - Tile.HEIGHT; cy <= centerY + Tile.HEIGHT; cy += Tile.HEIGHT / 3) {
-                world.addEntity(new Coal(cx, cy, 10, 10, world, 30));
+                world.addEntity(new Coal(cx, cy, world, 30));
             }
         }
     }
