@@ -15,28 +15,13 @@ function runShader () {
     litshader.setUniform('numlights',1);
     litshader.setUniform('reso',width/height);
     litshader.setUniform('texture',litscreen);
-    litshader.setUniform('texOffset',[1/(width/2), 1/(height/2)]);
-    litshader.setUniform('lightscontain',[mouseX/width,1-(-(mouseY-height)/height),0.5,0.5,0.5]);
+    litshader.setUniform('texOffset',[1/(width/4), 1/(height/4)]);
+    litshader.setUniform('lightscontain',[mouseX/width,1-(-(mouseY-height)/height),0.4,0.4,0.4]);
     offscreen.rect(0,0,width,height);
+    offscreen.resetShader();
+    litscreen.drawingContext.drawImage(offscreen.drawingContext.canvas,0,0,width,height);
+    // litscreen.filter(BLUR,1);
     blendMode(MULTIPLY);
-    drawingContext.drawImage(offscreen.drawingContext.canvas,0,0,width,height);
+    drawingContext.drawImage(litscreen.drawingContext.canvas,0,0,width,height);
     blendMode(BLEND);
-}
-
-const offscreenInst = (p) => {
-    p.setup = function () {
-        p.createCanvas(width, height, WEBGL);
-        // p.noStroke();
-    }
-    p.draw = function () {
-        offscreen.shader(litshader);
-        // console.log(litshader);
-        // litshader.setUniform('numlights',1);
-        // litshader.setUniform('reso',width/height);
-        // litshader.setUniform('lightscontain',[mouseX,mouseY,255,255,255]);
-        // litscreen.background(255);
-        // offscreen.image(litscreen,0,0,width,height);
-        offscreen.rect(-width/2,-height/2,width,height);
-        // offscreen.resetShader()
-    }
 }

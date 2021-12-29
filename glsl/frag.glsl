@@ -26,7 +26,7 @@ void main () {
       vec2 dir = normalize(distVec) * -vec2(texOffset.x*reso,texOffset.y);
       float totDist = length(distVec);
       float step = (totDist);
-      for (int i = 0; i < 300; i++) {
+      for (int i = 0; i < 200; i++) {
         if (i > int(step/stepReduce)) {
             break;
         }
