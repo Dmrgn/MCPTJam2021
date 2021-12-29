@@ -91,6 +91,19 @@ class World {
         for(let entity of this.entities){
             entity.render();
         }
+        fill(0);
+        noStroke();
+        for(let cx = Math.floor(this.camera.x / Tile.WIDTH) - 1; cx <= Math.floor((this.camera.x + width) / Tile.WIDTH) + 3; cx++){
+            for(let cy = Math.floor(this.camera.y / Tile.HEIGHT) - 1; cy <= Math.floor((this.camera.y + height) / Tile.HEIGHT) + 3; cy++) {
+                let toRender = false;
+                for(let tile of renderedTiles){
+                    toRender = toRender || tile.x === cx && tile.y === cy;
+                }
+                if(!toRender){
+                    rect(cx * Tile.WIDTH, cy * Tile.HEIGHT, Tile.WIDTH, Tile.HEIGHT);
+                }
+            }
+        }
         pop();
     }
 
