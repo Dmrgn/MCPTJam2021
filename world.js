@@ -69,7 +69,6 @@ class World {
     }
 
     tick() {
-        console.log("Hello");
         if (keyIsDown(87)) this.move(this.curPlayer, 0, -5);
         if (keyIsDown(65)) this.move(this.curPlayer, -5, 0);
         if (keyIsDown(83)) this.move(this.curPlayer, 0, 5);
@@ -93,7 +92,6 @@ class World {
         this.camera.alterMatrix();
         tileController.drawTiles();
         this.curPlayer.render();
-<<<<<<< Updated upstream
         for(let entity of this.entities){
             entity.render();
         }
@@ -111,9 +109,6 @@ class World {
             }
         }
         this.drawInteract();
-=======
-        image(litscreen, 0, 0, width / 10, height / 10);
->>>>>>> Stashed changes
         pop();
         litscreen.pop();
     }
@@ -227,7 +222,7 @@ class Camera {
         push();
         translate(-this.x, -this.y);
         litscreen.push();
-        litscreen.translate(this.x, this.y);
+        litscreen.translate(-this.x, -this.y);
     }
     toWorld(x, y) {
         return [x + this.x, y + this.y];

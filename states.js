@@ -41,7 +41,9 @@ class GameState extends State{
     }
     render(){
         background(0);
+        litscreen.background(0);
         this.world.render();
+        runShader();
         this.curUI.render();
     }
     mousePressed() {
