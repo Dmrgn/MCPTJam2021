@@ -16,16 +16,22 @@ function setup() {
     curState = new MainMenuState();
 
     litscreen = createGraphics(width, height);
-    offscreen = createGraphics(width/2, height/2, WEBGL);
-
-    frameRate(1000);
+    offscreen = createGraphics(width/4, height/4, WEBGL);
 
 }
+
+let fr = null;
 
 function draw() {
     curState.tick();
     curState.render();
-    document.title = "FrameRate: " + frameRate();
+    if (fr == null) {
+        fr = frameRate();
+    } else {
+        fr += frameRate();
+        fr /= 2;
+        document.title = "FrameRate: " + fr;
+    }
 }
 
 function mousePressed() {
