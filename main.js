@@ -1,7 +1,12 @@
 let curState;
 
 function preload() {
+<<<<<<< Updated upstream
     tileController.init();
+=======
+    world = new World(1237123);
+    litshader = loadShader("glsl/vert.glsl", "glsl/frag.glsl");
+>>>>>>> Stashed changes
 }
 
 function setup() {
@@ -11,12 +16,35 @@ function setup() {
     ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false; // draw pixel art without antialiasing
     // tileController.generateMap();
+<<<<<<< Updated upstream
     curState = new MainMenuState();
 }
 
 function draw() {
     curState.tick();
     curState.render();
+=======
+    offscreen = createGraphics(width, height, WEBGL);
+    litscreen = createGraphics(width,height);
+}
+
+// temp
+let mousepos = {
+    x:0,
+    y:0
+}
+let prevmousepos = {
+    x:-1,
+    y:-1
+}
+
+function draw() {
+    world.tick();
+    background(0);
+    litscreen.background(0);
+    world.render();
+    runShader();
+>>>>>>> Stashed changes
 }
 
 function mousePressed() {

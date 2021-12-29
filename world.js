@@ -26,7 +26,7 @@ class World {
     ]
     spawnSeed;
 
-    constructor(seed){
+    constructor(seed) {
         this.camera = new Camera(0, 0);
         this.maze = new Maze(10, seed);
         this.curPlayer = new Player(new PlayerData(100), 20, 20, this.playerTime);
@@ -48,8 +48,8 @@ class World {
         let valid = [-Infinity, Infinity, -Infinity, Infinity];
         tiles.forEach((tile) => tile.wallEntities.forEach((el) => {
             let bounds = toMove.valid(el);
-            for(let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
-            for(let i = 1; i < 4; i += 2) valid[i] = min(valid[i], bounds[i]);
+            for (let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
+            for (let i = 1; i < 4; i += 2) valid[i] = min(valid[i], bounds[i]);
         }));
         for(let entity of this.entities){
             if(entity !== toMove){
@@ -68,11 +68,12 @@ class World {
         toMove.y += min(max(valid[2], y), valid[3]);
     }
 
-    tick(){
-        if(keyIsDown(87)) this.move(this.curPlayer, 0, -5);
-        if(keyIsDown(65)) this.move(this.curPlayer, -5, 0);
-        if(keyIsDown(83)) this.move(this.curPlayer, 0, 5);
-        if(keyIsDown(68)) this.move(this.curPlayer, 5, 0);
+    tick() {
+        console.log("Hello");
+        if (keyIsDown(87)) this.move(this.curPlayer, 0, -5);
+        if (keyIsDown(65)) this.move(this.curPlayer, -5, 0);
+        if (keyIsDown(83)) this.move(this.curPlayer, 0, 5);
+        if (keyIsDown(68)) this.move(this.curPlayer, 5, 0);
         this.camera.x = this.curPlayer.x - width / 2;
         this.camera.y = this.curPlayer.y - height / 2;
         tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
@@ -88,10 +89,11 @@ class World {
         }
     }
 
-    render(){
+    render() {
         this.camera.alterMatrix();
         tileController.drawTiles();
         this.curPlayer.render();
+<<<<<<< Updated upstream
         for(let entity of this.entities){
             entity.render();
         }
@@ -109,7 +111,11 @@ class World {
             }
         }
         this.drawInteract();
+=======
+        image(litscreen, 0, 0, width / 10, height / 10);
+>>>>>>> Stashed changes
         pop();
+        litscreen.pop();
     }
 
     strOf(x, y){
@@ -213,15 +219,17 @@ class World {
 class Camera {
     x;
     y;
-    constructor(_x, _y){
+    constructor(_x, _y) {
         this.x = _x;
         this.y = _y;
     }
-    alterMatrix(){
+    alterMatrix() {
         push();
         translate(-this.x, -this.y);
+        litscreen.push();
+        litscreen.translate(this.x, this.y);
     }
-    toWorld(x, y){
+    toWorld(x, y) {
         return [x + this.x, y + this.y];
     }
 }

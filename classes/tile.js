@@ -32,6 +32,7 @@ class Tile {
             if (wall) { // if this tile has a wall on this side
                 const texture = this.type.textures[wallMap[index]];
                 image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+                litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
             }
         });
     }
