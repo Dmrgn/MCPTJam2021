@@ -48,7 +48,7 @@ class GameState extends State{
         background(0);
         litscreen.background(0);
         this.world.render();
-        runShader(width / 2, height / 2);
+        // runShader(width / 2, height / 2);
         this.curUI.render();
     }
     mousePressed() {
@@ -66,7 +66,7 @@ class GameState extends State{
         } else if(key === 'g'){
             this.world.interact();
         } else if(key === 'e'){
-            this.switchUI(new CraftUI(this.world, new GemUpgrade(0, 0, 0, 0)));
+            changeState(new CraftState(this.world, new GemUpgrade(0, 0, 0, 0), this));
         }
     }
 }
@@ -144,6 +144,93 @@ class MenuState extends State{
             changeState(this.prev);
         } else if (this.isPressed(this.mainMenu)){
             changeState(new MainMenuState());
+        }
+    }
+}
+
+class CraftState extends State {
+    playerData;
+    curPlayer;
+    world;
+    curRecipe;
+
+    slots;
+    inventoryBG;
+
+    prev;
+
+    constructor(_world, _recipe, _prev){
+        super();
+        this.world = _world;
+        this.curPlayer = _world.curPlayer;
+        this.playerData = this.curPlayer.playerData;
+        this.curRecipe = _recipe;
+        this.prev = _prev;
+        this.updateInventory();
+    }
+    updateInventory(){
+        this.curRecipe.setPos(width / 2 - 200, height / 2 - 200, 400, 200);
+        let [x, y, w] = [width / 2 - 200, height / 2 + 50, 400];
+        let amt = PlayerData.ITEMS;
+        let slotWidth = w / amt;
+        this.inventoryBG = [x, y, w, slotWidth]
+        this.slots = new Array(amt);
+        for(let i = 0; i < amt; i++){
+            let margin = 10;
+            this.slots[i] = [x + slotWidth * i + margin, y + margin, slotWidth - 2 * margin, slotWidth - 2 * margin];
+        }
+    }
+    exitState(){
+        for(let item of this.curRecipe.onExit()){
+            console.assert(this.playerData.addItem(item));
+        }
+    }
+    inBox(x, y, w, h){
+        return x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h;
+    }
+    mousePressed(){
+        for(let i = 0; i < PlayerData.ITEMS; i++){
+            let [x, y, w, h] = this.slots[i];
+            if(x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h){
+                if(this.playerData.items[i] && this.curRecipe.canUse(this.playerData.items[i])){
+                    this.curRecipe.insert(this.playerData.items[i]);
+                    this.playerData.items[i] = undefined;
+                }
+                return;
+            }
+        }
+        for(let item of this.curRecipe.mousePressed()){
+            console.assert(this.playerData.addItem(item));
+        }
+        if(!this.inBox(this.curRecipe.x, this.curRecipe.y, this.curRecipe.width, this.curRecipe.height)
+        && !this.inBox(this.inventoryBG[0], this.inventoryBG[1], this.inventoryBG[2], this.inventoryBG[3])){
+            changeState(this.prev);
+        }
+    }
+    render(){
+        this.world.render();
+        this.updateInventory();
+        this.curRecipe.render();
+        let [x, y, w, h] = this.inventoryBG;
+        fill(235, 171, 54);
+        noStroke();
+        rect(x, y, w, h, 5);
+
+        for(let [ind, slot] of this.slots.entries()){
+            [x, y, w, h] = slot;
+            fill(255);
+            stroke(0);
+            strokeWeight(1);
+            rect(x, y, w, h, 10);
+            if(this.playerData.items[ind]){
+                let margin = 5;
+                this.playerData.items[ind].drawIcon(x + margin, y + margin, w - 2 * margin, h - 2 * margin);
+            }
+        }
+    }
+    keyPressed() {
+        if(keyCode === 27){
+            changeState(this.prev);
         }
     }
 }

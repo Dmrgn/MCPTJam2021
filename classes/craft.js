@@ -45,6 +45,8 @@ class GemUpgrade extends Recipe{
     curCraft;
     items;
     tags;
+    matSlots;
+    resSlot;
     constructor(_x, _y, _width, _height){
         super(_x, _y, _width, _height);
         this.curCraft = 2;
@@ -57,7 +59,33 @@ class GemUpgrade extends Recipe{
         this.width = w;
         this.height = h;
     }
-    positionTags(){
+    onExit(){
+        return this.items;
+    }
+    inBox(x, y, w, h){
+        return x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h
+    }
+    mousePressed(){
+        let [x, y, w, h] = this.resSlot;
+        if(this.items.length === GemUpgrade.numNeeded[this.curCraft - 2] && this.inBox(x, y, w, h)){
+            this.items = [];
+            return [new GemItem(2)];
+        }
+        for(let i = 0; i < this.items.length; i++){
+            let [x, y, w, h] = this.matSlots[i];
+            if(this.inBox(x, y, w, h)){
+                return [this.items.pop()];
+            }
+        }
+        for(let i = 0; i < GemUpgrade.numNeeded.length; i++){
+            let [x, y, w, h] = this.tags[i];
+            if(this.inBox(x, y, w, h)){
+                this.curCraft = i + 2;
+            }
+        }
+        return [];
+    }
+    positionEls(){
         let tagHeight = this.height / 5 - 10;
         let longTagHeight = this.height / 5 + 5;
         let tagWidth = min(40, this.width / (GemUpgrade.numNeeded.length + 1) - 5);
@@ -69,16 +97,31 @@ class GemUpgrade extends Recipe{
                 this.tags[i] = [curPos - tagWidth / 2, this.y, tagWidth, tagHeight];
             }
         }
+        // initialize variables
+        let [x, y, w, h] = [this.x, this.y, this.width, this.height];
+        let amtNeeded = GemUpgrade.numNeeded[this.curCraft - 2];
+        let itemSize = h / 6;
+        let botY = y + h - itemSize - 20;
+
+        // draw the gem that results from the previous tiers
+        this.resSlot = [x + w / 2 - itemSize / 2, y + h * 2 / 5 - itemSize, itemSize, itemSize];
+
+        this.matSlots = new Array(amtNeeded);
+        // draw the individual squares for the previous gem
+        for(let i = 0; i < amtNeeded; i++) {
+            let curPos = x + (i + 1) * w / (amtNeeded + 1);
+            this.matSlots[i] = [curPos - itemSize / 2, botY, itemSize, itemSize];
+        }
     }
     canUse(item){
-        return item instanceof GemItem && this.items.length < GemUpgrade.numNeeded[this.curCraft - 2];
+        return item instanceof GemItem && this.items.length < GemUpgrade.numNeeded[this.curCraft - 2] && item.tier === this.curCraft - 1;
     }
     insert(item){
         console.assert(this.canUse(item));
         this.items.push(item);
     }
     render(){
-        this.positionTags();
+        this.positionEls();
         fill(235, 171, 54);
         noStroke();
         rect(this.x, this.y, this.width, this.height, 10);
@@ -96,50 +139,49 @@ class GemUpgrade extends Recipe{
         }
 
         // initialize variables
-        let [x, y, w, h] = [this.x, this.y, this.width, this.height];
+        let [x, y, w, h] = this.resSlot;
         let amtNeeded = GemUpgrade.numNeeded[this.curCraft - 2];
-        let itemSize = h / 6;
-        let botY = y + h - itemSize - 20;
-        let margin = 10;
-
-        // draw the gem that results from the previous tiers
         fill(255);
         stroke(0);
         strokeWeight(1);
-        rect(x + w / 2 - itemSize / 2, y + h * 2 / 5 - itemSize, itemSize, itemSize);
+
+        // draw the resulting gem
+        rect(x, y, w, h);
         if(this.items.length === amtNeeded){
-            new GemItem(this.curCraft).drawIcon(x + w / 2 - itemSize / 2 + margin, y + h * 2 / 5 - itemSize + margin,
-                itemSize - 2 * margin, itemSize - 2 * margin);
+            let margin = 5;
+            new GemItem(this.curCraft).drawIcon(x + margin, y + margin, w - 2 * margin, h - 2 * margin);
         } else {
             fill(0);
             noStroke();
             textAlign(CENTER, CENTER);
-            text("" + this.curCraft, x + w / 2 - itemSize / 2, y + h * 2 / 5 - itemSize / 2, itemSize);
+            text("" + this.curCraft, x, y + h / 2, w);
         }
 
         // draw the individual squares for the previous gem
         for(let i = 0; i < amtNeeded; i++) {
+            [x, y, w, h] = this.matSlots[i];
             fill(255);
             stroke(0);
             strokeWeight(1);
-            let curPos = x + (i + 1) * w / (amtNeeded + 1);
-            rect(curPos - itemSize / 2, botY, itemSize, itemSize);
+            rect(x, y, w, h);
             if(this.items.length > i){
-                let margin = 10;
-                this.items[i].drawIcon(curPos - itemSize / 2 + margin, botY + margin, itemSize - margin, itemSize - margin);
+                let margin = 5;
+                this.items[i].drawIcon(x + margin, y + margin, w - 2 * margin, h - 2 * margin);
             } else {
                 fill(0);
                 noStroke();
                 textAlign(CENTER, CENTER);
-                text("" + (this.curCraft - 1), curPos - itemSize / 2, botY + itemSize / 2, itemSize);
+                text("" + (this.curCraft - 1), x, y + h / 2, w);
             }
         }
 
+        // draw the connecting lines
         stroke(0);
         strokeWeight(5);
+        [x, y, w, h] = [this.x, this.y, this.width, this.height];
         for(let i = 0; i < amtNeeded; i++) {
             let curPos = x + (i + 1) * w / (amtNeeded + 1);
-            line(curPos, botY, curPos, y + h / 2);
+            line(curPos, this.matSlots[i][1], curPos, y + h / 2);
         }
         line(x + w / (amtNeeded + 1), y + h / 2, x + w - w / (amtNeeded + 1), y + h / 2);
         line(x + w / 2, y + h / 2, x + w / 2, y + h * 2 / 5);

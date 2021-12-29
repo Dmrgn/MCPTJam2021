@@ -144,9 +144,9 @@ class GemItem extends InventoryItem{
         noStroke();
         ellipseMode(CORNER);
         ellipse(x, y, width, height);
-        textAlign(CENTER);
+        textAlign(CENTER, CENTER);
         fill(0);
-        text(this.tier === 1 ? "I" : this.tier === 2 ? "II" : this.tier === 3 ? "III" : "IV", x, y + height / 2 - 5, width, height);
+        text(this.tier === 1 ? "I" : this.tier === 2 ? "II" : this.tier === 3 ? "III" : "IV", x, y + height / 2, width);
     }
     physicalItem(x, y, world){
         return new Gem(x - Gem.WIDTH / 2, y - Gem.HEIGHT / 2, this.tier, world);

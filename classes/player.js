@@ -10,6 +10,18 @@ class PlayerData {
         this.health = _health;
         this.items = new Array(PlayerData.ITEMS).fill(undefined);
     }
+
+    addItem(item){
+        let firstInd = -1;
+        for(let i = 0; i < PlayerData.ITEMS && firstInd === -1; i++){
+            if(!this.items[i]){
+                firstInd = i;
+            }
+        }
+        if(firstInd === -1) return false;
+        this.items[firstInd] = item;
+        return true;
+    }
 }
 
 /**
