@@ -44,7 +44,7 @@ class Default extends UIState{
     mouseReleased() {
         for(let i in this.slots){
             let [x, y, w, h] = this.slots[i];
-            if(x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h && this.selectedItem){
+            if(x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h && this.selectedItem && !this.curPlayer.playerData.items[i]){
                 this.curPlayer.playerData.items[i] = this.selectedItem;
                 this.selectedItem = undefined;
             }
@@ -74,6 +74,7 @@ class Default extends UIState{
         for(let [i, el] of this.curPlayer.playerData.items.entries()){
             fill(255);
             stroke(0);
+            strokeWeight(2);
             let [x, y, w, h] = this.slots[i];
             rect(x, y, w, h, 5);
             if(el){
@@ -83,6 +84,13 @@ class Default extends UIState{
 
         if(this.selectedItem){
             this.selectedItem.drawIcon(mouseX - 10, mouseY - 10, 20, 20);
+        }
+    }
+    exitState(){
+        for(let i in this.curPlayer.playerData.items){
+            if(this.selectedItem && !this.curPlayer.playerData.items[i]){
+                this.curPlayer.playerData.items[i] = this.selectedItem;
+            }
         }
     }
 }

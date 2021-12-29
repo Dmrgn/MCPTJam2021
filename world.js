@@ -17,10 +17,14 @@ class World {
     tiles;
     chunks;
 
-    coalSeed;
-    static coalProb = 0.1;
-    gemSeed;
-    static gemProb = 0.1;
+    probabilities = [
+        ["coal", 0.1],
+        ["gem", 0.1],
+        ["stone", 0.1],
+        ["feather", 0.1],
+        ["stick", 0.1]
+    ]
+    spawnSeed;
 
     constructor(seed){
         this.camera = new Camera(0, 0);
@@ -32,8 +36,7 @@ class World {
         this.tiles = new Map();
         this.chunks = new Set();
 
-        this.coalSeed = Math.floor(Math.random() * 817238721879312);
-        this.gemSeed = Math.floor(Math.random() * 817238721879312);
+        this.spawnSeed = Math.floor(Math.random() * 127833219183);
     }
     move(toMove, x, y) {
         let tiles = [];
@@ -113,6 +116,20 @@ class World {
         return x + " " + y;
     }
 
+    createEl(type, x, y){
+        if(type === "coal"){
+            this.addEntity(new Coal(x, y, this, 30));
+        } else if(type === "gem"){
+            this.addEntity(new Gem(x, y, 1, this));
+        } else if(type === "stone"){
+            this.addEntity(new Stone(x, y, 5, this));
+        } else if(type === "feather"){
+            this.addEntity(new Feather(x, y, 5, this));
+        } else if(type === "stick"){
+            this.addEntity(new Stick(x, y, 5, this));
+        }
+    }
+
     newChunk(x, y){
         console.assert(!this.chunks.has(this.strOf(x, y)));
         let [r, c] = [y, x];
@@ -120,11 +137,13 @@ class World {
         for(let cx = x * this.maze.chunkSize; cx < (x + 1) * this.maze.chunkSize; cx++){
             for(let cy = y * this.maze.chunkSize; cy < (y + 1) * this.maze.chunkSize; cy++){
                 this.tiles.set(this.strOf(cx, cy), new Tile(cx, cy, tileController.tileData.brick, this.maze.getTile(cx, cy)));
-                if(new MazeRand(cx, cy, this.coalSeed).rand() < World.coalProb){
-                    this.addEntity(new Coal(cx * Tile.WIDTH + Tile.WIDTH / 2, cy * Tile.HEIGHT + Tile.HEIGHT / 2, this, 20));
-                }
-                if(new MazeRand(cx, cy, this.gemSeed).rand() < World.gemProb){
-                    this.addEntity(new Gemstone(cx * Tile.WIDTH + Tile.WIDTH / 3, cy * Tile.HEIGHT + Tile.HEIGHT / 3, 1, this));
+                let randNum = new MazeRand(cx, cy, this.spawnSeed).rand();
+                for(let el of this.probabilities){
+                    randNum -= el[1];
+                    if(randNum <= 0){
+                        this.createEl(el[0], cx * Tile.WIDTH + Tile.WIDTH / 2, cy * Tile.HEIGHT + Tile.HEIGHT / 2);
+                        break;
+                    }
                 }
             }
         }

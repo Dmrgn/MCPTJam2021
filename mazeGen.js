@@ -99,30 +99,6 @@ class RoomGen {
      * @return * the altered arr
      */
     clearRoom(arr, rand) {
-        throw "RoomGen does not have any functionality - use a subclass instead";
-    }
-
-    /**
-     * fills a room with items
-     * @param world The world to alter
-     * @param x the x coordinate of the room
-     * @param y the y coordinate of the room
-     */
-    fillRoom(world, x, y){
-        throw "RoomGen does not have any functionality - use a subclass instead";
-    }
-}
-
-class BlankRoom extends RoomGen {
-    static COLS = 6;
-    static ROWS = 4;
-    static WALL_PROB = 0.3;
-
-    constructor() {
-        super(1);
-    }
-
-    clearRoom(arr, rand) {
         let rows = arr.length;
         let cols = arr[0].length;
         let r = floor(rand.rand() * (rows - (BlankRoom.ROWS + 1))) + 1;
@@ -153,6 +129,26 @@ class BlankRoom extends RoomGen {
             if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, lr, cc, 3);
         }
         return [r, c, this];
+    }
+
+    /**
+     * fills a room with items
+     * @param world The world to alter
+     * @param x the x coordinate of the room
+     * @param y the y coordinate of the room
+     */
+    fillRoom(world, x, y){
+        throw "RoomGen does not have any functionality - use a subclass instead";
+    }
+}
+
+class BlankRoom extends RoomGen {
+    static COLS = 6;
+    static ROWS = 4;
+    static WALL_PROB = 0.3;
+
+    constructor() {
+        super(1);
     }
 
     fillRoom(world, x, y){

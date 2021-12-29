@@ -33,6 +33,7 @@ class GameState extends State{
     enterState(){
         this.world = new World(this.seed);
         this.curUI = new Default(this.world);
+        this.curUI.enterState();
     }
     tick(){
         this.world.tick();

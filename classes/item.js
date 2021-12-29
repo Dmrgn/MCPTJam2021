@@ -25,22 +25,77 @@ class Item extends Entity{
     }
 }
 
-class Gemstone extends Item{
+class Gem extends Item{
     tier;
     static WIDTH = 10;
     static HEIGHT = 10;
     constructor(_x, _y, _tier, _world){
-        super(_x, _y, Gemstone.WIDTH, Gemstone.HEIGHT, _world);
+        super(_x, _y, Gem.WIDTH, Gem.HEIGHT, _world);
         this.tier = _tier;
     }
     itemOf(){
-        return new Gem(this.tier);
+        return new GemItem(this.tier);
     }
     render(){
         fill(0, 0, 255);
         strokeWeight(0);
         ellipseMode(CORNER);
         ellipse(this.x, this.y, this.width, this.height);
+    }
+}
+
+class Stone extends Item{
+    static WIDTH = 10;
+    static HEIGHT = 10;
+    amt;
+    constructor(_x, _y, _amt, _world){
+        super(_x, _y, Stone.WIDTH, Stone.HEIGHT, _world);
+        this.amt = _amt;
+    }
+    itemOf(){
+        return new StoneItem(this.amt);
+    }
+    render(){
+        fill(100, 100, 100);
+        strokeWeight(0);
+        ellipseMode(CORNER);
+        ellipse(this.x, this.y, this.width, this.height);
+    }
+}
+
+class Feather extends Item{
+    static WIDTH = 10;
+    static HEIGHT = 10;
+    amt;
+    constructor(_x, _y, _amt, _world){
+        super(_x, _y, Feather.WIDTH, Feather.HEIGHT, _world);
+        this.amt = _amt;
+    }
+    itemOf(){
+        return new FeatherItem(this.amt);
+    }
+    render(){
+        stroke(255);
+        strokeWeight(5);
+        line(this.x, this.y, this.x + this.width, this.y + this.height);
+    }
+}
+
+class Stick extends Item{
+    static WIDTH = 10;
+    static HEIGHT = 10;
+    amt;
+    constructor(_x, _y, _amt, _world){
+        super(_x, _y, Stick.WIDTH, Stick.HEIGHT, _world);
+        this.amt = _amt;
+    }
+    itemOf(){
+        return new StickItem(this.amt);
+    }
+    render(){
+        stroke(148, 74, 0);
+        strokeWeight(5);
+        line(this.x, this.y, this.x + this.width, this.y + this.height);
     }
 }
 
@@ -78,7 +133,7 @@ class InventoryItem{
     }
 }
 
-class Gem extends InventoryItem{
+class GemItem extends InventoryItem{
     tier;
     constructor(_tier){
         super();
@@ -94,6 +149,52 @@ class Gem extends InventoryItem{
         text(this.tier === 1 ? "I" : this.tier === 2 ? "II" : this.tier === 3 ? "III" : "IV", x, y + height / 2 - 5, width, height);
     }
     physicalItem(x, y, world){
-        return new Gemstone(x - Gemstone.WIDTH / 2, y - Gemstone.HEIGHT / 2, this.tier, world);
+        return new Gem(x - Gem.WIDTH / 2, y - Gem.HEIGHT / 2, this.tier, world);
+    }
+}
+class StoneItem extends InventoryItem {
+    amt;a
+    constructor(_amt){
+        super();
+        this.amt = _amt;
+    }
+    drawIcon(x, y, width, height){
+        fill(100, 100, 100);
+        noStroke();
+        ellipseMode(CORNER);
+        ellipse(x, y, width, height);
+    }
+    physicalItem(x, y, world){
+        return new Stone(x, y, this.amt);
+    }
+}
+class FeatherItem extends InventoryItem {
+    amt;
+    constructor(_amt){
+        super();
+        this.amt = _amt;
+    }
+    drawIcon(x, y, width, height){
+        stroke(0);
+        strokeWeight(5);
+        line(x, y, x + width, y + height);
+    }
+    physicalItem(x, y, world){
+        return new Feather(x, y, this.amt);
+    }
+}
+class StickItem extends InventoryItem {
+    amt;
+    constructor(_amt){
+        super();
+        this.amt = _amt;
+    }
+    drawIcon(x, y, width, height){
+        stroke(148, 74, 0);
+        strokeWeight(5);
+        line(x, y, x + width, y + height);
+    }
+    physicalItem(x, y, world){
+        return new Stick(x, y, this.amt);
     }
 }
