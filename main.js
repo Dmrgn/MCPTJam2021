@@ -18,8 +18,6 @@ function setup() {
     litscreen = createGraphics(width, height);
     offscreen = createGraphics(width/4, height/4, WEBGL);
 
-    frameRate(1000);
-
 }
 
 let fr = null;
