@@ -77,12 +77,85 @@ class DSU {
     }
 }
 
+// a list of directions (corresponds to the directions outlined in the function doc)
+let mazeDir = [[0, -1], [-1, 0], [0, 1], [1, 0]]
+
+/**
+ * Interface-esque Factory pattern
+ */
+class RoomGen {
+    weight
+
+    constructor(_weight) {
+        this.weight = _weight;
+    }
+
+    destroy(arr, r, c, dir) {
+        arr[r][c][dir] = false;
+        let [nr, nc] = [r + mazeDir[dir][0], c + mazeDir[dir][1]];
+        arr[nr][nc][(dir + 2) % 4] = false;
+    }
+
+    /**
+     * Alters arr so that there is a room at a random position
+     * @param arr the grid specifying the maze -> arr[row][col][dir]
+     * @param rand the MazeRand generator for randomness
+     * @return * the altered arr
+     */
+    makeRoom(arr, rand) {
+        throw "RoomGen does not have any functionality - use a subclass instead";
+    }
+}
+
+class BlankRoom extends RoomGen {
+    static COLS = 6;
+    static ROWS = 4;
+    static WALL_PROB = 0.3;
+
+    constructor() {
+        super(1);
+    }
+
+    makeRoom(arr, rand) {
+        let rows = arr.length;
+        let cols = arr[0].length;
+        let r = floor(rand.rand() * (rows - (BlankRoom.ROWS + 1))) + 1;
+        let c = floor(rand.rand() * (cols - (BlankRoom.COLS + 1))) + 1;
+        for (let cr = r + 1; cr < r + BlankRoom.ROWS - 1; cr++) {
+            for (let cc = c + 1; cc < c + BlankRoom.COLS - 1; cc++) {
+                arr[cr][cc].fill(true);
+            }
+        }
+        for (let cr = r; cr < r + BlankRoom.ROWS; cr++) {
+            arr[cr][c][1] = arr[cr][c][2] = arr[cr][c][3] = true;
+            let lc = c + BlankRoom.COLS - 1;
+            arr[cr][lc][0] = arr[cr][lc][1] = arr[cr][lc][3] = true;
+        }
+        for (let cc = c; cc < c + BlankRoom.COLS; cc++) {
+            arr[r][cc][0] = arr[r][cc][2] = arr[r][cc][3] = true;
+            let lr = r + BlankRoom.ROWS - 1;
+            arr[lr][cc][0] = arr[lr][cc][1] = arr[lr][cc][2] = true;
+        }
+        for (let cr = r; cr < r + BlankRoom.ROWS; cr++) {
+            let lc = c + BlankRoom.COLS - 1;
+            if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, cr, c, 0);
+            if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, cr, lc, 2);
+        }
+        for (let cc = c; cc < c + BlankRoom.COLS; cc++) {
+            if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, r, cc, 1);
+            let lr = r + BlankRoom.ROWS - 1;
+            if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, lr, cc, 3);
+        }
+        return [arr, r, c];
+    }
+}
+
 function compCoords(r, c, cols) {
     return (r + 5) * (cols + 7) + (c + 5);
 }
 
-// a list of directions (corresponds to the directions outlined in the function doc)
-let mazeDir = [[0, -1], [-1, 0], [0, 1], [1, 0]]
+const roomGens = [new BlankRoom()]
+const roomProb = 0.1;
 
 /**
  * creates a new maze
@@ -149,6 +222,22 @@ function newMaze(rows, cols, rGen) {
             dsu.join(curComp, nexComp);
         }
     });
+
+    if (rGen.rand() < roomProb) {
+        let totWeight = 0;
+        for (let room of roomGens) {
+            totWeight += room.weight;
+        }
+        let num = rGen.rand() * totWeight;
+        for (let room of roomGens) {
+            num -= room.weight;
+            if (num <= 0) {
+                room.makeRoom(arr, rGen);
+                break;
+            }
+        }
+    }
+
     // return the array
     return arr;
 }
@@ -255,27 +344,27 @@ class Maze {
      * @param y the y coordinate
      * @returns {*[]} boolean array - {has left wall, has top wall, has right wall, has bottom wall}
      */
-    getTile(x, y){
+    getTile(x, y) {
         return [this.hasWall(x, y, 0), this.hasWall(x, y, 1), this.hasWall(x, y, 2), this.hasWall(x, y, 3)];
     }
 }
 
 $(function () {
-    // test();
+    test();
 })
 
 const testWindow = (p) => {
     let maze;
     p.setup = function () {
         p.createCanvas(800, 800)
-        maze = new Maze(10, Math.floor(8732487234));
+        maze = new Maze(10, Math.floor(17623876123));
     }
 
     p.draw = function () {
         p.background(0);
         p.stroke(255);
         p.strokeWeight(3);
-        for(let x = 0; x < 20; x++) for(let y = 0; y < 20; y++) {
+        for (let x = 0; x < 20; x++) for (let y = 0; y < 20; y++) {
             if (maze.hasWall(x, y, 0)) p.line(40 * x, 40 * y, 40 * x, 40 * y + 40);
             if (maze.hasWall(x, y, 1)) p.line(40 * x, 40 * y, 40 * (x + 1), 40 * y);
             if (maze.hasWall(x, y, 2)) p.line(40 * (x + 1), 40 * y, 40 * (x + 1), 40 * y + 40);

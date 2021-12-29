@@ -3,7 +3,7 @@ class World {
     maze;
     curPlayer;
     coldness;
-    playerTime = 500;
+    playerTime = 9999999;
 
     constructor(seed){
         this.camera = new Camera(0, 0);
@@ -49,12 +49,12 @@ class World {
         tileController.drawTiles();
         this.curPlayer.render();
         pop();
+
         fill(0, 0, 0, 0);
         stroke(255);
         strokeWeight(2);
         rect(10, 10, 200, 20);
         fill(255, 0, 0);
-        print(this.curPlayer.timeLeft);
         rect(10, 10, 200 * this.curPlayer.timeLeft / this.playerTime, 20);
     }
 }
