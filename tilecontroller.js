@@ -38,8 +38,8 @@ class TileController {
 
     // constructor
     constructor() {};
-    setMaze(_maze){
-        this.maze = _maze;
+    setWorld(_world){
+        this.world = _world;
     }
     // load tile data from Json
     init() {
@@ -91,7 +91,7 @@ class TileController {
         perimeterTiles = [];
         for (let i = r-floor(k/2); i < r+floor(k/2)+1; i++) {
             for (let j = c-floor(k/2); j < c+floor(k/2)+1; j++) {
-                perimeterTiles.push(new Tile(i, j, this.tileData.brick, this.maze.getTile(i, j)));
+                perimeterTiles.push(this.world.getTile(i, j));
             }
         }
     }
@@ -103,7 +103,7 @@ class TileController {
         // set all tiles that the worms visited to rendered
         renderedTiles = [];
         worms.forEach((worm)=>{
-            renderedTiles.push(new Tile(worm.x, worm.y, this.tileData.brick, this.maze.getTile(worm.x, worm.y)));
+            renderedTiles.push(this.world.getTile(worm.x, worm.y));
         });
     }
     // display tiles to the screen

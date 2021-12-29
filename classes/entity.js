@@ -1,15 +1,4 @@
 /**
- * PlayerData stores the data for the player - this is useful for when we switch between states
- */
-class PlayerData {
-    health;
-
-    constructor(_health) {
-        this.health = _health;
-    }
-}
-
-/**
  * a generic entity - interacts with the world
  */
 class Entity {
@@ -18,11 +7,15 @@ class Entity {
     width;
     height;
 
-    constructor(_x, _y, _width, _height) {
+    // the layers this entity is a part of - entities in the same layer cannot overlap
+    layers;
+
+    constructor(_x, _y, _width, _height, _layers) {
         this.x = _x;
         this.y = _y;
         this.width = _width;
         this.height = _height;
+        this.layers = _layers;
     }
 
     shouldFix(other) {
@@ -53,30 +46,10 @@ class Entity {
         return this.x <= other.x + other.width && this.x + this.width >= other.x &&
             this.y <= other.y + other.height && this.y + this.height >= other.y;
     }
-}
 
-/**
- * The player interacting with the world
- */
-class Player extends Entity {
-    playerData;
-    static WIDTH = 20;
-    static HEIGHT = 40;
-    timeLeft;
+    tick(){}
 
-    constructor(_playerData, _x, _y, startTime) {
-        super(_x, _y, Player.WIDTH, Player.HEIGHT);
-        this.playerData = _playerData;
-        this.timeLeft = startTime;
-    }
+    render(){}
 
-    render() {
-        fill(255);
-        rect(this.x, this.y, this.width, this.height);
-    }
-
-    reduceTimer(amt){
-        this.timeLeft -= amt;
-        return this.timeLeft <= 0;
-    }
+    onTouch(other){}
 }

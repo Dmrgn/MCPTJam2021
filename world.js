@@ -2,15 +2,34 @@ class World {
     camera;
     maze;
     curPlayer;
+
+    // coldness dictates the speed at which the player loses time
     coldness;
-    playerTime = 9999999;
+
+    // starting time
+    playerTime = 900;
+
+    // list of entities
+    entities;
+
+    // second map of tiles - this time with actual tiles
+    tiles;
+    chunks;
+
+    coalSeed;
+    static coalProb = 0.1;
 
     constructor(seed){
         this.camera = new Camera(0, 0);
         this.maze = new Maze(10, seed);
         this.curPlayer = new Player(new PlayerData(100), 20, 20, this.playerTime);
-        tileController.setMaze(this.maze);
-        this.coldness = 0.002;
+        this.entities = new Set([this.curPlayer]);
+        tileController.setWorld(this);
+        this.coldness = 1 / frameRate();
+        this.tiles = new Map();
+        this.chunks = new Set();
+
+        this.coalSeed = Math.floor(Math.random() * 817238721879312);
     }
     move(toMove, x, y) {
         let tiles = [];
@@ -25,6 +44,19 @@ class World {
             for(let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
             for(let i = 1; i < 4; i += 2) valid[i] = min(valid[i], bounds[i]);
         }));
+        for(let entity of this.entities){
+            if(entity !== toMove){
+                let hasLayer = false;
+                for(let tag of toMove.layers){
+                    hasLayer = hasLayer || entity.layers.includes(tag);
+                }
+                if(hasLayer){
+                    let bounds = toMove.valid(entity);
+                    for(let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
+                    for(let i = 1; i < 4; i += 2) valid[i] = min(valid[i], bounds[i]);
+                }
+            }
+        }
         toMove.x += min(max(valid[0], x), valid[1]);
         toMove.y += min(max(valid[2], y), valid[3]);
     }
@@ -41,21 +73,81 @@ class World {
         if(this.curPlayer.reduceTimer(this.coldness)){
             changeState(new FadeState(this, new MainMenuState()));
         }
-        this.coldness += 0.001;
+        for(let entity of this.entities){
+            if(this.curPlayer.isTouching(entity)){
+                this.curPlayer.onTouch(entity);
+                entity.onTouch(this.curPlayer);
+            }
+        }
     }
 
     render(){
         this.camera.alterMatrix();
         tileController.drawTiles();
         this.curPlayer.render();
+        for(let entity of this.entities){
+            entity.render();
+        }
         pop();
 
-        fill(0, 0, 0, 0);
-        stroke(255);
-        strokeWeight(2);
-        rect(10, 10, 200, 20);
+        fill(255);
+        rect(10, 10, 40, 20, 5);
         fill(255, 0, 0);
-        rect(10, 10, 200 * this.curPlayer.timeLeft / this.playerTime, 20);
+        strokeWeight(2);
+        textAlign(LEFT, TOP);
+        text(Math.floor(this.curPlayer.timeLeft), 15, 15);
+    }
+
+    strOf(x, y){
+        return x + " " + y;
+    }
+
+    newChunk(x, y){
+        console.assert(!this.chunks.has(this.strOf(x, y)));
+        let [r, c] = [y, x];
+        let room = this.maze.newChunk(r, c);
+        for(let cx = x * this.maze.chunkSize; cx < (x + 1) * this.maze.chunkSize; cx++){
+            for(let cy = y * this.maze.chunkSize; cy < (y + 1) * this.maze.chunkSize; cy++){
+                this.tiles.set(this.strOf(cx, cy), new Tile(cx, cy, tileController.tileData.brick, this.maze.getTile(cx, cy)));
+                if(new MazeRand(cx, cy, this.coalSeed).rand() < World.coalProb){
+                    this.addEntity(new Coal(cx * Tile.WIDTH + Tile.WIDTH / 2, cy * Tile.HEIGHT + Tile.HEIGHT / 2, 10, 10, this, 20));
+                }
+            }
+        }
+        if(room){
+            let [rx, ry] = [room[1], room[0]];
+            room[2].fillRoom(this, rx, ry);
+        }
+        this.chunks.add(this.strOf(x, y));
+    }
+
+    syncTile(x, y){
+        console.assert(this.tiles.has(this.strOf(x, y)))
+        this.tiles.get(this.strOf(x, y)).walls = this.maze.getTile(x, y);
+    }
+
+    addEntity(toAdd){
+        this.entities.add(toAdd);
+    }
+
+    removeEntity(toRemove){
+        this.entities.delete(toRemove);
+    }
+
+    getTile(x, y){
+        if(!this.tiles.has(this.strOf(x, y))){
+            // make sure the chunks around the current tile exist
+            let [cx, cy] = [Math.floor(x / this.maze.chunkSize), Math.floor(y / this.maze.chunkSize)]
+            for(let ax = cx - 1; ax <= cx + 1; ax++){
+                for(let ay = cy - 1; ay <= cy + 1; ay++){
+                    if (!this.chunks.has(this.strOf(ax, ay))) {
+                        this.newChunk(ax, ay);
+                    }
+                }
+            }
+        }
+        this.syncTile(x, y);
+        return this.tiles.get(this.strOf(x, y));
     }
 }
 

@@ -1,7 +1,3 @@
-/*
-* TODO create tiles
- */
-
 /**
  * MazeRand class - returns random numbers
  */
@@ -102,7 +98,17 @@ class RoomGen {
      * @param rand the MazeRand generator for randomness
      * @return * the altered arr
      */
-    makeRoom(arr, rand) {
+    clearRoom(arr, rand) {
+        throw "RoomGen does not have any functionality - use a subclass instead";
+    }
+
+    /**
+     * fills a room with items
+     * @param world The world to alter
+     * @param x the x coordinate of the room
+     * @param y the y coordinate of the room
+     */
+    fillRoom(world, x, y){
         throw "RoomGen does not have any functionality - use a subclass instead";
     }
 }
@@ -116,7 +122,7 @@ class BlankRoom extends RoomGen {
         super(1);
     }
 
-    makeRoom(arr, rand) {
+    clearRoom(arr, rand) {
         let rows = arr.length;
         let cols = arr[0].length;
         let r = floor(rand.rand() * (rows - (BlankRoom.ROWS + 1))) + 1;
@@ -146,7 +152,16 @@ class BlankRoom extends RoomGen {
             let lr = r + BlankRoom.ROWS - 1;
             if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, lr, cc, 3);
         }
-        return [arr, r, c];
+        return [r, c, this];
+    }
+
+    fillRoom(world, x, y){
+        let [centerX, centerY] = [(x + BlankRoom.COLS / 2) * Tile.WIDTH, (y + BlankRoom.ROWS / 2) * Tile.HEIGHT];
+        for(let cx = centerX - Tile.WIDTH; cx <= centerX + Tile.WIDTH; cx += Tile.WIDTH / 3){
+            for(let cy = centerY - Tile.HEIGHT; cy <= centerY + Tile.HEIGHT; cy += Tile.HEIGHT / 3) {
+                world.addEntity(new Coal(cx, cy, 10, 10, world, 30));
+            }
+        }
     }
 }
 
@@ -155,7 +170,7 @@ function compCoords(r, c, cols) {
 }
 
 const roomGens = [new BlankRoom()]
-const roomProb = 0.1;
+const roomProb = 1;
 
 /**
  * creates a new maze
@@ -164,9 +179,12 @@ const roomProb = 0.1;
  * @param rows number of rows
  * @param cols number of columns
  * @param rGen A MazeRand object for creating random numbers
- * @return maze 3D boolean array
+ * @return [maze, (room)]
+ *      maze: 3D boolean array
  *      (returned array)[row][column][direction] -> whether or not there is a wall in the direction from (row, column)
  *      for directions, 0: left, 1: up, 2: right, 3: down
+ *      room: array w/ 3 elements
+ *      [r, c, roomGen] -> {row of the room created, column of the room creating, roomGen object that made the room}
  */
 function newMaze(rows, cols, rGen) {
     // 3D array -> arr[row][col][dir] = hasEdge from (row, col) in [dir] direction
@@ -232,14 +250,13 @@ function newMaze(rows, cols, rGen) {
         for (let room of roomGens) {
             num -= room.weight;
             if (num <= 0) {
-                room.makeRoom(arr, rGen);
-                break;
+                return [arr, room.clearRoom(arr, rGen)];
             }
         }
     }
 
     // return the array
-    return arr;
+    return [arr];
 }
 
 /**
@@ -292,11 +309,12 @@ class Maze {
      * Creates a new chunk
      * @param r the row of the chunk
      * @param c the column of the chunk
+     * @return (room) if a room was created, it returns [row of room, column of room, roomGen object that made it]
      */
     newChunk(r, c) {
         console.assert(!this.chunks.has(this.compChunk(r, c)));
         // create the current chunk
-        let curChunk = newMaze(this.chunkSize, this.chunkSize, new MazeRand(r, c, this.seed));
+        let [curChunk, room] = newMaze(this.chunkSize, this.chunkSize, new MazeRand(r, c, this.seed));
 
         // store the tiles in the chunk into the "central database"
         for (let ir = 0; ir < this.chunkSize; ir++) {
@@ -317,6 +335,10 @@ class Maze {
 
         // add the chunk to the "chunks database"
         this.chunks.add(this.compChunk(r, c));
+
+        if(room){
+            return [room[0] + r * this.chunkSize, room[1] + c * this.chunkSize, room[2]];
+        }
     }
 
     /**
@@ -329,11 +351,11 @@ class Maze {
     hasWall(x, y, dir) {
         // convert x, y coordinates into row, col coordinates
         let [r, c] = [y, x]
-        // if the chunk doesn't exist, create the chunk
-        let [cr, cc] = [Math.floor(r / this.chunkSize), Math.floor(c / this.chunkSize)]
-        if (!this.chunks.has(this.compChunk(cr, cc))) {
-            this.newChunk(cr, cc);
+
+        if(!this.tiles.has(this.compTile(r, c, dir))){
+            throw "The tile doesn't exist!";
         }
+
         // return the current wall
         return !this.tiles.get(this.compTile(r, c, dir));
     }

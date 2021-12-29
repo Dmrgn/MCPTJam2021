@@ -18,11 +18,10 @@ class Worm{
     constructor(x,y,dist) {
         this.x = x;
         this.y = y;
-        const thistile = new Tile(x, y, tileController.tileData.brick, tileController.maze.getTile(x, y));
+        const thistile = tileController.world.getTile(x, y);
         if (dist < vision && thistile !== undefined) {
             for (let i = 0 ; i < dirdata.length; i++) {
-                let nexttile = new Tile(this.x+dirdata[i].x, this.y+dirdata[i].y, tileController.tileData.brick,
-                    tileController.maze.getTile(this.x+dirdata[i].x, this.y+dirdata[i].y));
+                let nexttile = tileController.world.getTile(this.x + dirdata[i].x, this.y + dirdata[i].y);
                 if (nexttile !== undefined) {
                     if (!(nexttile.walls[dirdata[i].o]) && !(thistile.walls[dirdata[i].i])) { //if the path is clear
                         worms.push(new Worm(nexttile.x,nexttile.y,dist+((dirdata[i].i === 3 || dirdata[i] === 1) ? 1 : 1)));

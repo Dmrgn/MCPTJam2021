@@ -35,13 +35,4 @@ class Tile {
             }
         });
     }
-
-    /**
-     * checks for collision between an entity and
-     * @param entity the entity to check for
-     * @returns {*} whether or not entity collided with one of this tile's walls
-     */
-    wallCollide(entity){
-        return this.wallEntities.some((el) => el.isTouching(entity));
-    }
 }
