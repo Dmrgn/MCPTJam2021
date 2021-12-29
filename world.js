@@ -18,6 +18,8 @@ class World {
 
     coalSeed;
     static coalProb = 0.1;
+    gemSeed;
+    static gemProb = 0.1;
 
     constructor(seed){
         this.camera = new Camera(0, 0);
@@ -30,6 +32,7 @@ class World {
         this.chunks = new Set();
 
         this.coalSeed = Math.floor(Math.random() * 817238721879312);
+        this.gemSeed = Math.floor(Math.random() * 817238721879312);
     }
     move(toMove, x, y) {
         let tiles = [];
@@ -89,13 +92,6 @@ class World {
             entity.render();
         }
         pop();
-
-        fill(255);
-        rect(10, 10, 40, 20, 5);
-        fill(255, 0, 0);
-        strokeWeight(2);
-        textAlign(LEFT, TOP);
-        text(Math.floor(this.curPlayer.timeLeft), 15, 15);
     }
 
     strOf(x, y){
@@ -111,6 +107,9 @@ class World {
                 this.tiles.set(this.strOf(cx, cy), new Tile(cx, cy, tileController.tileData.brick, this.maze.getTile(cx, cy)));
                 if(new MazeRand(cx, cy, this.coalSeed).rand() < World.coalProb){
                     this.addEntity(new Coal(cx * Tile.WIDTH + Tile.WIDTH / 2, cy * Tile.HEIGHT + Tile.HEIGHT / 2, 10, 10, this, 20));
+                }
+                if(new MazeRand(cx, cy, this.gemSeed).rand() < World.gemProb){
+                    this.addEntity(new Gemstone(cx * Tile.WIDTH + Tile.WIDTH / 3, cy * Tile.HEIGHT + Tile.HEIGHT / 3, 10, 10, 1, this));
                 }
             }
         }

@@ -37,6 +37,12 @@ class Gemstone extends Item{
     itemOf(){
         return new Gem(this.tier);
     }
+    render(){
+        fill(0, 0, 255);
+        strokeWeight(0);
+        ellipseMode(CORNER);
+        ellipse(this.x, this.y, this.width, this.height);
+    }
 }
 
 class Coal extends Item{
@@ -60,7 +66,9 @@ class Coal extends Item{
 }
 
 class InventoryItem{
+    drawIcon(x, y, width, height){
 
+    }
 }
 
 class Gem extends InventoryItem{
@@ -68,5 +76,14 @@ class Gem extends InventoryItem{
     constructor(_tier){
         super();
         this.tier = _tier;
+    }
+    drawIcon(x, y, width, height){
+        fill(66, 239, 245);
+        noStroke();
+        ellipseMode(CORNER);
+        ellipse(x, y, width, height);
+        textAlign(CENTER);
+        fill(0);
+        text(this.tier === 1 ? "I" : this.tier === 2 ? "II" : this.tier === 3 ? "III" : "IV", x, y + height / 2 - 5, width, height);
     }
 }

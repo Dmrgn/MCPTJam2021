@@ -24,6 +24,7 @@ class MainMenuState extends State{
 
 class GameState extends State{
     world;
+    curUI;
     seed;
     constructor(_seed){
         super();
@@ -31,6 +32,7 @@ class GameState extends State{
     }
     enterState(){
         this.world = new World(this.seed);
+        this.curUI = new Default(this.world.curPlayer);
     }
     tick(){
         this.world.tick();
@@ -38,6 +40,13 @@ class GameState extends State{
     render(){
         background(0);
         this.world.render();
+        this.curUI.render();
+    }
+    mousePressed() {
+        this.curUI.mousePressed();
+    }
+    mouseReleased() {
+        this.curUI.mouseReleased();
     }
 }
 
