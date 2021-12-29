@@ -15,7 +15,7 @@ function runShader () {
     litshader.setUniform('numlights',1);
     litshader.setUniform('reso',width/height);
     litshader.setUniform('texture',litscreen);
-    litshader.setUniform('texOffset',[1/width, 1/height]);
+    litshader.setUniform('texOffset',[1/(width/2), 1/(height/2)]);
     litshader.setUniform('lightscontain',[mouseX/width,1-(-(mouseY-height)/height),0.5,0.5,0.5]);
     offscreen.rect(0,0,width,height);
     blendMode(MULTIPLY);
