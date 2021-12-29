@@ -350,7 +350,7 @@ class Maze {
 }
 
 $(function () {
-    test();
+    // test();
 })
 
 const testWindow = (p) => {
