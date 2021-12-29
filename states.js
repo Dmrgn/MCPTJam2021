@@ -48,7 +48,10 @@ class GameState extends State{
         background(0);
         litscreen.background(0);
         this.world.render();
-        runShader(width / 2, height / 2);
+
+        let curPlayer = this.world.curPlayer;
+        let [sx, sy] = this.world.camera.toScreen(curPlayer.x + curPlayer.width / 2, curPlayer.y + curPlayer.height / 2);
+        runShader(sx, sy);
         this.curUI.render();
     }
     mousePressed() {

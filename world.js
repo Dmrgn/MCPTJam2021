@@ -227,4 +227,7 @@ class Camera {
     toWorld(x, y) {
         return [x + this.x, y + this.y];
     }
+    toScreen(x, y){
+        return [x - this.x, y - this.y];
+    }
 }
