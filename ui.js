@@ -106,3 +106,55 @@ class Default extends UIState{
         }
     }
 }
+
+class CraftUI extends UIState {
+    playerData;
+    curPlayer;
+    world;
+    curRecipe;
+
+    slots;
+    inventoryBG;
+
+    constructor(_world, _recipe){
+        super();
+        this.world = _world;
+        this.curPlayer = _world.curPlayer;
+        this.playerData = this.curPlayer.playerData;
+        this.curRecipe = _recipe;
+        this.updateInventory();
+    }
+    updateInventory(){
+        this.curRecipe.setPos(width / 2 - 200, height / 2 - 200, 400, 200);
+        let [x, y, w] = [width / 2 - 200, height / 2 + 50, 400];
+        let amt = PlayerData.ITEMS;
+        let slotWidth = w / amt;
+        this.inventoryBG = [x, y, w, slotWidth]
+        this.slots = new Array(amt);
+        for(let i = 0; i < amt; i++){
+            let margin = 10;
+            this.slots[i] = [x + slotWidth * i + margin, y + margin, slotWidth - 2 * margin, slotWidth - 2 * margin];
+        }
+    }
+    exitState(){
+
+    }
+    mousePressed(){
+
+    }
+    render(){
+        this.updateInventory();
+        this.curRecipe.render();
+        let [x, y, w, h] = this.inventoryBG;
+        fill(235, 171, 54);
+        noStroke();
+        rect(x, y, w, h, 5);
+        fill(255);
+        stroke(0);
+        strokeWeight(1);
+        for(let slot of this.slots){
+            [x, y, w, h] = slot;
+            rect(x, y, w, h, 10);
+        }
+    }
+}

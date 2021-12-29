@@ -32,6 +32,11 @@ class GameState extends State{
         this.world = new World(this.seed);
         this.curUI = new Default(this.world);
     }
+    switchUI(to){
+        this.curUI.exitState();
+        to.enterState();
+        this.curUI = to;
+    }
     enterState(){
         this.curUI.enterState();
     }
@@ -43,7 +48,7 @@ class GameState extends State{
         background(0);
         litscreen.background(0);
         this.world.render();
-        runShader();
+        runShader(width / 2, height / 2);
         this.curUI.render();
     }
     mousePressed() {
@@ -60,6 +65,8 @@ class GameState extends State{
             changeState(new MenuState(this));
         } else if(key === 'g'){
             this.world.interact();
+        } else if(key === 'e'){
+            this.switchUI(new CraftUI(this.world, new GemUpgrade(0, 0, 0, 0)));
         }
     }
 }
