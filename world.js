@@ -89,6 +89,7 @@ class World {
     }
 
     render() {
+        litscreen.background(0);
         this.camera.alterMatrix();
         tileController.drawTiles();
         this.curPlayer.render();
@@ -111,6 +112,10 @@ class World {
         this.drawInteract();
         pop();
         litscreen.pop();
+
+        let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
+            this.curPlayer.y + this.curPlayer.height / 2);
+        runShader(sx, sy);
     }
 
     strOf(x, y){
