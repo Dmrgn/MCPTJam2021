@@ -2,6 +2,7 @@ class World {
     camera;
     maze;
     curPlayer;
+    static interactRadius = 50;
 
     // coldness dictates the speed at which the player loses time
     coldness;
@@ -104,6 +105,7 @@ class World {
                 }
             }
         }
+        this.drawInteract();
         pop();
     }
 
@@ -160,6 +162,32 @@ class World {
         }
         this.syncTile(x, y);
         return this.tiles.get(this.strOf(x, y));
+    }
+
+    canInteract(a, b){
+        return dist((b.x + b.width) / 2, (b.y + b.height) / 2,
+        (a.x + a.width) / 2, (a.y + a.height) / 2) <= World.interactRadius;
+    }
+
+    interact(){
+        for(let entity of this.entities){
+            if(entity.canInteract && this.canInteract(this.curPlayer, entity)){
+                entity.onInteract(this.curPlayer);
+                return;
+            }
+        }
+    }
+
+    drawInteract(){
+        for(let entity of this.entities){
+            if(entity.canInteract && this.canInteract(this.curPlayer, entity)){
+                fill(0);
+                noStroke();
+                textAlign(CENTER);
+                text("Press 'g' to interact", entity.x - 100, entity.y - 10, entity.width + 200)
+                return;
+            }
+        }
     }
 }
 

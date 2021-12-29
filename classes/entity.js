@@ -6,16 +6,18 @@ class Entity {
     y;
     width;
     height;
+    canInteract;
 
     // the layers this entity is a part of - entities in the same layer cannot overlap
     layers;
 
-    constructor(_x, _y, _width, _height, _layers) {
+    constructor(_x, _y, _width, _height, _layers, _canInteract) {
         this.x = _x;
         this.y = _y;
         this.width = _width;
         this.height = _height;
         this.layers = _layers;
+        this.canInteract = _canInteract;
     }
 
     shouldFix(other) {
@@ -46,6 +48,8 @@ class Entity {
         return this.x <= other.x + other.width && this.x + this.width >= other.x &&
             this.y <= other.y + other.height && this.y + this.height >= other.y;
     }
+
+    onInteract(player){}
 
     tick(){}
 

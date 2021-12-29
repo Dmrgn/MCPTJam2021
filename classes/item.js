@@ -1,7 +1,7 @@
 class Item extends Entity{
     world;
-    constructor(_x, _y, _width, _height, _world){
-        super(_x, _y, _width, _height, [])
+    constructor(_x, _y, _width, _height, _world, _canInteract){
+        super(_x, _y, _width, _height, [], _canInteract || _canInteract === undefined)
         this.world = _world;
     }
 
@@ -18,12 +18,9 @@ class Item extends Entity{
     destroy(){
         this.world.removeEntity(this);
     }
-
-    onTouch(other){
-        if(other instanceof Player){
-            if(other.collectItem(this.itemOf())){
-                this.destroy();
-            }
+    onInteract(player) {
+        if(player.collectItem(this.itemOf())){
+            this.destroy();
         }
     }
 }
@@ -48,7 +45,7 @@ class Gemstone extends Item{
 class Coal extends Item{
     amt;
     constructor(_x, _y, _width, _height, _world, _amt){
-        super(_x, _y, _width, _height, _world);
+        super(_x, _y, _width, _height, _world, false);
         this.amt = _amt;
     }
     onTouch(other){
@@ -57,6 +54,9 @@ class Coal extends Item{
             this.destroy();
         }
     }
+
+    onInteract(player) {}
+
     render(){
         fill(0);
         strokeWeight(0);

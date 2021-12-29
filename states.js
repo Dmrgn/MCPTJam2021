@@ -48,6 +48,11 @@ class GameState extends State{
     mouseReleased() {
         this.curUI.mouseReleased();
     }
+    keyPressed() {
+        if(key === 'g'){
+            this.world.interact();
+        }
+    }
 }
 
 class FadeState extends State {
