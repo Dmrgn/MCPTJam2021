@@ -7,7 +7,7 @@ class World {
         this.camera = new Camera(0, 0);
         this.maze = new Maze(10, seed);
         this.curPlayer = new Player(new PlayerData(100), 20, 20);
-        tileController.init(this.maze);
+        tileController.setMaze(this.maze);
     }
     move(toMove, x, y) {
         let tiles = [];

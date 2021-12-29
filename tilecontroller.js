@@ -16,7 +16,6 @@ const wallMap = {
 class TileController {
     // contains the stats of all tile types
     tileData = {};
-    maze;
     /* e.g
     tileData = {
         "brick":{
@@ -39,9 +38,11 @@ class TileController {
 
     // constructor
     constructor() {};
-    // load tile data from Json
-    init(_maze) {
+    setMaze(_maze){
         this.maze = _maze;
+    }
+    // load tile data from Json
+    init() {
         // load manifest
         loadJSON("data/tiles/manifest.json", (manifest) => {
             // for each tile type

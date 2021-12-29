@@ -62,14 +62,21 @@ class Player extends Entity {
     playerData;
     static WIDTH = 20;
     static HEIGHT = 40;
+    timeLeft;
 
-    constructor(_playerData, _x, _y) {
+    constructor(_playerData, _x, _y, startTime) {
         super(_x, _y, Player.WIDTH, Player.HEIGHT);
         this.playerData = _playerData;
+        this.timeLeft = startTime;
     }
 
     render() {
         fill(255);
         rect(this.x, this.y, this.width, this.height);
+    }
+
+    reduceTimer(amt){
+        this.timeLeft -= amt;
+        return this.timeLeft <= 0;
     }
 }

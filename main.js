@@ -1,7 +1,7 @@
-let world;
+let curState;
 
 function preload() {
-    world = new World(1237123);
+    tileController.init();
 }
 
 function setup() {
@@ -11,30 +11,34 @@ function setup() {
     ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false; // draw pixel art without antialiasing
     // tileController.generateMap();
-}
-
-// temp
-let mousepos = {
-    x:0,
-    y:0
-}
-let prevmousepos = {
-    x:-1,
-    y:-1
+    curState = new MainMenuState();
 }
 
 function draw() {
-    world.tick();
-    background(0);
-    world.render();
+    curState.tick();
+    curState.render();
 }
 
 function mousePressed() {
+    curState.mousePressed();
+}
 
+function mouseReleased(){
+    curState.mouseReleased();
+}
+
+function keyReleased(){
+    curState.keyReleased();
 }
 
 function keyPressed(){
+    curState.keyPressed();
+}
 
+function changeState(changeTo){
+    curState.exitState();
+    changeTo.enterState();
+    curState = changeTo;
 }
 
 // when the window is resized
