@@ -16,12 +16,20 @@ class Default extends UIState{
     slots;
     static hMargin=5;
     static vMargin = 6;
+    mouseX;
+    mouseY;
     constructor(_world){
         super();
         this.world = _world;
         this.curPlayer = this.world.curPlayer;
         this.selectedItem = undefined;
         this.updateSlots();
+        this.mouseX = 0;
+        this.mouseY = 0;
+    }
+    updateMouse(){
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
     }
     updateSlots(){
         let [hm, vm] = [Default.hMargin, Default.vMargin];
@@ -33,9 +41,10 @@ class Default extends UIState{
         }
     }
     mousePressed(){
+        this.updateMouse();
         for(let i in this.slots){
             let [x, y, w, h] = this.slots[i];
-            if(x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h && !this.selectedItem){
+            if(x <= this.mouseX && this.mouseX <= x + w && y <= this.mouseY && this.mouseY <= y + h && !this.selectedItem){
                 this.selectedItem = this.curPlayer.playerData.items[i];
                 this.curPlayer.playerData.items[i] = undefined;
             }
@@ -54,7 +63,9 @@ class Default extends UIState{
             this.selectedItem = undefined;
         }
     }
-
+    tick(){
+        this.updateMouse();
+    }
     render(){
         this.updateSlots();
         fill(255);
@@ -83,13 +94,14 @@ class Default extends UIState{
         }
 
         if(this.selectedItem){
-            this.selectedItem.drawIcon(mouseX - 10, mouseY - 10, 20, 20);
+            this.selectedItem.drawIcon(this.mouseX - 10, this.mouseY - 10, 20, 20);
         }
     }
     exitState(){
         for(let i in this.curPlayer.playerData.items){
             if(this.selectedItem && !this.curPlayer.playerData.items[i]){
                 this.curPlayer.playerData.items[i] = this.selectedItem;
+                this.selectedItem = undefined;
             }
         }
     }

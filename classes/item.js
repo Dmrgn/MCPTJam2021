@@ -153,7 +153,7 @@ class GemItem extends InventoryItem{
     }
 }
 class StoneItem extends InventoryItem {
-    amt;a
+    amt;
     constructor(_amt){
         super();
         this.amt = _amt;
@@ -165,7 +165,7 @@ class StoneItem extends InventoryItem {
         ellipse(x, y, width, height);
     }
     physicalItem(x, y, world){
-        return new Stone(x, y, this.amt);
+        return new Stone(x, y, this.amt, world);
     }
 }
 class FeatherItem extends InventoryItem {
@@ -180,7 +180,7 @@ class FeatherItem extends InventoryItem {
         line(x, y, x + width, y + height);
     }
     physicalItem(x, y, world){
-        return new Feather(x, y, this.amt);
+        return new Feather(x, y, this.amt, world);
     }
 }
 class StickItem extends InventoryItem {
@@ -195,6 +195,6 @@ class StickItem extends InventoryItem {
         line(x, y, x + width, y + height);
     }
     physicalItem(x, y, world){
-        return new Stick(x, y, this.amt);
+        return new Stick(x, y, this.amt, world);
     }
 }
