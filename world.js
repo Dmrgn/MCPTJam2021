@@ -2,12 +2,15 @@ class World {
     camera;
     maze;
     curPlayer;
+    coldness;
+    playerTime = 500;
 
     constructor(seed){
         this.camera = new Camera(0, 0);
         this.maze = new Maze(10, seed);
-        this.curPlayer = new Player(new PlayerData(100), 20, 20);
+        this.curPlayer = new Player(new PlayerData(100), 20, 20, this.playerTime);
         tileController.setMaze(this.maze);
+        this.coldness = 0.002;
     }
     move(toMove, x, y) {
         let tiles = [];
@@ -35,6 +38,10 @@ class World {
         this.camera.y = this.curPlayer.y - height / 2;
         tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
             floor((this.curPlayer.y + this.curPlayer.height / 2) / Tile.HEIGHT));
+        if(this.curPlayer.reduceTimer(this.coldness)){
+            changeState(new FadeState(this, new MainMenuState()));
+        }
+        this.coldness += 0.001;
     }
 
     render(){
@@ -42,6 +49,13 @@ class World {
         tileController.drawTiles();
         this.curPlayer.render();
         pop();
+        fill(0, 0, 0, 0);
+        stroke(255);
+        strokeWeight(2);
+        rect(10, 10, 200, 20);
+        fill(255, 0, 0);
+        print(this.curPlayer.timeLeft);
+        rect(10, 10, 200 * this.curPlayer.timeLeft / this.playerTime, 20);
     }
 }
 

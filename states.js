@@ -14,6 +14,7 @@ class MainMenuState extends State{
         background(0);
         fill(255);
         textAlign(CENTER, CENTER);
+        stroke(0, 0, 0, 0);
         text("Press the screen to continue", width / 2, height / 2);
     }
     mousePressed(){
@@ -23,9 +24,13 @@ class MainMenuState extends State{
 
 class GameState extends State{
     world;
-    constructor(seed){
+    seed;
+    constructor(_seed){
         super();
-        this.world = new World(seed);
+        this.seed = _seed;
+    }
+    enterState(){
+        this.world = new World(this.seed);
     }
     tick(){
         this.world.tick();
@@ -33,5 +38,28 @@ class GameState extends State{
     render(){
         background(0);
         this.world.render();
+    }
+}
+
+class FadeState extends State {
+    prev;
+    next;
+    screenOpacity = 0;
+    constructor(_prev, _next){
+        super();
+        this.prev = _prev;
+        this.next = _next;
+    }
+    tick(){
+        this.screenOpacity += 5;
+        if(this.screenOpacity > 255){
+            changeState(this.next);
+        }
+    }
+    render(){
+        this.prev.render();
+        stroke(0, 0, 0, 0);
+        fill(0, 0, 0, this.screenOpacity);
+        rect(0, 0, width, height);
     }
 }
