@@ -90,7 +90,7 @@ class Player extends Entity {
 
     attack(){
         if(this.playerData.weapons[this.curWeapon]){
-            this.playerData.weapons[this.curWeapon].attack();
+            this.playerData.weapons[this.curWeapon].attack(this, curState.world);
         }
     }
 }

@@ -3,13 +3,12 @@ class Enemy extends Entity{
     player;
     world;
     constructor(_x, _y, _width, _height, _health, _world){
-        super(_x, _y, _width, _height, ["Enemy"]);
+        super(_x, _y, _width, _height, ["Foreground"]);
         this.health = _health;
         this.world = _world;
         this.player = _world.curPlayer;
     }
     damage(amt){
-        console.assert(curState instanceof GameState);
         this.health -= amt;
         if(this.health <= 0){
             curState.world.removeEntity(this);

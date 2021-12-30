@@ -1,4 +1,4 @@
-const useShader = true;
+const useShader = false;
 
 class World{
     camera;
@@ -36,7 +36,6 @@ class World{
             for (let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
             for (let i = 1; i < 4; i += 2) valid[i] = min(valid[i], bounds[i]);
         }));
-        this.removeEntity(toMove);
         for(let entity of this.getEntitiesAround(toMove)){
             if(entity !== toMove){
                 if(toMove.willHit(entity, x, y)){
@@ -56,7 +55,6 @@ class World{
         }
         toMove.x += min(max(valid[0], x), valid[1]);
         toMove.y += min(max(valid[2], y), valid[3]);
-        this.addEntity(toMove);
     }
 
     getChunk(x, y){
