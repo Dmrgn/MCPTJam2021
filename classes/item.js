@@ -124,6 +124,36 @@ class Coal extends Item{
     }
 }
 
+class SwordDrop extends Item {
+    static WIDTH = 20;
+    static HEIGHT = 20;
+    tier;
+    enhance;
+    constructor(_x, _y, _world, _tier, _enhance){
+        super(_x, _y, SwordDrop.WIDTH, SwordDrop.HEIGHT, _world);
+        this.tier = _tier;
+        this.enhance = _enhance;
+    }
+
+    onInteract(player) {
+        if(player.equipWeapon(new SwordItem(this.tier, this.enhance))){
+            this.destroy();
+        }
+    }
+
+    render(){
+        let [x, y, w, h] = [this.x, this.y, this.width, this.height];
+        fill(100);
+        stroke(0);
+        strokeWeight(1);
+        beginShape();
+        vertex(x + w / 2, y);
+        vertex(x + w, y + h);
+        vertex(x, y + h);
+        endShape();
+    }
+}
+
 class InventoryItem{
     drawIcon(x, y, width, height){
 

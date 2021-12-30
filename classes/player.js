@@ -85,8 +85,9 @@ class Player extends Entity {
     }
 
     equipWeapon(weapon){
-        this.playerData.addWeapon(weapon);
+        let didEquip = this.playerData.addWeapon(weapon);
         this.setWeapon();
+        return didEquip;
     }
 
     damage(amt){
