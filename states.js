@@ -10,6 +10,10 @@ class State{
 }
 
 class MainMenuState extends State{
+    constructor(shader) {
+        super();
+        this.shader=shader;
+    }
     render(){
         background(0);
         fill(255);
@@ -18,7 +22,7 @@ class MainMenuState extends State{
         text("Press the screen to continue", width / 2, height / 2);
     }
     mousePressed(){
-        changeState(new GameState(Math.floor(Math.random() * 187287231281)));
+        changeState(new GameState(Math.floor(Math.random() * 187287231281), this.shader));
     }
 }
 
@@ -27,11 +31,11 @@ class GameState extends State{
     curUI;
     seed;
     playerData;
-    constructor(_seed){
+    constructor(_seed, shader){
         super();
         this.seed = _seed;
-        this.playerData = new PlayerData(1);
-        this.world = new ExplorationWorld(this.seed, this.playerData);
+        this.playerData = new PlayerData(100);
+        this.world = new ExplorationWorld(this.seed, this.playerData, shader);
         this.curUI = new Default(this.world);
         this.world.curPlayer.playerData.weapons[0] = new Sword(this.world.curPlayer, this.world,1, []);
     }
@@ -82,11 +86,11 @@ class BossState extends State {
     playerData;
     static playerHealth = 100;
 
-    constructor(level, playerData){
+    constructor(level, playerData, shader){
         super();
         playerData.health = BossState.playerHealth;
         this.playerData = playerData;
-        if(level === 1) this.world = new BossWorld(12, 12, playerData);
+        if(level === 1) this.world = new BossWorld(12, 12, playerData, shader);
         this.curUI = new Default(this.world);
         this.world.addEntity(new BasicEnemy(100, 100, this.world));
     }

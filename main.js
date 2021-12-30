@@ -13,7 +13,7 @@ function setup() {
     ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false; // draw pixel art without antialiasing
     // tileController.generateMap();
-    curState = new MainMenuState();
+    curState = new MainMenuState(new Shader(litshader));
 
     litscreen = createGraphics(width, height);
     offscreen = createGraphics(width/2, height/2, WEBGL);
