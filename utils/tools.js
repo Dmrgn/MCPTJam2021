@@ -3,3 +3,30 @@ function boxDist(x1, y1, w1, h1, x2, y2, w2, h2){
     let vDist = y1 <= y2 + h2 && y1 + h1 <= y2 ? 0 : min(abs(y2 - (y1 + h1)), abs(y1 - (y2 + h2)));
     return hDist + vDist;
 }
+
+let images = new Map();
+let videos = new Map();
+
+function loadSprites(){
+    loadJSON("data/manifest.json", (manifest) => {
+        for(let type in manifest){
+            let things = manifest[type]
+            for(let name in things){
+                let path = things[name]
+                if(type === "image"){
+                    images.set(name, loadImage("data/" + path));
+                    loadImage("data/" + path, (el) => images.set(name, el));
+                } else if (type === "video"){
+                    videos.set(name, createVideo(["data/" + path]));
+                    videos.get(name).hide();
+                }
+            }
+        }
+    })
+}
+
+function getSprite(name){
+    if(images.has(name)) return images.get(name);
+    if(videos.has(name)) return images.get(name);
+    throw "Couldn't find " + name + "!";
+}
