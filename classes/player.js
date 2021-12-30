@@ -46,25 +46,31 @@ class Player extends Entity {
     playerData;
     static WIDTH = 20;
     static HEIGHT = 40;
+    weaponInd;
     curWeapon;
 
     constructor(_playerData, _x, _y) {
         super(_x, _y, Player.WIDTH, Player.HEIGHT, ["Foreground"]);
         this.playerData = _playerData;
-        this.curWeapon = 0;
+        this.weaponInd = 0;
+        this.setWeapon();
+    }
+
+    setWeapon(){
+        this.curWeapon = this.playerData.weapons[this.weaponInd] ? this.playerData.weapons[this.weaponInd].weaponOf(this, curState.world) : undefined;
     }
 
     tick(){
-        if(this.playerData.weapons[this.curWeapon]){
-            this.playerData.weapons[this.curWeapon].tick();
+        if(this.curWeapon){
+            this.curWeapon.tick();
         }
     }
 
     render() {
         fill(255);
         rect(this.x, this.y, this.width, this.height);
-        if(this.playerData.weapons[this.curWeapon]){
-            this.playerData.weapons[this.curWeapon].render();
+        if(this.curWeapon){
+            this.curWeapon.render();
         }
     }
 
@@ -78,6 +84,11 @@ class Player extends Entity {
         return false;
     }
 
+    equipWeapon(weapon){
+        this.playerData.addWeapon(weapon);
+        this.setWeapon();
+    }
+
     damage(amt){
         this.playerData.health -= amt;
         return this.playerData.health <= 0;
@@ -85,12 +96,13 @@ class Player extends Entity {
 
     switchWeapon(offset){
         if(!offset) offset = 1;
-        this.curWeapon = ((this.curWeapon + offset) % PlayerData.WEAPONS + PlayerData.WEAPONS) % PlayerData.WEAPONS;
+        this.weaponInd = ((this.weaponInd + offset) % PlayerData.WEAPONS + PlayerData.WEAPONS) % PlayerData.WEAPONS;
+        this.setWeapon();
     }
 
     attack(){
-        if(this.playerData.weapons[this.curWeapon]){
-            this.playerData.weapons[this.curWeapon].attack(this, curState.world);
+        if(this.curWeapon){
+            this.curWeapon.attack(this, curState.world);
         }
     }
 }

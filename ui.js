@@ -112,7 +112,7 @@ class Default extends UIState{
         fill(255);
         noStroke();
         beginShape();
-        let [x, y, w] = this.weaponSlots[this.curPlayer.curWeapon];
+        let [x, y, w] = this.weaponSlots[this.curPlayer.weaponInd];
         vertex(x + w / 2, y);
         vertex(x + w / 2 - vm / 2, y - vm);
         vertex(x + w / 2 + vm / 2, y - vm);
