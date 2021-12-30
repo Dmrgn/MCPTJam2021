@@ -46,8 +46,10 @@ class Sword extends Weapon{
             }
         }
     }
-    attack(){
+    attack(_wielder, _world){
         if(this.timer === 0){
+            this.player = _wielder;
+            this.world = _world;
             let range = Sword.RANGE + 5 * (this.tier - 1);
             let damage = Sword.DAMAGE + 3 * (this.tier - 1);
             let timeLeft = Sword.TIME - 2 * (this.tier - 1);
@@ -96,13 +98,15 @@ class Projectile extends Entity{
     tick(){
         this.world.move(this, this.vx, this.vy);
     }
-    onTouch(other){
-        if(this.hitEnemy && other instanceof Enemy){
+    onTouch(other) {
+        if (this.hitEnemy && other instanceof Enemy) {
             this.attack(other);
-        } else if (!this.hitEnemy && other instanceof Player){
+        } else if (!this.hitEnemy && other instanceof Player) {
             this.attack(other);
         }
-        this.world.removeEntity(this);
+        if (!(!this.hitEnemy && other instanceof Enemy || this.hitEnemy && other instanceof Player)) {
+            this.world.removeEntity(this);
+        }
     }
     render(){}
     attack(other){}
