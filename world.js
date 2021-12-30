@@ -10,7 +10,7 @@ class World {
     // starting time
     playerTime = 900;
 
-    // list of entities
+    // map of entities - entities[cur chunk] = {entities in chunk as a set}
     entities;
 
     // second map of tiles - this time with actual tiles
@@ -30,7 +30,7 @@ class World {
         this.camera = new Camera(0, 0);
         this.maze = new Maze(10, seed);
         this.curPlayer = new Player(new PlayerData(100), 20, 20, this.playerTime);
-        this.entities = new Set([this.curPlayer]);
+        this.entities = new Map();
         tileController.setWorld(this);
         this.coldness = 1 / frameRate();
         this.tiles = new Map();
@@ -51,7 +51,8 @@ class World {
             for (let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
             for (let i = 1; i < 4; i += 2) valid[i] = min(valid[i], bounds[i]);
         }));
-        for(let entity of this.entities){
+        this.removeEntity(toMove);
+        for(let entity of this.getEntitiesAround(toMove)){
             if(entity !== toMove){
                 let hasLayer = false;
                 for(let tag of toMove.layers){
@@ -66,6 +67,7 @@ class World {
         }
         toMove.x += min(max(valid[0], x), valid[1]);
         toMove.y += min(max(valid[2], y), valid[3]);
+        this.addEntity(toMove);
     }
 
     tick() {
@@ -80,7 +82,7 @@ class World {
         if(this.curPlayer.reduceTimer(this.coldness)){
             changeState(new FadeState(this, new MainMenuState()));
         }
-        for(let entity of this.entities){
+        for(let entity of this.getEntitiesAround(this.curPlayer)){
             if(this.curPlayer.isTouching(entity)){
                 this.curPlayer.onTouch(entity);
                 entity.onTouch(this.curPlayer);
@@ -88,14 +90,32 @@ class World {
         }
     }
 
+    entityInChunks(sx, sy, ex, ey){
+        let toRet = new Set();
+        for(let x = sx; x <= ex; x++){
+            for(let y = sy; y <= ey; y++){
+                if(this.entities.has(this.strOf(x, y))){
+                    for(let entity of this.entities.get(this.strOf(x, y))){
+                        toRet.add(entity);
+                    }
+                }
+            }
+        }
+        return toRet;
+    }
+
     render() {
         litscreen.background(0);
         this.camera.alterMatrix();
         tileController.drawTiles();
         this.curPlayer.render();
-        for(let entity of this.entities){
+
+        let [chunkL, chunkT] = this.getChunk(this.camera.toWorld(0, 0)[0], this.camera.toWorld(0, 0)[1]);
+        let [chunkR, chunkB] = this.getChunk(this.camera.toWorld(width, height)[0], this.camera.toWorld(width, height)[1]);
+        for(let entity of this.entityInChunks(chunkL - 1, chunkT - 1, chunkR + 1, chunkB + 1)){
             entity.render();
         }
+
         fill(0);
         noStroke();
         for(let cx = Math.floor(this.camera.x / Tile.WIDTH) - 1; cx <= Math.floor((this.camera.x + width) / Tile.WIDTH) + 3; cx++){
@@ -165,12 +185,39 @@ class World {
         this.tiles.get(this.strOf(x, y)).walls = this.maze.getTile(x, y);
     }
 
+    getChunk(x, y){
+        return [Math.floor(x / Tile.WIDTH / this.maze.chunkSize), Math.floor(y / Tile.HEIGHT / this.maze.chunkSize)]
+    }
+
     addEntity(toAdd){
-        this.entities.add(toAdd);
+        let [sx, sy] = this.getChunk(toAdd.x, toAdd.y)
+        let [ex, ey] = this.getChunk(toAdd.x + toAdd.width, toAdd.y + toAdd.height);
+        for(let x = sx; x <= ex; x++){
+            for(let y = sy; y <= ey; y++){
+                let of = this.strOf(x, y);
+                if(!this.entities.has(of)) this.entities.set(of, new Set())
+                this.entities.get(of).add(toAdd);
+            }
+        }
+    }
+
+    getEntitiesAround(query){
+        let xPerChunk = Tile.WIDTH * this.maze.chunkSize;
+        let yPerChunk = Tile.HEIGHT * this.maze.chunkSize;
+        return this.entityInChunks(Math.floor(query.x / xPerChunk - 1), Math.floor(query.y / xPerChunk - 1),
+            Math.floor((query.x + query.width) / yPerChunk + 1), Math.floor((query.y + query.height) / yPerChunk + 1));
     }
 
     removeEntity(toRemove){
-        this.entities.delete(toRemove);
+        let [sx, sy] = this.getChunk(toRemove.x, toRemove.y)
+        let [ex, ey] = this.getChunk(toRemove.x + toRemove.width, toRemove.y + toRemove.height);
+        for(let x = sx - 1; x <= ex + 1; x++) {
+            for (let y = sy - 1; y <= ey + 1; y++) {
+                if (this.entities.has(this.strOf(x, y))) {
+                    this.entities.get(this.strOf(x, y)).delete(toRemove);
+                }
+            }
+        }
     }
 
     getTile(x, y){
@@ -195,7 +242,7 @@ class World {
 
     closestInteract(cur){
         let closestEntity = undefined;
-        for(let entity of this.entities){
+        for(let entity of this.getEntitiesAround(cur)){
             if(entity.canInteract && entity !== cur &&
                 (!closestEntity || this.dist(this.curPlayer, entity) < this.dist(this.curPlayer, closestEntity))){
                 closestEntity = entity;
@@ -206,14 +253,14 @@ class World {
 
     interact(){
         let closest = this.closestInteract(this.curPlayer);
-        if(this.dist(this.curPlayer, closest) <= World.interactRadius){
+        if(closest && this.dist(this.curPlayer, closest) <= World.interactRadius){
             closest.onInteract(this.curPlayer)
         }
     }
 
     drawInteract(){
         let closest = this.closestInteract(this.curPlayer);
-        if(this.dist(this.curPlayer, closest) <= World.interactRadius){
+        if(closest && this.dist(this.curPlayer, closest) <= World.interactRadius){
             fill(0);
             noStroke();
             textAlign(CENTER);
