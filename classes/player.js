@@ -4,11 +4,14 @@
 class PlayerData {
     health;
     items;
+    weapons;
+    static WEAPONS = 2;
     static ITEMS = 8;
 
     constructor(_health) {
         this.health = _health;
         this.items = new Array(PlayerData.ITEMS).fill(undefined);
+        this.weapons = new Array(PlayerData.WEAPONS).fill(undefined);
     }
 
     addItem(item){
@@ -22,6 +25,18 @@ class PlayerData {
         this.items[firstInd] = item;
         return true;
     }
+
+    addWeapon(weapon){
+        let firstInd = -1;
+        for(let i = 0; i < PlayerData.WEAPONS && firstInd === -1; i++){
+            if(!this.weapons[i]){
+                firstInd = i;
+            }
+        }
+        if(firstInd === -1) return false;
+        this.weapons[firstInd] = weapon;
+        return true;
+    }
 }
 
 /**
@@ -32,16 +47,27 @@ class Player extends Entity {
     static WIDTH = 20;
     static HEIGHT = 40;
     timeLeft;
+    curWeapon;
 
     constructor(_playerData, _x, _y, startTime) {
         super(_x, _y, Player.WIDTH, Player.HEIGHT, ["Foreground"]);
         this.playerData = _playerData;
         this.timeLeft = startTime;
+        this.curWeapon = 0;
+    }
+
+    tick(){
+        if(this.playerData.weapons[this.curWeapon]){
+            this.playerData.weapons[this.curWeapon].tick();
+        }
     }
 
     render() {
         fill(255);
         rect(this.x, this.y, this.width, this.height);
+        if(this.playerData.weapons[this.curWeapon]){
+            this.playerData.weapons[this.curWeapon].render();
+        }
     }
 
     collectItem(item){
@@ -57,5 +83,16 @@ class Player extends Entity {
     reduceTimer(amt){
         this.timeLeft -= amt;
         return this.timeLeft <= 0;
+    }
+
+    switchWeapon(offset){
+        if(!offset) offset = 1;
+        this.curWeapon = ((this.curWeapon + offset) % PlayerData.WEAPONS + PlayerData.WEAPONS) % PlayerData.WEAPONS;
+    }
+
+    attack(){
+        if(this.playerData.weapons[this.curWeapon]){
+            this.playerData.weapons[this.curWeapon].attack();
+        }
     }
 }

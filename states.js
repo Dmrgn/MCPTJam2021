@@ -39,6 +39,7 @@ class GameState extends State{
     }
     enterState(){
         this.curUI.enterState();
+        this.world.curPlayer.playerData.weapons[0] = new Sword(this.world.curPlayer, 1, []);
     }
     tick(){
         this.world.tick();
@@ -51,6 +52,7 @@ class GameState extends State{
     }
     mousePressed() {
         this.curUI.mousePressed();
+        this.world.attack();
     }
     mouseReleased() {
         this.curUI.mouseReleased();

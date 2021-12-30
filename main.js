@@ -52,8 +52,8 @@ function keyPressed(){
 
 function changeState(changeTo){
     curState.exitState();
-    changeTo.enterState();
     curState = changeTo;
+    changeTo.enterState();
 }
 
 // when the window is resized

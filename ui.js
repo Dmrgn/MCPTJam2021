@@ -14,6 +14,7 @@ class Default extends UIState{
     world;
     selectedItem;
     slots;
+    weaponSlots;
     static hMargin=5;sd
     static vMargin = 6;
     mouseX;
@@ -34,10 +35,16 @@ class Default extends UIState{
     updateSlots(){
         let [hm, vm] = [Default.hMargin, Default.vMargin];
         this.slots = new Array(PlayerData.ITEMS);
+        this.weaponSlots = new Array(PlayerData.WEAPONS);
         let itemWidth = width / 2 / PlayerData.ITEMS;
         for(let i = 0; i < PlayerData.ITEMS; i++){
             let slotWidth = itemWidth - 2 * hm;
             this.slots[i] = [width / 2 + i * itemWidth + hm, height - slotWidth - vm, slotWidth, slotWidth];
+        }
+
+        for(let i = 0; i < PlayerData.WEAPONS; i++){
+            let slotWidth = itemWidth - 2 * hm;
+            this.weaponSlots[i] = [i * itemWidth + hm, height - slotWidth - vm, slotWidth, slotWidth];
         }
     }
     mousePressed(){
@@ -87,6 +94,16 @@ class Default extends UIState{
             stroke(0);
             strokeWeight(2);
             let [x, y, w, h] = this.slots[i];
+            rect(x, y, w, h, 5);
+            if(el){
+                el.drawIcon(x + innerMargin, y + innerMargin, slotWidth - 2 * innerMargin, slotWidth - 2 * innerMargin);
+            }
+        }
+        for(let [i, el] of this.curPlayer.playerData.weapons.entries()){
+            fill(255);
+            stroke(0);
+            strokeWeight(2);
+            let [x, y, w, h] = this.weaponSlots[i];
             rect(x, y, w, h, 5);
             if(el){
                 el.drawIcon(x + innerMargin, y + innerMargin, slotWidth - 2 * innerMargin, slotWidth - 2 * innerMargin);

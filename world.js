@@ -48,6 +48,10 @@ class World {
         let valid = [-Infinity, Infinity, -Infinity, Infinity];
         tiles.forEach((tile) => tile.wallEntities.forEach((el) => {
             let bounds = toMove.valid(el);
+            if(toMove.willHit(el, x, y)){
+                el.onTouch(toMove);
+                toMove.onTouch(el);
+            }
             for (let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
             for (let i = 1; i < 4; i += 2) valid[i] = min(valid[i], bounds[i]);
         }));
@@ -61,6 +65,7 @@ class World {
                 if(hasLayer){
                     if(toMove.willHit(entity, x, y)){
                         entity.onTouch(toMove);
+                        toMove.onTouch(entity);
                     }
                     let bounds = toMove.valid(entity);
                     for(let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
@@ -85,12 +90,8 @@ class World {
         if(this.curPlayer.reduceTimer(this.coldness)){
             changeState(new FadeState(this, new MainMenuState()));
         }
-        for(let entity of this.getEntitiesAround(this.curPlayer)){
-            if(this.curPlayer.isTouching(entity)){
-                this.curPlayer.onTouch(entity);
-                entity.onTouch(this.curPlayer);
-            }
-        }
+        this.curPlayer.tick();
+
     }
 
     entityInChunks(sx, sy, ex, ey){
@@ -241,6 +242,10 @@ class World {
 
     dist(a, b){
         return dist((b.x + b.width) / 2, (b.y + b.height) / 2, (a.x + a.width) / 2, (a.y + a.height) / 2);
+    }
+
+    attack(){
+        this.curPlayer.attack();
     }
 
     closestInteract(cur){
