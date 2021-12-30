@@ -158,9 +158,11 @@ class MenuState extends State{
     background;
     returnTo;
     mainMenu;
+    world;
     constructor(_prev){
         super();
         this.prev = _prev;
+        this.world = _prev.world;
     }
     calcPositions(){
         this.background = [width / 2 - 100, height / 2 - 120, 200, 240];
