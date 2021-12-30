@@ -49,6 +49,11 @@ class Player extends Entity {
     static HEIGHT = 40;
     weaponInd;
     curWeapon;
+    static ANIM_TIME = 25;
+    animTimer = Player.ANIM_TIME;
+    frame = 1;
+    dir = 'd';
+    moving = false;
 
     constructor(_playerData, _x, _y) {
         super(_x, _y, Player.WIDTH, Player.HEIGHT, ["Foreground"]);
@@ -62,17 +67,31 @@ class Player extends Entity {
     }
 
     tick(){
+        let preDir = this.dir;
+        this.moving = true;
+        if(keyIsDown(83)) this.dir = 'd';
+        else if(keyIsDown(65)) this.dir = 'l';
+        else if(keyIsDown(87)) this.dir = 'u';
+        else if(keyIsDown(68)) this.dir = 'r';
+        else this.moving = false;
+        if(this.dir !== preDir){
+            this.animTimer = Player.ANIM_TIME;
+            this.frame = 1;
+        }
+
         if(this.curWeapon){
             this.curWeapon.tick();
         }
     }
 
     render() {
-        fill(255);
-        rect(this.x, this.y, this.width, this.height);
-        if(this.curWeapon){
-            this.curWeapon.render();
+        let displayImg = !this.moving ? getSprite("player-" + this.dir + "-idle") : getSprite("player-" + this.dir + "-" + this.frame);
+        this.animTimer--;
+        if(this.animTimer <= 0){
+            this.animTimer = Player.ANIM_TIME;
+            this.frame = this.frame % 2 + 1;
         }
+        image(displayImg, this.x, this.y, this.width, this.height);
     }
 
     collectItem(item){

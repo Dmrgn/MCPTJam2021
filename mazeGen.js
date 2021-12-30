@@ -209,7 +209,7 @@ class WeaponRoom extends RoomGen{
         for(let [ind, we] of tierWeight.entries()){
             tierRand -= we;
             if(curTier === -1 && tierRand <= 0){
-                curTier = ind;
+                curTier = ind + 1;
             }
         }
         console.assert(curTier !== -1);

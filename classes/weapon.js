@@ -102,6 +102,11 @@ class SwordItem extends WeaponItem{
     }
     drawIcon(x, y, w, h){
         image(getSprite("basic-sword-icon"), x, y, w, h);
+        image(getSprite("tier-" + this.tier), x, y, w / 3, h / 3);
+        let smallSideLen = min(w / 6, h / 2 / this.enhance.length);
+        for(let i = 0; i < this.enhance.length; i++){
+            this.enhance[i].drawIcon(x + w - smallSideLen, y + h - (i + 1) * smallSideLen, smallSideLen, smallSideLen);
+        }
     }
 
     physicalItem(x, y, world) {
