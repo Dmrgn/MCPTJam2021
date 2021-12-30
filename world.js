@@ -1,43 +1,21 @@
-class World {
+class World{
     camera;
-    maze;
-    curPlayer;
-    static interactRadius = 50;
-
-    // coldness dictates the speed at which the player loses time
-    coldness;
-
-    // starting time
-    playerTime = 900;
-
-    // map of entities - entities[cur chunk] = {entities in chunk as a set}
     entities;
 
-    // second map of tiles - this time with actual tiles
     tiles;
     chunks;
 
-    probabilities = [
-        ["coal", 0.1],
-        ["gem", 0.1],
-        ["stone", 0.1],
-        ["feather", 0.1],
-        ["stick", 0.1]
-    ]
-    spawnSeed;
+    curPlayer;
 
-    constructor(seed) {
+    constructor(playerData, px, py){
         this.camera = new Camera(0, 0);
-        this.maze = new Maze(10, seed);
-        this.curPlayer = new Player(new PlayerData(100), 20, 20, this.playerTime);
+        this.curPlayer = new Player(playerData, px, py);
         this.entities = new Map();
         tileController.setWorld(this);
-        this.coldness = 1 / frameRate();
         this.tiles = new Map();
         this.chunks = new Set();
-
-        this.spawnSeed = Math.floor(Math.random() * 127833219183);
     }
+
     move(toMove, x, y) {
         let tiles = [];
         for (let tx = floor((toMove.x - abs(x)) / Tile.WIDTH) - 2; tx <= floor((toMove.x + toMove.width + abs(x)) / Tile.WIDTH) + 2; tx++) {
@@ -78,20 +56,75 @@ class World {
         this.addEntity(toMove);
     }
 
-    tick() {
-        if (keyIsDown(87)) this.move(this.curPlayer, 0, -5);
-        if (keyIsDown(65)) this.move(this.curPlayer, -5, 0);
-        if (keyIsDown(83)) this.move(this.curPlayer, 0, 5);
-        if (keyIsDown(68)) this.move(this.curPlayer, 5, 0);
-        this.camera.x = this.curPlayer.x - width / 2;
-        this.camera.y = this.curPlayer.y - height / 2;
-        tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
-            floor((this.curPlayer.y + this.curPlayer.height / 2) / Tile.HEIGHT));
-        if(this.curPlayer.reduceTimer(this.coldness)){
-            changeState(new FadeState(this, new MainMenuState()));
-        }
-        this.curPlayer.tick();
+    getChunk(x, y){
+        return [Math.floor(x / Tile.WIDTH / Maze.CHUNKSIZE), Math.floor(y / Tile.HEIGHT / Maze.CHUNKSIZE)]
+    }
 
+    addEntity(toAdd){
+        let [sx, sy] = this.getChunk(toAdd.x, toAdd.y)
+        let [ex, ey] = this.getChunk(toAdd.x + toAdd.width, toAdd.y + toAdd.height);
+        for(let x = sx; x <= ex; x++){
+            for(let y = sy; y <= ey; y++){
+                let of = this.strOf(x, y);
+                if(!this.entities.has(of)) this.entities.set(of, new Set())
+                this.entities.get(of).add(toAdd);
+            }
+        }
+    }
+
+    getEntitiesAround(query){
+        let xPerChunk = Tile.WIDTH * Maze.CHUNKSIZE;
+        let yPerChunk = Tile.HEIGHT * Maze.CHUNKSIZE;
+        return this.entityInChunks(Math.floor(query.x / xPerChunk - 1), Math.floor(query.y / xPerChunk - 1),
+            Math.floor((query.x + query.width) / yPerChunk + 1), Math.floor((query.y + query.height) / yPerChunk + 1));
+    }
+
+    removeEntity(toRemove){
+        let [sx, sy] = this.getChunk(toRemove.x, toRemove.y)
+        let [ex, ey] = this.getChunk(toRemove.x + toRemove.width, toRemove.y + toRemove.height);
+        for(let x = sx - 1; x <= ex + 1; x++) {
+            for (let y = sy - 1; y <= ey + 1; y++) {
+                if (this.entities.has(this.strOf(x, y))) {
+                    this.entities.get(this.strOf(x, y)).delete(toRemove);
+                }
+            }
+        }
+    }
+
+    dist(a, b){
+        return dist((b.x + b.width) / 2, (b.y + b.height) / 2, (a.x + a.width) / 2, (a.y + a.height) / 2);
+    }
+
+    closestInteract(cur){
+        let closestEntity = undefined;
+        for(let entity of this.getEntitiesAround(cur)){
+            if(entity.canInteract && entity !== cur &&
+                (!closestEntity || this.dist(this.curPlayer, entity) < this.dist(this.curPlayer, closestEntity))){
+                closestEntity = entity;
+            }
+        }
+        return closestEntity;
+    }
+
+    interact(){
+        let closest = this.closestInteract(this.curPlayer);
+        if(closest && this.dist(this.curPlayer, closest) <= ExplorationWorld.interactRadius){
+            closest.onInteract(this.curPlayer)
+        }
+    }
+
+    drawInteract(){
+        let closest = this.closestInteract(this.curPlayer);
+        if(closest && this.dist(this.curPlayer, closest) <= ExplorationWorld.interactRadius){
+            fill(0);
+            noStroke();
+            textAlign(CENTER);
+            text("Press 'g' to interact", closest.x - 100, closest.y - 10, closest.width + 200);
+        }
+    }
+
+    switchWeapon(){
+        this.curPlayer.switchWeapon(1);
     }
 
     entityInChunks(sx, sy, ex, ey){
@@ -106,6 +139,70 @@ class World {
             }
         }
         return toRet;
+    }
+
+    centerCamera(){
+        this.camera.x = this.curPlayer.x + this.curPlayer.width / 2 - width / 2;
+        this.camera.y = this.curPlayer.y + this.curPlayer.width / 2 - height / 2;
+    }
+
+    strOf(x, y){
+        return x + " " + y;
+    }
+
+    tick(){}
+    render(){}
+    getTile(){}
+}
+
+class ExplorationWorld extends World{
+    maze;
+
+    static interactRadius = 50;
+
+    // coldness dictates the speed at which the player loses time
+    coldness;
+
+    probabilities = [
+        ["coal", 0.1],
+        ["gem", 0.1],
+        ["stone", 0.1],
+        ["feather", 0.1],
+        ["stick", 0.1]
+    ]
+    spawnSeed;
+
+    constructor(seed, playerData) {
+        super(playerData, 20, 20);
+        this.maze = new Maze(seed);
+        this.coldness = 1 / frameRate();
+
+        this.spawnSeed = Math.floor(Math.random() * 127833219183);
+    }
+
+    tick() {
+        if (keyIsDown(87)) this.move(this.curPlayer, 0, -5);
+        if (keyIsDown(65)) this.move(this.curPlayer, -5, 0);
+        if (keyIsDown(83)) this.move(this.curPlayer, 0, 5);
+        if (keyIsDown(68)) this.move(this.curPlayer, 5, 0);
+        this.centerCamera();
+        tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
+            floor((this.curPlayer.y + this.curPlayer.height / 2) / Tile.HEIGHT));
+        if(this.curPlayer.damage(this.coldness)){
+            curState.explorationDone();
+        }
+        this.curPlayer.tick();
+        for(let entity of this.getEntitiesAround(this.curPlayer)){
+            if(this.curPlayer.isTouching(entity)){
+                this.curPlayer.onTouch(entity);
+                entity.onTouch(this.curPlayer);
+            }
+        }
+    }
+
+    syncTile(x, y){
+        console.assert(this.tiles.has(this.strOf(x, y)))
+        this.tiles.get(this.strOf(x, y)).walls = this.maze.getTile(x, y);
     }
 
     render() {
@@ -139,11 +236,7 @@ class World {
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
-        runShader(sx, sy);
-    }
-
-    strOf(x, y){
-        return x + " " + y;
+        // runShader(sx, sy);
     }
 
     createEl(type, x, y){
@@ -164,8 +257,8 @@ class World {
         console.assert(!this.chunks.has(this.strOf(x, y)));
         let [r, c] = [y, x];
         let room = this.maze.newChunk(r, c);
-        for(let cx = x * this.maze.chunkSize; cx < (x + 1) * this.maze.chunkSize; cx++){
-            for(let cy = y * this.maze.chunkSize; cy < (y + 1) * this.maze.chunkSize; cy++){
+        for(let cx = x * Maze.CHUNKSIZE; cx < (x + 1) * Maze.CHUNKSIZE; cx++){
+            for(let cy = y * Maze.CHUNKSIZE; cy < (y + 1) * Maze.CHUNKSIZE; cy++){
                 this.tiles.set(this.strOf(cx, cy), new Tile(cx, cy, tileController.tileData.brick, this.maze.getTile(cx, cy)));
                 let randNum = new MazeRand(cx, cy, this.spawnSeed).rand();
                 for(let el of this.probabilities){
@@ -184,50 +277,14 @@ class World {
         this.chunks.add(this.strOf(x, y));
     }
 
-    syncTile(x, y){
-        console.assert(this.tiles.has(this.strOf(x, y)))
-        this.tiles.get(this.strOf(x, y)).walls = this.maze.getTile(x, y);
-    }
-
-    getChunk(x, y){
-        return [Math.floor(x / Tile.WIDTH / this.maze.chunkSize), Math.floor(y / Tile.HEIGHT / this.maze.chunkSize)]
-    }
-
-    addEntity(toAdd){
-        let [sx, sy] = this.getChunk(toAdd.x, toAdd.y)
-        let [ex, ey] = this.getChunk(toAdd.x + toAdd.width, toAdd.y + toAdd.height);
-        for(let x = sx; x <= ex; x++){
-            for(let y = sy; y <= ey; y++){
-                let of = this.strOf(x, y);
-                if(!this.entities.has(of)) this.entities.set(of, new Set())
-                this.entities.get(of).add(toAdd);
-            }
-        }
-    }
-
-    getEntitiesAround(query){
-        let xPerChunk = Tile.WIDTH * this.maze.chunkSize;
-        let yPerChunk = Tile.HEIGHT * this.maze.chunkSize;
-        return this.entityInChunks(Math.floor(query.x / xPerChunk - 1), Math.floor(query.y / xPerChunk - 1),
-            Math.floor((query.x + query.width) / yPerChunk + 1), Math.floor((query.y + query.height) / yPerChunk + 1));
-    }
-
-    removeEntity(toRemove){
-        let [sx, sy] = this.getChunk(toRemove.x, toRemove.y)
-        let [ex, ey] = this.getChunk(toRemove.x + toRemove.width, toRemove.y + toRemove.height);
-        for(let x = sx - 1; x <= ex + 1; x++) {
-            for (let y = sy - 1; y <= ey + 1; y++) {
-                if (this.entities.has(this.strOf(x, y))) {
-                    this.entities.get(this.strOf(x, y)).delete(toRemove);
-                }
-            }
-        }
+    attack(){
+        this.curPlayer.attack();
     }
 
     getTile(x, y){
         if(!this.tiles.has(this.strOf(x, y))){
             // make sure the chunks around the current tile exist
-            let [cx, cy] = [Math.floor(x / this.maze.chunkSize), Math.floor(y / this.maze.chunkSize)]
+            let [cx, cy] = [Math.floor(x / Maze.CHUNKSIZE), Math.floor(y / Maze.CHUNKSIZE)]
             for(let ax = cx - 1; ax <= cx + 1; ax++){
                 for(let ay = cy - 1; ay <= cy + 1; ay++){
                     if (!this.chunks.has(this.strOf(ax, ay))) {
@@ -239,41 +296,19 @@ class World {
         this.syncTile(x, y);
         return this.tiles.get(this.strOf(x, y));
     }
+}
 
-    dist(a, b){
-        return dist((b.x + b.width) / 2, (b.y + b.height) / 2, (a.x + a.width) / 2, (a.y + a.height) / 2);
+class BossWorld extends World{
+    width;
+    height;
+    constructor(width, height, playerData){
+        super(playerData);
+        this.width = width;
+        this.height = height;
     }
 
-    attack(){
-        this.curPlayer.attack();
-    }
+    getTile(x, y){
 
-    closestInteract(cur){
-        let closestEntity = undefined;
-        for(let entity of this.getEntitiesAround(cur)){
-            if(entity.canInteract && entity !== cur &&
-                (!closestEntity || this.dist(this.curPlayer, entity) < this.dist(this.curPlayer, closestEntity))){
-                closestEntity = entity;
-            }
-        }
-        return closestEntity;
-    }
-
-    interact(){
-        let closest = this.closestInteract(this.curPlayer);
-        if(closest && this.dist(this.curPlayer, closest) <= World.interactRadius){
-            closest.onInteract(this.curPlayer)
-        }
-    }
-
-    drawInteract(){
-        let closest = this.closestInteract(this.curPlayer);
-        if(closest && this.dist(this.curPlayer, closest) <= World.interactRadius){
-            fill(0);
-            noStroke();
-            textAlign(CENTER);
-            text("Press 'g' to interact", closest.x - 100, closest.y - 10, closest.width + 200);
-        }
     }
 }
 

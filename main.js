@@ -2,7 +2,7 @@ let curState;
 
 function preload() {
     tileController.init();
-    world = new World(1237123);
+    world = new ExplorationWorld(1237123);
     litshader = loadShader("glsl/vert.glsl", "glsl/frag.glsl");
 }
 

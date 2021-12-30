@@ -46,13 +46,11 @@ class Player extends Entity {
     playerData;
     static WIDTH = 20;
     static HEIGHT = 40;
-    timeLeft;
     curWeapon;
 
-    constructor(_playerData, _x, _y, startTime) {
+    constructor(_playerData, _x, _y) {
         super(_x, _y, Player.WIDTH, Player.HEIGHT, ["Foreground"]);
         this.playerData = _playerData;
-        this.timeLeft = startTime;
         this.curWeapon = 0;
     }
 
@@ -80,9 +78,9 @@ class Player extends Entity {
         return false;
     }
 
-    reduceTimer(amt){
-        this.timeLeft -= amt;
-        return this.timeLeft <= 0;
+    damage(amt){
+        this.playerData.health -= amt;
+        return this.playerData.health <= 0;
     }
 
     switchWeapon(offset){

@@ -15,7 +15,7 @@ class Default extends UIState{
     selectedItem;
     slots;
     weaponSlots;
-    static hMargin=5;sd
+    static hMargin=5;
     static vMargin = 6;
     mouseX;
     mouseY;
@@ -80,7 +80,7 @@ class Default extends UIState{
         fill(255, 0, 0);
         noStroke();
         textAlign(LEFT, TOP);
-        text(Math.floor(this.curPlayer.timeLeft), 15, 15);
+        text(Math.floor(this.curPlayer.playerData.health), 15, 15);
 
         let itemWidth = width / 2 / PlayerData.ITEMS;
         let innerMargin = 6;
@@ -109,6 +109,14 @@ class Default extends UIState{
                 el.drawIcon(x + innerMargin, y + innerMargin, slotWidth - 2 * innerMargin, slotWidth - 2 * innerMargin);
             }
         }
+        fill(255);
+        noStroke();
+        beginShape();
+        let [x, y, w] = this.weaponSlots[this.curPlayer.curWeapon];
+        vertex(x + w / 2, y);
+        vertex(x + w / 2 - vm / 2, y - vm);
+        vertex(x + w / 2 + vm / 2, y - vm);
+        endShape();
 
         if(this.selectedItem){
             this.selectedItem.drawIcon(this.mouseX - 10, this.mouseY - 10, 20, 20);

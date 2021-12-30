@@ -26,10 +26,12 @@ class GameState extends State{
     world;
     curUI;
     seed;
+    playerData;
     constructor(_seed){
         super();
         this.seed = _seed;
-        this.world = new World(this.seed);
+        this.playerData = new PlayerData(100);
+        this.world = new ExplorationWorld(this.seed, this.playerData);
         this.curUI = new Default(this.world);
     }
     switchUI(to){
@@ -54,6 +56,13 @@ class GameState extends State{
         this.curUI.mousePressed();
         this.world.attack();
     }
+    explorationDone(){
+        console.assert(this.world instanceof ExplorationWorld);
+        // TODO switch to boss world
+    }
+    playerDied(){
+        changeState(new FadeState(this, new MainMenuState()));
+    }
     mouseReleased() {
         this.curUI.mouseReleased();
     }
@@ -65,6 +74,8 @@ class GameState extends State{
             changeState(new MenuState(this));
         } else if(key === 'g'){
             this.world.interact();
+        } else if (key === ' '){
+            this.world.switchWeapon();
         }
     }
 }

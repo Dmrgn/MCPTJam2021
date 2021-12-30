@@ -277,15 +277,14 @@ function newMaze(rows, cols, rGen) {
  * should usually only use constructor() and hasWall()
  */
 class Maze {
-    chunkSize;
+    static CHUNKSIZE = 10;
     seed;
 
     // stores the loaded chunks & tiles
     chunks;
     tiles;
 
-    constructor(chunkSize, seed) {
-        this.chunkSize = chunkSize;
+    constructor(seed) {
         this.seed = seed;
         this.chunks = new Set();
         this.tiles = new Map();
@@ -327,21 +326,21 @@ class Maze {
     newChunk(r, c) {
         console.assert(!this.chunks.has(this.compChunk(r, c)));
         // create the current chunk
-        let [curChunk, room] = newMaze(this.chunkSize, this.chunkSize, new MazeRand(r, c, this.seed));
+        let [curChunk, room] = newMaze(Maze.CHUNKSIZE, Maze.CHUNKSIZE, new MazeRand(r, c, this.seed));
 
         // store the tiles in the chunk into the "central database"
-        for (let ir = 0; ir < this.chunkSize; ir++) {
-            for (let ic = 0; ic < this.chunkSize; ic++) {
+        for (let ir = 0; ir < Maze.CHUNKSIZE; ir++) {
+            for (let ic = 0; ic < Maze.CHUNKSIZE; ic++) {
                 for (let dir = 0; dir < 4; dir++) {
-                    this.tiles.set(this.compTile(this.chunkSize * r + ir, this.chunkSize * c + ic, dir),
+                    this.tiles.set(this.compTile(Maze.CHUNKSIZE * r + ir, Maze.CHUNKSIZE * c + ic, dir),
                         curChunk[ir][ic][dir]);
                 }
             }
         }
 
         // fix the edges so that it is compatible with the other chunks
-        for (let cr = this.chunkSize * r; cr < this.chunkSize * (r + 1); cr++) {
-            for (let cc = this.chunkSize * c; cc < this.chunkSize * (c + 1); cc++) {
+        for (let cr = Maze.CHUNKSIZE * r; cr < Maze.CHUNKSIZE * (r + 1); cr++) {
+            for (let cc = Maze.CHUNKSIZE * c; cc < Maze.CHUNKSIZE * (c + 1); cc++) {
                 this.fixArea(cr, cc);
             }
         }
@@ -350,7 +349,7 @@ class Maze {
         this.chunks.add(this.compChunk(r, c));
 
         if(room){
-            return [room[0] + r * this.chunkSize, room[1] + c * this.chunkSize, room[2]];
+            return [room[0] + r * Maze.CHUNKSIZE, room[1] + c * Maze.CHUNKSIZE, room[2]];
         }
     }
 
