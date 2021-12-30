@@ -11,9 +11,7 @@ class Anvil extends Entity{
         changeState(new CraftState(new GemUpgrade(0, 0, 0, 0), curState));
     }
     render(){
-        fill(100);
-        noStroke();
-        rect(this.x, this.y, this.width, this.height);
+        image(getSprite("anvil"), this.x, this.y, this.width, this.height);
     }
 }
 
