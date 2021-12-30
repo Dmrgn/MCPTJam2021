@@ -64,13 +64,31 @@ class Sword extends Weapon{
             }
             for(let entity of this.world.getEntitiesAround(this.player)){
                 if(entity instanceof Enemy && boxDist(this.player.x, this.player.y, this.player.width, this.player.height,
-                            entity.x, entity.y, entity.width, entity.height) <= range){
+                    entity.x, entity.y, entity.width, entity.height) <= range){
                     entity.damage(damage);
                 }
             }
             this.timer = timeLeft;
             this.atkProgress = 0;
         }
+    }
+}
+
+class WeaponItem{
+    drawIcon(x, y, w, h){}
+    weaponOf(_player, _world){}
+}
+
+class SwordItem extends WeaponItem{
+    tier;
+    enhance;
+    constructor(tier, enhancers){
+        super();
+        this.tier = tier;
+        this.enhance = enhancers;
+    }
+    weaponOf(_player, _world){
+        return new Sword(_player, _world, this.tier, this.enhance);
     }
     drawIcon(x, y, w, h){
         fill(100);

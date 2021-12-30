@@ -37,7 +37,7 @@ class GameState extends State{
         this.playerData = new PlayerData(100);
         this.world = new ExplorationWorld(this.seed, this.playerData, shader);
         this.curUI = new Default(this.world);
-        this.world.curPlayer.playerData.weapons[0] = new Sword(this.world.curPlayer, this.world,1, []);
+        this.world.curPlayer.equipWeapon(new SwordItem(1, []))
     }
     switchUI(to){
         this.curUI.exitState();

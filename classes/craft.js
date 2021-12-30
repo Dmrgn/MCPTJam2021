@@ -187,3 +187,80 @@ class GemUpgrade extends Recipe{
         line(x + w / 2, y + h / 2, x + w / 2, y + h * 2 / 5);
     }
 }
+
+class WeaponUpgrade extends Recipe{
+    static NUM_ENHANCE = 2;
+    weaponSlot;
+    gemSlot;
+    enhanceSlots;
+    resultSlot;
+
+    insertWeapon;
+    gem;
+    enhancers;
+    result;
+
+    constructor(_x, _y, _width, _height){
+        super(_x, _y, _width, _height);
+        this.makeSlots();
+    }
+
+    makeSlots(){
+        let [x, y, w, h] = [this.x, this.y, this.width, this.height];
+        let slotSize = width / 8;
+        this.weaponSlot = [x + w / 5 - slotSize, y + h / 2 - slotSize / 2, slotSize, slotSize];
+        this.gemSlot = [x + w / 2 - slotSize / 2, y + h * 2 / 5 - slotSize, slotSize, slotSize];
+        this.enhanceSlots = new Array(WeaponUpgrade.NUM_ENHANCE);
+        let margin = 5;
+        for(let i = 0; i < WeaponUpgrade.NUM_ENHANCE; i++){
+            this.enhanceSlots[i] = [x + w / 4 + (slotSize + margin) * i, y + h * 3 / 5, slotSize, slotSize];
+        }
+        this.resultSlot = [x + w * 4 / 5, y + h / 2 - slotSize / 2, slotSize, slotSize];
+    }
+
+    updateResult(){
+        if(!this.insertWeapon) this.result = undefined;
+        else {
+
+        }
+    }
+
+    drawRect(arr){
+        let [x, y, w, h] = arr;
+        rect(x, y, w, h, );
+    }
+
+    drawItem(position, element, margin){
+        let [x, y, w, h] = position;
+        if(element) {
+            element.drawIcon(x + margin, y + margin, w - 2 * margin, h - 2 * margin);
+            return true;
+        }
+        return false;
+    }
+
+    render(){
+        this.positionEls();
+        fill(235, 171, 54);
+        noStroke();
+        rect(this.x, this.y, this.width, this.height, 10);
+
+        fill(255);
+        stroke(0);
+        strokeWeight(1);
+        this.drawRect(this.weaponSlot);
+        this.drawRect(this.resultSlot);
+        this.drawRect(this.gemSlot);
+        for(let enhance of this.enhanceSlots){
+            this.drawRect(enhance);
+        }
+
+        this.drawItem(this.weaponSlot, this.insertWeapon);
+        this.drawItem(this.gemSlot, this.gem);
+        for(let ind in this.enhancers){
+            this.drawItem(this.enhanceSlots[ind], this.enhancers[ind]);
+        }
+        this.drawItem(this.resultSlot, this.result);
+    }
+
+}
