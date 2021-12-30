@@ -49,6 +49,18 @@ class Entity {
             this.y <= other.y + other.height && this.y + this.height >= other.y;
     }
 
+    /**
+     * whether or not this entity will hit the other if this entity moves by (x, y)
+     * @param other the entity to check for collision
+     * @param x the direction to move in
+     * @param y the y direction to move in
+     * @return {boolean} whether or not, if this entity moves by (x, y), this entity will hit [other]
+     */
+    willHit(other, x, y){
+        let [nx, ny] = [this.x + x, this.y + y];
+        return nx <= other.x + other.width && other.x <= nx + this.width && ny <= other.y + other.height && other.y <= ny + this.height;
+    }
+
     onInteract(player){}
 
     tick(){}

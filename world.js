@@ -59,6 +59,9 @@ class World {
                     hasLayer = hasLayer || entity.layers.includes(tag);
                 }
                 if(hasLayer){
+                    if(toMove.willHit(entity, x, y)){
+                        entity.onTouch(toMove);
+                    }
                     let bounds = toMove.valid(entity);
                     for(let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
                     for(let i = 1; i < 4; i += 2) valid[i] = min(valid[i], bounds[i]);
