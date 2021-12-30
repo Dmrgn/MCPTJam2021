@@ -30,7 +30,6 @@ class Shader {
         this.lights.forEach((light)=>{
             formatedlights.push(...light.format());
         });
-        console.log(formatedlights);
         litshader.setUniform('lightscontain',formatedlights);
         offscreen.rect(0,0,offscreen.width,offscreen.height);
         offscreen.resetShader();

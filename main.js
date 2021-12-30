@@ -37,7 +37,10 @@ function draw() {
 
 function mousePressed() {
     curState.mousePressed();
-    console.log(curState.world.getTile(floor(mouseX/Tile.WIDTH), floor(mouseY/Tile.HEIGHT)));
+    // console.log(curState.world.camera.toWorld);
+    // console.log(floor(curState.world.camera.toWorld(mouseX))) + " " + floor(curState.world.camera.toWorld(mouseY));
+    let mouseworld = curState.world.camera.toWorld(mouseX,mouseY);
+    console.log(curState.world.getTile(floor(mouseworld[0]/Tile.WIDTH), floor(mouseworld[1]/Tile.HEIGHT)));
 }
 
 function mouseReleased(){
