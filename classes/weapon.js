@@ -16,8 +16,8 @@ class Sword extends Weapon{
     static RANGE = 30;
     tier;
     enhance;
-    static TIME = 20;
-    static ANIM_TIME = 10;
+    static TIME = 30;
+    static ANIM_TIME = 20;
     timer;
     atkProgress;
     constructor(_player, _world, _tier, _enhance){
@@ -36,14 +36,17 @@ class Sword extends Weapon{
         if(this.atkProgress >= 0){
             this.atkProgress++;
             let [cw, ch] = [this.player.x + this.player.width / 2, this.player.y + this.player.height / 2];
+            push();
+            translate(cw, ch);
             let angle = this.atkProgress / Sword.ANIM_TIME * 2 * PI;
+            rotate(angle);
             let range = Sword.RANGE + 5 * (this.tier - 1);
-            stroke(0);
-            strokeWeight(5);
-            line(cw, ch, cw + range * cos(angle), ch - range * sin(angle));
+            let height = range / 3;
+            image(getSprite("basic-sword"), 0, -height / 2, range, height);
             if(this.atkProgress > Sword.ANIM_TIME){
                 this.atkProgress = -1;
             }
+            pop();
         }
     }
     attack(_wielder, _world){
@@ -98,13 +101,7 @@ class SwordItem extends WeaponItem{
         return new Sword(_player, _world, this.tier, this.enhance);
     }
     drawIcon(x, y, w, h){
-        fill(100);
-        noStroke();
-        beginShape();
-        vertex(x + w / 2, y);
-        vertex(x, y + h);
-        vertex(x + w, y + h);
-        endShape();
+        image(getSprite("basic-sword-icon"), x, y, w, h);
     }
 
     physicalItem(x, y, world) {

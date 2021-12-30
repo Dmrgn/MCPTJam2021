@@ -18,7 +18,7 @@ function setup() {
 
     litscreen = createGraphics(width, height);
     offscreen = createGraphics(width/2, height/2, WEBGL);
-
+    frameRate(60);
 }
 
 let fr = null;
@@ -33,12 +33,16 @@ function draw() {
         fr /= 2;
         document.title = "FrameRate: " + fr;
     }
-    frameRate(60);
 }
 
+let didAutoplay = false;
+
 function mousePressed() {
-    curState.mousePressed();
-    console.log(curState.world.getTile(floor(mouseX/Tile.WIDTH), floor(mouseY/Tile.HEIGHT)));
+    getSprite("splash").play();
+    if(didAutoplay){
+        curState.mousePressed();
+    }
+    didAutoplay = true;
 }
 
 function mouseReleased(){

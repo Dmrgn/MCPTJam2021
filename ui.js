@@ -76,11 +76,12 @@ class Default extends UIState{
     render(){
         this.updateSlots();
         fill(255);
-        rect(10, 10, 40, 20, 5);
+        rect(10, 10, 60, 30, 5);
         fill(255, 0, 0);
         noStroke();
-        textAlign(LEFT, TOP);
-        text(Math.floor(this.curPlayer.playerData.health), 15, 15);
+        textAlign(LEFT, CENTER);
+        textSize(20);
+        text(Math.floor(this.curPlayer.playerData.health), 15, 25);
 
         let itemWidth = width / 2 / PlayerData.ITEMS;
         let innerMargin = 6;

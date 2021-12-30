@@ -133,14 +133,7 @@ class SwordDrop extends Item {
 
     render(){
         let [x, y, w, h] = [this.x, this.y, this.width, this.height];
-        fill(100);
-        stroke(0);
-        strokeWeight(1);
-        beginShape();
-        vertex(x + w / 2, y);
-        vertex(x + w, y + h);
-        vertex(x, y + h);
-        endShape();
+        image(getSprite("basic-sword-icon"), x, y, w, h);
     }
 }
 

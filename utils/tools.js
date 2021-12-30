@@ -6,6 +6,7 @@ function boxDist(x1, y1, w1, h1, x2, y2, w2, h2){
 
 let images = new Map();
 let videos = new Map();
+let fonts = new Map();
 
 function loadSprites(){
     loadJSON("data/manifest.json", (manifest) => {
@@ -15,10 +16,11 @@ function loadSprites(){
                 let path = things[name]
                 if(type === "image"){
                     images.set(name, loadImage("data/" + path));
-                    loadImage("data/" + path, (el) => images.set(name, el));
                 } else if (type === "video"){
-                    videos.set(name, createVideo(["data/" + path]));
-                    videos.get(name).hide();
+                    videos.set(name, createVideo("data/" + path));
+                    getSprite("splash").hide();
+                } else if (type === "font"){
+                    fonts.set(name, loadFont("data/" + path));
                 }
             }
         }
@@ -27,6 +29,11 @@ function loadSprites(){
 
 function getSprite(name){
     if(images.has(name)) return images.get(name);
-    if(videos.has(name)) return images.get(name);
-    throw "Couldn't find " + name + "!";
+    if(videos.has(name)) return videos.get(name);
+    throw "Couldn't find " + name + " sprite!";
+}
+
+function getFont(name){
+    if(fonts.has(name)) return fonts.get(name);
+    throw "Couldn't find " + name + " font!";
 }

@@ -13,16 +13,29 @@ class MainMenuState extends State{
     constructor(shader) {
         super();
         this.shader=shader;
+        getSprite("splash").onended(function(){
+            if(curState instanceof MainMenuState){
+                curState.exit();
+            }
+        });
     }
     render(){
         background(0);
-        fill(255);
-        textAlign(CENTER, CENTER);
-        stroke(0, 0, 0, 0);
-        text("Press the screen to continue", width / 2, height / 2);
+        if(!didAutoplay){
+            textSize(40);
+            textAlign(CENTER, CENTER);
+            textFont(getFont("roboto"));
+            fill(255);
+            text("Click the screen to play", width / 2, height / 2);
+        }
+        let dim = min(width, height);
+        image(getSprite("splash"), width / 2 - dim / 2, height / 2 - dim / 2, dim, dim);
+    }
+    exit(){
+        changeState(new GameState(this.shader));
     }
     mousePressed(){
-        changeState(new GameState(this.shader));
+        this.exit();
     }
 }
 

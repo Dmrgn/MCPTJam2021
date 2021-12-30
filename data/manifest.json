@@ -9,9 +9,15 @@
     "feather": "sprites/feather.png",
     "stick": "sprites/stick.png",
     "stone": "sprites/stone.png",
-    "coal": "sprites/coal.png"
+    "coal": "sprites/coal.png",
+    "basic-sword-icon": "sprites/swords/basic-sword-icon.png",
+    "basic-sword": "sprites/swords/basic-sword.png"
   },
   "video": {
-    "splash": "sprites/splash.png"
+    "splash": "splash.mov"
+  },
+  "font": {
+    "roboto": "fonts/roboto.ttf",
+    "pacifico": "fonts/pacifico.ttf"
   }
 }
