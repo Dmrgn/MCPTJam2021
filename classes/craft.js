@@ -277,7 +277,7 @@ class WeaponUpgrade extends Recipe{
         }
         for(let ind in this.enhanceSlots){
             if(this.inBox(this.enhanceSlots[ind])){
-                let toRet = this.enhancers.splice(ind, 1);
+                let toRet = this.enhancers.splice(ind, 1)[0];
                 this.updateResult();
                 return [toRet];
             }
@@ -288,12 +288,10 @@ class WeaponUpgrade extends Recipe{
     onExit(){
         let toRet = [];
         this.updateResult();
-        if(this.result) return [this.result];
-        else {
-            for(let item of this.enhancers) toRet.push(item);
-            toRet.push(this.gem);
-            return toRet;
-        }
+        for(let item of this.enhancers) toRet.push(item);
+        if(this.gem) toRet.push(this.gem);
+        if(this.bare) toRet.push(this.bare);
+        return toRet;
     }
 
     drawRect(arr){

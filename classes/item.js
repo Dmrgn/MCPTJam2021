@@ -136,7 +136,7 @@ class SwordDrop extends Item {
     }
 
     onInteract(player) {
-        if(player.equipWeapon(new SwordItem(this.tier, this.enhance))){
+        if(player.addItem(new SwordItem(this.tier, this.enhance))){
             this.destroy();
         }
     }

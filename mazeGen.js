@@ -176,13 +176,22 @@ class AnvilRoom extends RoomGen{
     }
 }
 
-
+class WeaponCraftRoom extends RoomGen{
+    static ROWS = 3;
+    static COLS = 3;
+    constructor(){
+        super(2, WeaponCraftRoom.ROWS, WeaponCraftRoom.COLS);
+    }
+    fillRoom(world, x, y){
+        world.addEntity(new CraftBench((x + 1) * Tile.WIDTH, (y + 1) * Tile.HEIGHT));
+    }
+}
 
 function compCoords(r, c, cols) {
     return (r + 5) * (cols + 7) + (c + 5);
 }
 
-const roomGens = [new BlankRoom(), new AnvilRoom()]
+const roomGens = [new BlankRoom(), new AnvilRoom(), new WeaponCraftRoom()]
 const roomProb = 1;
 
 /**

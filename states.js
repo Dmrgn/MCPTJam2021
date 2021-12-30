@@ -37,7 +37,7 @@ class GameState extends State{
         this.playerData = new PlayerData(1000);
         this.world = new ExplorationWorld(this.seed, this.playerData, shader);
         this.curUI = new Default(this.world);
-        this.world.curPlayer.equipWeapon(new SwordItem(1, []))
+        this.world.curPlayer.addItem(new SwordItem(1, []))
     }
     switchUI(to){
         this.curUI.exitState();
@@ -76,8 +76,6 @@ class GameState extends State{
             this.world.interact();
         } else if (key === ' '){
             this.world.switchWeapon();
-        } else if(key === 'e'){
-            changeState(new CraftState(new WeaponUpgrade(0, 0, 0, 0), curState));
         }
     }
 }
@@ -270,20 +268,14 @@ class CraftState extends State {
         }
     }
     throwInWorld(item){
-        this.prev.world.addEntity(item.physicalItem(this.curPlayer.x + this.curPlayer.width / 2, this.curPlayer.y + this.curPlayer.height / 2))
+        this.prev.world.addEntity(item.physicalItem(this.curPlayer.x + this.curPlayer.width / 2, this.curPlayer.y + this.curPlayer.height / 2, this.prev.world))
     }
     mousePressed(){
         this.addItems(this.weaponSlots, this.playerData.weapons);
         this.addItems(this.itemSlots, this.playerData.items);
         for(let item of this.curRecipe.mousePressed()){
-            if(item instanceof WeaponItem){
-                if(!this.curPlayer.equipWeapon(item)){
-                    this.throwInWorld(item);
-                }
-            } else if(item instanceof Item){
-                if(!this.playerData.addItem(item)){
-                    this.throwInWorld(item);
-                }
+            if(!this.curPlayer.addItem(item)){
+                this.throwInWorld(item);
             }
         }
         if(!this.inBox(this.curRecipe.x, this.curRecipe.y, this.curRecipe.width, this.curRecipe.height)
