@@ -22,22 +22,20 @@ class MainMenuState extends State{
         text("Press the screen to continue", width / 2, height / 2);
     }
     mousePressed(){
-        changeState(new GameState(Math.floor(Math.random() * 187287231281), this.shader));
+        changeState(new GameState(this.shader));
     }
 }
 
 class GameState extends State{
     world;
     curUI;
-    seed;
     playerData;
-    constructor(_seed, shader){
+    constructor(shader){
         super();
-        this.seed = _seed;
-        this.playerData = new PlayerData(1);
-        this.world = new ExplorationWorld(this.seed, this.playerData, shader);
+        this.playerData = new PlayerData(1000);
+        this.world = new ExplorationWorld(this.playerData, shader);
         this.curUI = new Default(this.world);
-        this.world.curPlayer.equipWeapon(new SwordItem(1, []))
+        this.world.curPlayer.addItem(new SwordItem(1, []))
     }
     switchUI(to){
         this.curUI.exitState();
@@ -158,9 +156,11 @@ class MenuState extends State{
     background;
     returnTo;
     mainMenu;
+    world;
     constructor(_prev){
         super();
         this.prev = _prev;
+        this.world = _prev.world;
     }
     calcPositions(){
         this.background = [width / 2 - 100, height / 2 - 120, 200, 240];
@@ -213,7 +213,7 @@ class CraftState extends State {
     world;
     curRecipe;
 
-    slots;
+    itemSlots;
     inventoryBG;
 
     prev;
@@ -230,41 +230,70 @@ class CraftState extends State {
     }
     updateInventory(){
         this.curRecipe.setPos(width / 2 - 200, height / 2 - 200, 400, 200);
-        let [x, y, w] = [width / 2 - 200, height / 2 + 50, 400];
-        let amt = PlayerData.ITEMS;
+        let [x, y, w] = [width / 2 - 300, height / 2 + 50, 600];
+        let amt = PlayerData.ITEMS + PlayerData.WEAPONS + 1;
         let slotWidth = w / amt;
         this.inventoryBG = [x, y, w, slotWidth]
-        this.slots = new Array(amt);
-        for(let i = 0; i < amt; i++){
+        this.weaponSlots = new Array(PlayerData.WEAPONS)
+        this.itemSlots = new Array(PlayerData.ITEMS);
+        for(let i = 0; i < PlayerData.WEAPONS; i++){
             let margin = 10;
-            this.slots[i] = [x + slotWidth * i + margin, y + margin, slotWidth - 2 * margin, slotWidth - 2 * margin];
+            this.weaponSlots[i] = [x + slotWidth * i + margin, y + margin, slotWidth - 2 * margin, slotWidth - 2 * margin];
+        }
+        let extra = PlayerData.WEAPONS + 1;
+        for(let i = 0; i < PlayerData.ITEMS; i++){
+            let margin = 10;
+            this.itemSlots[i] = [x + slotWidth * (extra + i) + margin, y + margin, slotWidth - 2 * margin, slotWidth - 2 * margin];
         }
     }
     exitState(){
         for(let item of this.curRecipe.onExit()){
-            console.assert(this.playerData.addItem(item));
+            if(!this.playerData.addItem(item)){
+                this.throwInWorld(item);
+            }
         }
     }
     inBox(x, y, w, h){
         return x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h;
     }
-    mousePressed(){
-        for(let i = 0; i < PlayerData.ITEMS; i++){
-            let [x, y, w, h] = this.slots[i];
+    addItems(slots, items){
+        for(let i = 0; i < slots.length; i++){
+            let [x, y, w, h] = slots[i];
             if(x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h){
-                if(this.playerData.items[i] && this.curRecipe.canUse(this.playerData.items[i])){
-                    this.curRecipe.insert(this.playerData.items[i]);
-                    this.playerData.items[i] = undefined;
+                if(items[i] && this.curRecipe.canUse(items[i])){
+                    this.curRecipe.insert(items[i]);
+                    items[i] = undefined;
                 }
-                return;
             }
         }
+    }
+    throwInWorld(item){
+        this.prev.world.addEntity(item.physicalItem(this.curPlayer.x + this.curPlayer.width / 2, this.curPlayer.y + this.curPlayer.height / 2, this.prev.world))
+    }
+    mousePressed(){
+        this.addItems(this.weaponSlots, this.playerData.weapons);
+        this.addItems(this.itemSlots, this.playerData.items);
         for(let item of this.curRecipe.mousePressed()){
-            console.assert(this.playerData.addItem(item));
+            if(!this.curPlayer.addItem(item)){
+                this.throwInWorld(item);
+            }
         }
         if(!this.inBox(this.curRecipe.x, this.curRecipe.y, this.curRecipe.width, this.curRecipe.height)
         && !this.inBox(this.inventoryBG[0], this.inventoryBG[1], this.inventoryBG[2], this.inventoryBG[3])){
             changeState(this.prev);
+        }
+    }
+    drawItems(slots, items){
+        for(let [ind, slot] of slots.entries()){
+            let [x, y, w, h] = slot;
+            fill(255);
+            stroke(0);
+            strokeWeight(1);
+            rect(x, y, w, h, 10);
+            if(items[ind]){
+                let margin = 5;
+                items[ind].drawIcon(x + margin, y + margin, w - 2 * margin, h - 2 * margin);
+            }
         }
     }
     render(){
@@ -276,17 +305,8 @@ class CraftState extends State {
         noStroke();
         rect(x, y, w, h, 5);
 
-        for(let [ind, slot] of this.slots.entries()){
-            [x, y, w, h] = slot;
-            fill(255);
-            stroke(0);
-            strokeWeight(1);
-            rect(x, y, w, h, 10);
-            if(this.playerData.items[ind]){
-                let margin = 5;
-                this.playerData.items[ind].drawIcon(x + margin, y + margin, w - 2 * margin, h - 2 * margin);
-            }
-        }
+        this.drawItems(this.weaponSlots, this.playerData.weapons);
+        this.drawItems(this.itemSlots, this.playerData.items);
     }
     keyPressed() {
         if(keyCode === 27){

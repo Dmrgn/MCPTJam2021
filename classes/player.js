@@ -15,27 +15,28 @@ class PlayerData {
     }
 
     addItem(item){
-        let firstInd = -1;
-        for(let i = 0; i < PlayerData.ITEMS && firstInd === -1; i++){
-            if(!this.items[i]){
-                firstInd = i;
+        if(item instanceof WeaponItem){
+            let firstInd = -1;
+            for(let i = 0; i < PlayerData.WEAPONS && firstInd === -1; i++){
+                if(!this.weapons[i]){
+                    firstInd = i;
+                }
             }
-        }
-        if(firstInd === -1) return false;
-        this.items[firstInd] = item;
-        return true;
-    }
-
-    addWeapon(weapon){
-        let firstInd = -1;
-        for(let i = 0; i < PlayerData.WEAPONS && firstInd === -1; i++){
-            if(!this.weapons[i]){
-                firstInd = i;
+            if(firstInd === -1) return false;
+            this.weapons[firstInd] = item;
+            return true;
+        } else if (item instanceof InventoryItem){
+            let firstInd = -1;
+            for(let i = 0; i < PlayerData.ITEMS && firstInd === -1; i++){
+                if(!this.items[i]){
+                    firstInd = i;
+                }
             }
+            if(firstInd === -1) return false;
+            this.items[firstInd] = item;
+            return true;
         }
-        if(firstInd === -1) return false;
-        this.weapons[firstInd] = weapon;
-        return true;
+        throw "couldn't equip this item!";
     }
 }
 
@@ -84,9 +85,10 @@ class Player extends Entity {
         return false;
     }
 
-    equipWeapon(weapon){
-        this.playerData.addWeapon(weapon);
+    addItem(item){
+        let didEquip = this.playerData.addItem(item);
         this.setWeapon();
+        return didEquip;
     }
 
     damage(amt){

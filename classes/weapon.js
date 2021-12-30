@@ -74,18 +74,25 @@ class Sword extends Weapon{
     }
 }
 
+/**
+ * Weapon inside the inventory
+ */
 class WeaponItem{
-    drawIcon(x, y, w, h){}
-    weaponOf(_player, _world){}
-}
-
-class SwordItem extends WeaponItem{
     tier;
     enhance;
     constructor(tier, enhancers){
-        super();
         this.tier = tier;
         this.enhance = enhancers;
+    }
+    drawIcon(x, y, w, h){}
+    weaponOf(_player, _world){}
+    copy(tier, enhance){}
+    physicalItem(x, y, world){}
+}
+
+class SwordItem extends WeaponItem{
+    constructor(tier, enhancers){
+        super(tier, enhancers);
     }
     weaponOf(_player, _world){
         return new Sword(_player, _world, this.tier, this.enhance);
@@ -98,6 +105,14 @@ class SwordItem extends WeaponItem{
         vertex(x, y + h);
         vertex(x + w, y + h);
         endShape();
+    }
+
+    physicalItem(x, y, world) {
+        return new SwordDrop(x, y, world, this.tier, this.enhance);
+    }
+
+    copy(tier, enhance){
+        return new SwordItem(tier, enhance);
     }
 }
 

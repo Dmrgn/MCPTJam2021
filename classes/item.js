@@ -1,3 +1,6 @@
+/**
+ * Items are drops found on the floor
+ */
 class Item extends Entity{
     world;
     constructor(_x, _y, _width, _height, _world, _canInteract){
@@ -124,6 +127,39 @@ class Coal extends Item{
     }
 }
 
+class SwordDrop extends Item {
+    static WIDTH = 20;
+    static HEIGHT = 20;
+    tier;
+    enhance;
+    constructor(_x, _y, _world, _tier, _enhance){
+        super(_x, _y, SwordDrop.WIDTH, SwordDrop.HEIGHT, _world);
+        this.tier = _tier;
+        this.enhance = _enhance;
+    }
+
+    onInteract(player) {
+        if(player.addItem(new SwordItem(this.tier, this.enhance))){
+            this.destroy();
+        }
+    }
+
+    render(){
+        let [x, y, w, h] = [this.x, this.y, this.width, this.height];
+        fill(100);
+        stroke(0);
+        strokeWeight(1);
+        beginShape();
+        vertex(x + w / 2, y);
+        vertex(x + w, y + h);
+        vertex(x, y + h);
+        endShape();
+    }
+}
+
+/**
+ * InventoryItems are items found in the inventory (Not weapons)
+ */
 class InventoryItem{
     drawIcon(x, y, width, height){
 

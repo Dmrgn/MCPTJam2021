@@ -176,13 +176,52 @@ class AnvilRoom extends RoomGen{
     }
 }
 
+class WeaponCraftRoom extends RoomGen{
+    static ROWS = 3;
+    static COLS = 3;
+    constructor(){
+        super(2, WeaponCraftRoom.ROWS, WeaponCraftRoom.COLS);
+    }
+    fillRoom(world, x, y){
+        world.addEntity(new CraftBench((x + 1) * Tile.WIDTH, (y + 1) * Tile.HEIGHT));
+    }
+}
 
+class WeaponRoom extends RoomGen{
+    static ROWS = 3;
+    static COLS = 3;
+    static tierWeight = [100, 23, 8, 2]
+    constructor(){
+        super(2, WeaponRoom.ROWS, WeaponRoom.COLS);
+    }
+    fillRoom(world, x, y){
+        let chunksAway = x / Maze.CHUNKSIZE + y / Maze.CHUNKSIZE;
+        let tierWeight = [...WeaponRoom.tierWeight];
+        let tot = 0;
+        for(let i = 1; i < tierWeight.length; i++){
+            tierWeight[i] += i * chunksAway;
+        }
+        for(let weight of tierWeight){
+            tot += weight;
+        }
+        let tierRand = new MazeRand(x, y, seed).rand() * tot;
+        let curTier = -1;
+        for(let [ind, we] of tierWeight.entries()){
+            tierRand -= we;
+            if(curTier === -1 && tierRand <= 0){
+                curTier = ind;
+            }
+        }
+        console.assert(curTier !== -1);
+        world.addEntity(new SwordDrop((x + 1) * Tile.WIDTH, (y + 1) * Tile.HEIGHT, world, curTier, []));
+    }
+}
 
 function compCoords(r, c, cols) {
     return (r + 5) * (cols + 7) + (c + 5);
 }
 
-const roomGens = [new BlankRoom(), new AnvilRoom()]
+const roomGens = [new BlankRoom(), new AnvilRoom(), new WeaponCraftRoom(), new WeaponRoom()]
 const roomProb = 1;
 
 /**

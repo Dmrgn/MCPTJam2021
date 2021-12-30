@@ -21,7 +21,7 @@ class Recipe{
     }
 
     /**
-     * @return {item} a list of items to be placed back into the inventory
+     * @return [item] a list of items to be placed back into the inventory
      */
     onExit(){}
 
@@ -38,6 +38,13 @@ class Recipe{
     insert(item){}
 
     render(){}
+
+    setPos(x, y, w, h){
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+    }
 }
 
 class GemUpgrade extends Recipe{
@@ -52,12 +59,6 @@ class GemUpgrade extends Recipe{
         this.curCraft = 2;
         this.items = [];
         this.tags = new Array(GemUpgrade.numNeeded.length);
-    }
-    setPos(x, y, w, h){
-        this.x = x;
-        this.y = y;
-        this.width = w;
-        this.height = h;
     }
     onExit(){
         return this.items;
@@ -195,34 +196,102 @@ class WeaponUpgrade extends Recipe{
     enhanceSlots;
     resultSlot;
 
-    insertWeapon;
+    bare;
     gem;
     enhancers;
     result;
 
     constructor(_x, _y, _width, _height){
         super(_x, _y, _width, _height);
-        this.makeSlots();
+        this.positionEls();
+        this.bare = undefined;
+        this.gem = undefined;
+        this.enhancers = []
+        this.result = undefined;
     }
 
-    makeSlots(){
+    positionEls(){
         let [x, y, w, h] = [this.x, this.y, this.width, this.height];
-        let slotSize = width / 8;
+        let slotSize = 40;
         this.weaponSlot = [x + w / 5 - slotSize, y + h / 2 - slotSize / 2, slotSize, slotSize];
         this.gemSlot = [x + w / 2 - slotSize / 2, y + h * 2 / 5 - slotSize, slotSize, slotSize];
         this.enhanceSlots = new Array(WeaponUpgrade.NUM_ENHANCE);
         let margin = 5;
+        let startX = x + w / 2 - (slotSize + margin) * WeaponUpgrade.NUM_ENHANCE / 2;
         for(let i = 0; i < WeaponUpgrade.NUM_ENHANCE; i++){
-            this.enhanceSlots[i] = [x + w / 4 + (slotSize + margin) * i, y + h * 3 / 5, slotSize, slotSize];
+            this.enhanceSlots[i] = [startX + (slotSize + margin) * i, y + h * 3 / 5, slotSize, slotSize];
         }
         this.resultSlot = [x + w * 4 / 5, y + h / 2 - slotSize / 2, slotSize, slotSize];
     }
 
-    updateResult(){
-        if(!this.insertWeapon) this.result = undefined;
+    updateResult() {
+        if (!this.bare) this.result = undefined;
         else {
-
+            this.result = this.bare.copy(this.bare.tier + (this.gem ? 1 : 0), this.enhancers);
         }
+    }
+
+    inBox(arr){
+        let [x, y, w, h] = arr;
+        return x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h
+    }
+
+    canUse(item){
+        if(item instanceof GemItem){
+            return !this.gem && (!this.bare || item.tier === this.bare.tier);
+        } else if(item instanceof StoneItem || item instanceof FeatherItem || item instanceof StickItem){
+            return this.enhancers.length < WeaponUpgrade.NUM_ENHANCE;
+        } else if(item instanceof WeaponItem){
+            return !this.bare && (!this.gem || item.tier === this.gem.tier) && (item.enhance.length + this.enhancers.length <= WeaponUpgrade.NUM_ENHANCE);
+        } else return false;
+    }
+
+    insert(item){
+        console.assert(this.canUse(item));
+        if(item instanceof GemItem){
+            this.gem = item;
+        } else if (item instanceof StoneItem || item instanceof FeatherItem || item instanceof StickItem) {
+            this.enhancers.push(item);
+        } else if(item instanceof WeaponItem) {
+            this.bare = item.copy(item.tier, []);
+            for(let en of item.enhance){
+                this.enhancers.push(en);
+            }
+        }
+    }
+
+    mousePressed() {
+        this.updateResult();
+        if(this.inBox(this.resultSlot)) {
+            this.bare = undefined;
+            this.gem = undefined;
+            this.enhancers = [];
+            let tmp = this.result;
+            this.updateResult();
+            return [tmp];
+        } else if (this.inBox(this.gemSlot)){
+            let tmp = this.gem;
+            this.gem = undefined;
+            this.updateResult();
+            return [tmp];
+        }
+        for(let ind in this.enhanceSlots){
+            if(this.inBox(this.enhanceSlots[ind])){
+                let toRet = this.enhancers.splice(ind, 1)[0];
+                this.updateResult();
+                return [toRet];
+            }
+        }
+        return [];
+    }
+
+    onExit(){
+        let toRet = [];
+        this.updateResult();
+        for(let item of this.enhancers) toRet.push(item);
+        if(this.gem) toRet.push(this.gem);
+        if(this.bare) toRet.push(this.bare);
+        return toRet;
     }
 
     drawRect(arr){
@@ -255,12 +324,42 @@ class WeaponUpgrade extends Recipe{
             this.drawRect(enhance);
         }
 
-        this.drawItem(this.weaponSlot, this.insertWeapon);
-        this.drawItem(this.gemSlot, this.gem);
-        for(let ind in this.enhancers){
-            this.drawItem(this.enhanceSlots[ind], this.enhancers[ind]);
+        let margin = 5;
+        if(!this.drawItem(this.weaponSlot, this.bare, margin)){
+            fill(255, 0, 0);
+            noStroke();
+            let [x, y, w, h] = this.weaponSlot;
+            beginShape();
+            vertex(x + w / 2, y);
+            vertex(x, y + h);
+            vertex(x + w, y + h);
+            endShape();
         }
-        this.drawItem(this.resultSlot, this.result);
+        if(!this.drawItem(this.gemSlot, this.gem, margin)){
+            fill(100);
+            noStroke();
+            ellipseMode(CORNER);
+            let [x, y, w, h] = this.gemSlot;
+            ellipse(x, y, w, h);
+        }
+        for(let ind in this.enhanceSlots) {
+            if (!this.drawItem(this.enhanceSlots[ind], this.enhancers[ind], margin)){
+                let [x, y, w, h] = this.enhanceSlots[ind];
+                fill(100);
+                noStroke();
+                rect(x + 5, y + 5, w - 10, h - 10);
+            }
+        }
+        if(!this.drawItem(this.resultSlot, this.result, margin)){
+            fill(255, 0, 0);
+            noStroke();
+            let [x, y, w, h] = this.resultSlot;
+            beginShape();
+            vertex(x + w / 2, y);
+            vertex(x, y + h);
+            vertex(x + w, y + h);
+            endShape();
+        }
     }
 
 }
