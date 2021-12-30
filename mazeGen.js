@@ -81,9 +81,14 @@ let mazeDir = [[0, -1], [-1, 0], [0, 1], [1, 0]]
  */
 class RoomGen {
     weight
+    rows;
+    cols;
+    static WALL_PROB = 0.3;
 
-    constructor(_weight) {
+    constructor(_weight, _rows, _cols) {
         this.weight = _weight;
+        this.rows = _rows;
+        this.cols = _cols;
     }
 
     destroy(arr, r, c, dir) {
@@ -101,32 +106,32 @@ class RoomGen {
     clearRoom(arr, rand) {
         let rows = arr.length;
         let cols = arr[0].length;
-        let r = floor(rand.rand() * (rows - (BlankRoom.ROWS + 1))) + 1;
-        let c = floor(rand.rand() * (cols - (BlankRoom.COLS + 1))) + 1;
-        for (let cr = r + 1; cr < r + BlankRoom.ROWS - 1; cr++) {
-            for (let cc = c + 1; cc < c + BlankRoom.COLS - 1; cc++) {
+        let r = floor(rand.rand() * (rows - (this.rows + 1))) + 1;
+        let c = floor(rand.rand() * (cols - (this.cols + 1))) + 1;
+        for (let cr = r + 1; cr < r + this.rows - 1; cr++) {
+            for (let cc = c + 1; cc < c + this.cols - 1; cc++) {
                 arr[cr][cc].fill(true);
             }
         }
-        for (let cr = r; cr < r + BlankRoom.ROWS; cr++) {
+        for (let cr = r; cr < r + this.rows; cr++) {
             arr[cr][c][1] = arr[cr][c][2] = arr[cr][c][3] = true;
-            let lc = c + BlankRoom.COLS - 1;
+            let lc = c + this.cols - 1;
             arr[cr][lc][0] = arr[cr][lc][1] = arr[cr][lc][3] = true;
         }
-        for (let cc = c; cc < c + BlankRoom.COLS; cc++) {
+        for (let cc = c; cc < c + this.cols; cc++) {
             arr[r][cc][0] = arr[r][cc][2] = arr[r][cc][3] = true;
-            let lr = r + BlankRoom.ROWS - 1;
+            let lr = r + this.rows - 1;
             arr[lr][cc][0] = arr[lr][cc][1] = arr[lr][cc][2] = true;
         }
-        for (let cr = r; cr < r + BlankRoom.ROWS; cr++) {
-            let lc = c + BlankRoom.COLS - 1;
-            if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, cr, c, 0);
-            if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, cr, lc, 2);
+        for (let cr = r; cr < r + this.rows; cr++) {
+            let lc = c + this.cols - 1;
+            if (rand.rand() < RoomGen.WALL_PROB) this.destroy(arr, cr, c, 0);
+            if (rand.rand() < RoomGen.WALL_PROB) this.destroy(arr, cr, lc, 2);
         }
-        for (let cc = c; cc < c + BlankRoom.COLS; cc++) {
-            if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, r, cc, 1);
-            let lr = r + BlankRoom.ROWS - 1;
-            if (rand.rand() < BlankRoom.WALL_PROB) this.destroy(arr, lr, cc, 3);
+        for (let cc = c; cc < c + this.cols; cc++) {
+            if (rand.rand() < RoomGen.WALL_PROB) this.destroy(arr, r, cc, 1);
+            let lr = r + this.rows - 1;
+            if (rand.rand() < RoomGen.WALL_PROB) this.destroy(arr, lr, cc, 3);
         }
         return [r, c, this];
     }
@@ -134,8 +139,8 @@ class RoomGen {
     /**
      * fills a room with items
      * @param world The world to alter
-     * @param x the x coordinate of the room
-     * @param y the y coordinate of the room
+     * @param x the x coordinate of the room in terms of tiles
+     * @param y the y coordinate of the room in terms of tiles
      */
     fillRoom(world, x, y){
         throw "RoomGen does not have any functionality - use a subclass instead";
@@ -145,10 +150,9 @@ class RoomGen {
 class BlankRoom extends RoomGen {
     static COLS = 6;
     static ROWS = 4;
-    static WALL_PROB = 0.3;
 
     constructor() {
-        super(1);
+        super(1, BlankRoom.ROWS, BlankRoom.COLS);
     }
 
     fillRoom(world, x, y){
@@ -161,11 +165,24 @@ class BlankRoom extends RoomGen {
     }
 }
 
+class AnvilRoom extends RoomGen{
+    static ROWS = 3;
+    static COLS = 3;
+    constructor(){
+        super(2, AnvilRoom.ROWS, AnvilRoom.COLS);
+    }
+    fillRoom(world, x, y){
+        world.addEntity(new Anvil((x + 1) * Tile.WIDTH, (y + 1) * Tile.HEIGHT));
+    }
+}
+
+
+
 function compCoords(r, c, cols) {
     return (r + 5) * (cols + 7) + (c + 5);
 }
 
-const roomGens = [new BlankRoom()]
+const roomGens = [new BlankRoom(), new AnvilRoom()]
 const roomProb = 1;
 
 /**

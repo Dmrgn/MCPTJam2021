@@ -63,8 +63,6 @@ class GameState extends State{
             changeState(new MenuState(this));
         } else if(key === 'g'){
             this.world.interact();
-        } else if(key === 'e'){
-            changeState(new CraftState(this.world, new GemUpgrade(0, 0, 0, 0), this));
         }
     }
 }
@@ -157,10 +155,11 @@ class CraftState extends State {
 
     prev;
 
-    constructor(_world, _recipe, _prev){
+    constructor(_recipe, _prev){
         super();
-        this.world = _world;
-        this.curPlayer = _world.curPlayer;
+        console.assert(_prev instanceof GameState);
+        this.world = _prev.world;
+        this.curPlayer = this.world.curPlayer;
         this.playerData = this.curPlayer.playerData;
         this.curRecipe = _recipe;
         this.prev = _prev;
