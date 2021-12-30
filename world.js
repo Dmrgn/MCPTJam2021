@@ -1,3 +1,5 @@
+const useShader = true;
+
 class World{
     camera;
     entities;
@@ -37,15 +39,15 @@ class World{
         this.removeEntity(toMove);
         for(let entity of this.getEntitiesAround(toMove)){
             if(entity !== toMove){
+                if(toMove.willHit(entity, x, y)){
+                    entity.onTouch(toMove);
+                    toMove.onTouch(entity);
+                }
                 let hasLayer = false;
                 for(let tag of toMove.layers){
                     hasLayer = hasLayer || entity.layers.includes(tag);
                 }
                 if(hasLayer){
-                    if(toMove.willHit(entity, x, y)){
-                        entity.onTouch(toMove);
-                        toMove.onTouch(entity);
-                    }
                     let bounds = toMove.valid(entity);
                     for(let i = 0; i < 4; i += 2) valid[i] = max(valid[i], bounds[i]);
                     for(let i = 1; i < 4; i += 2) valid[i] = min(valid[i], bounds[i]);
@@ -207,7 +209,7 @@ class ExplorationWorld extends World{
 
     syncTile(x, y){
         console.assert(this.tiles.has(this.strOf(x, y)))
-        this.tiles.get(this.strOf(x, y)).walls = this.maze.getTile(x, y);
+        this.tiles.get(this.strOf(x, y)).updateWalls(this.maze.getTile(x, y));
     }
 
     render() {
@@ -241,7 +243,7 @@ class ExplorationWorld extends World{
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
-        runShader(sx, sy);
+        if(useShader) runShader(sx, sy);
     }
 
     createEl(type, x, y){
@@ -351,7 +353,7 @@ class BossWorld extends World{
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
-        runShader(sx, sy);
+        if(useShader) runShader(sx, sy);
     }
 
     attack(){

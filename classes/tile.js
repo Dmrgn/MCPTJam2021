@@ -17,7 +17,11 @@ class Tile {
         // wall values respectively
         this.walls = _walls;
         this.wallEntities = []
+    }
+    updateWalls(walls){
         let [rx, ry] = [this.x * Tile.WIDTH, this.y * Tile.HEIGHT];
+        this.walls = walls;
+        this.wallEntities = []
         if(this.walls[0]) this.wallEntities.push(new Entity(rx, ry, Tile.WALL_WIDTH, Tile.HEIGHT));
         if(this.walls[1]) this.wallEntities.push(new Entity(rx, ry, Tile.WIDTH, Tile.WALL_WIDTH));
         if(this.walls[2]) this.wallEntities.push(new Entity(rx + Tile.WIDTH - Tile.WALL_WIDTH, ry, Tile.WALL_WIDTH, Tile.HEIGHT));

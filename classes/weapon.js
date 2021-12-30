@@ -85,24 +85,51 @@ class Projectile extends Entity{
     hitEnemy;
     vx;
     vy;
-    constructor(_x, _y, _width, _height, _vx, _vy, _playerFired){
-        super(_x, _y, _width, _height, [_playerFired ? "Enemy" : "Foreground"]);
+    world;
+    constructor(_x, _y, _width, _height, _vx, _vy, _playerFired, _world){
+        super(_x, _y, _width, _height);
         this.vx = _vx;
         this.vy = _vy;
         this.hitEnemy = _playerFired;
+        this.world = _world;
     }
     tick(){
-        console.assert(curState instanceof GameState);
-        curState.world.move(this, this.vx, this.vy);
+        this.world.move(this, this.vx, this.vy);
     }
     onTouch(other){
-        console.assert(curState instanceof GameState);
         if(this.hitEnemy && other instanceof Enemy){
             this.attack(other);
         } else if (!this.hitEnemy && other instanceof Player){
             this.attack(other);
         }
-        curState.world.removeEntity(this);
+        this.world.removeEntity(this);
     }
+    render(){}
     attack(other){}
+}
+
+class Spinny extends Projectile{
+    static WIDTH = 10;
+    static HEIGHT = 10;
+    static DEFAULT_DAMAGE = 5;
+    damage;
+    constructor(_x, _y, _vx, _vy, _playerFired, _damage){
+        super(_x, _y, Spinny.WIDTH, Spinny.HEIGHT, _vx, _vy, _playerFired);
+        if(_damage) this.damage = _damage;
+        else this.damage = Spinny.DEFAULT_DAMAGE;
+    }
+    attack(other){
+        if(other instanceof Player){
+            other.damage(this.damage);
+        }
+        if(other instanceof Enemy){
+            other.damage(this.damage);
+        }
+    }
+    render(){
+        fill(0);
+        noStroke();
+        ellipseMode(CORNER);
+        ellipse(this.x, this.y, this.width, this.height);
+    }
 }
