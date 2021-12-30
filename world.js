@@ -365,7 +365,6 @@ class BossWorld extends World {
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
-        v
     }
 
     attack() {
