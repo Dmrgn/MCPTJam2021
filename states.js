@@ -51,8 +51,10 @@ class GameState extends State{
     world;
     curUI;
     playerData;
+    shader;
     constructor(shader){
         super();
+        this.shader = shader;
         this.playerData = new PlayerData(100);
         this.world = new ExplorationWorld(this.playerData, shader);
         this.curUI = new Default(this.world);
@@ -80,7 +82,7 @@ class GameState extends State{
         this.world.attack();
     }
     explorationDone(){
-        changeState(new FadeState(this, new BossState(1, this.world.curPlayer.playerData)));
+        changeState(new FadeState(this, new BossState(1, this.world.curPlayer.playerData, this.shader)));
     }
     mouseReleased() {
         this.curUI.mouseReleased();

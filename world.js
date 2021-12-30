@@ -8,6 +8,7 @@ class World {
     chunks;
 
     curPlayer;
+    shader;
     static ZOOM = 1.2;
 
     constructor(playerData, px, py, shader) {
@@ -204,7 +205,7 @@ class ExplorationWorld extends World {
                 entity.onTouch(this.curPlayer);
             }
         }
-        this.coldness += 0.00001;
+        this.coldness += 0.00002;
     }
 
     syncTile(x, y) {
@@ -245,7 +246,7 @@ class ExplorationWorld extends World {
             this.curPlayer.y + this.curPlayer.height / 2);
         this.shader.addLight(sx,sy,200,200,200);
         if (useShader) {
-            if (frameCount%1 == 0) {
+            if (frameCount%1 === 0) {
                 this.shader.runShader();
             }
             this.shader.pushShader();
@@ -366,6 +367,13 @@ class BossWorld extends World {
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
+        this.shader.addLight(sx,sy,200,200,200);
+        if (useShader) {
+            if (frameCount%1 === 0) {
+                this.shader.runShader();
+            }
+            this.shader.pushShader();
+        }
     }
 
     attack() {
