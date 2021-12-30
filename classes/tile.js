@@ -31,12 +31,38 @@ class Tile {
     draw() {
         // draw the floor
         image(this.type.textures["0000"],this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+        background(200);
         // draw each wall
+        litscreen.strokeWeight(8);
+        litscreen.stroke(255);
+        const player = curState.world.curPlayer;
         this.walls.forEach((wall,index) => {
             if (wall) { // if this tile has a wall on this side
                 const texture = this.type.textures[wallMap[index]];
-                image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
-                litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+                if (false) {
+
+                } else {
+                    if (index == 1) { //this is backwall
+                        const wl = {x:this.tile.x*Tile.WIDTH, y:this.tile.y*Tile.HEIGHT};
+                        const wr = {x:(this.tile.x+Tile.WIDTH)*Tile.WIDTH, y:this.tile.y*Tile.HEIGHT};
+                        const diff = {x:player.x}
+                        if (player.y+player.height > this.y*Tile.HEIGHT) { // tile is behind player
+                            image(texture,this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+                            // if the wall to the left is disabled
+                            // const getTile = curState.world.getTile;
+                            if (!curState.world.getTile(this.x-1,this.y).walls[2]) {
+                                litscreen.line(this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT, this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT+Tile.HEIGHT); // left side
+                            }
+                            if (!curState.world.getTile(this.x+1,this.y).walls[0]) {
+                                litscreen.line(this.x*Tile.WIDTH+Tile.WIDTH,(this.y-1)*Tile.HEIGHT, this.x*Tile.WIDTH+Tile.WIDTH,(this.y-1)*Tile.HEIGHT+Tile.HEIGHT); // right side
+                            }
+                            litscreen.line(this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT, this.x*Tile.WIDTH+Tile.WIDTH,(this.y-1)*Tile.HEIGHT); // top side side
+                        }
+                    } else { // this is a side or front wall
+                        image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+                        litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+                    }
+                }
             }
         });
     }

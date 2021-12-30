@@ -80,7 +80,7 @@ class TileController {
         // })
 
         // blendMode(MULTIPLY);
-        renderedTiles.forEach(tile=>{
+        perimeterTiles.forEach((tile, index)=>{
             tile.draw();
         })
         // blendMode(BLEND);
