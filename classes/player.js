@@ -45,8 +45,8 @@ class PlayerData {
  */
 class Player extends Entity {
     playerData;
-    static WIDTH = 20;
-    static HEIGHT = 40;
+    static WIDTH = 25;
+    static HEIGHT = 50;
     weaponInd;
     curWeapon;
     static ANIM_TIME = 25;
@@ -92,6 +92,9 @@ class Player extends Entity {
             this.frame = this.frame % 2 + 1;
         }
         image(displayImg, this.x, this.y, this.width, this.height);
+        if(this.curWeapon){
+            this.curWeapon.render();
+        }
     }
 
     collectItem(item){

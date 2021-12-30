@@ -8,9 +8,10 @@ class World {
     chunks;
 
     curPlayer;
+    static ZOOM = 1.2;
 
     constructor(playerData, px, py, shader) {
-        this.camera = new Camera(0, 0);
+        this.camera = new Camera(0, 0, World.ZOOM);
         this.curPlayer = new Player(playerData, px, py);
         this.entities = new Map();
         this.addEntity(this.curPlayer);
@@ -203,6 +204,7 @@ class ExplorationWorld extends World {
                 entity.onTouch(this.curPlayer);
             }
         }
+        this.coldness += 0.00001;
     }
 
     syncTile(x, y) {
@@ -379,15 +381,21 @@ class BossWorld extends World {
 class Camera {
     x;
     y;
-    constructor(_x, _y) {
+    zoom;
+    constructor(_x, _y, _zoom) {
         this.x = _x;
         this.y = _y;
+        if(!_zoom) this.zoom = 1;
+        else this.zoom = _zoom;
     }
     alterMatrix() {
         push();
-        translate(-this.x, -this.y);
+        let [bx, by] = [this.x + width / 2 - width / 2 / this.zoom, this.y + height / 2 - height / 2 / this.zoom];
+        scale(this.zoom, this.zoom);
+        translate(-bx, -by);
         litscreen.push();
-        litscreen.translate(-this.x, -this.y);
+        litscreen.scale(this.zoom, this.zoom);
+        litscreen.translate(-bx, -by);
     }
     toWorld(x, y) {
         return [x + this.x, y + this.y];
