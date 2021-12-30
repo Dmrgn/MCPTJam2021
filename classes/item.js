@@ -30,8 +30,8 @@ class Item extends Entity{
 
 class Gem extends Item{
     tier;
-    static WIDTH = 10;
-    static HEIGHT = 10;
+    static WIDTH = 20;
+    static HEIGHT = 20;
     constructor(_x, _y, _tier, _world){
         super(_x, _y, Gem.WIDTH, Gem.HEIGHT, _world);
         this.tier = _tier;
@@ -40,16 +40,13 @@ class Gem extends Item{
         return new GemItem(this.tier);
     }
     render(){
-        fill(0, 0, 255);
-        strokeWeight(0);
-        ellipseMode(CORNER);
-        ellipse(this.x, this.y, this.width, this.height);
+        image(getSprite("gem-t" + this.tier), this.x, this.y, this.width, this.height);
     }
 }
 
 class Stone extends Item{
-    static WIDTH = 10;
-    static HEIGHT = 10;
+    static WIDTH = 20;
+    static HEIGHT = 20;
     amt;
     constructor(_x, _y, _amt, _world){
         super(_x, _y, Stone.WIDTH, Stone.HEIGHT, _world);
@@ -59,16 +56,13 @@ class Stone extends Item{
         return new StoneItem(this.amt);
     }
     render(){
-        fill(100, 100, 100);
-        strokeWeight(0);
-        ellipseMode(CORNER);
-        ellipse(this.x, this.y, this.width, this.height);
+        image(getSprite("stone"), this.x, this.y, this.width, this.height);
     }
 }
 
 class Feather extends Item{
-    static WIDTH = 10;
-    static HEIGHT = 10;
+    static WIDTH = 20;
+    static HEIGHT = 20;
     amt;
     constructor(_x, _y, _amt, _world){
         super(_x, _y, Feather.WIDTH, Feather.HEIGHT, _world);
@@ -78,15 +72,13 @@ class Feather extends Item{
         return new FeatherItem(this.amt);
     }
     render(){
-        stroke(255);
-        strokeWeight(5);
-        line(this.x, this.y, this.x + this.width, this.y + this.height);
+        image(getSprite("feather"), this.x, this.y, this.width, this.height);
     }
 }
 
 class Stick extends Item{
-    static WIDTH = 10;
-    static HEIGHT = 10;
+    static WIDTH = 20;
+    static HEIGHT = 20;
     amt;
     constructor(_x, _y, _amt, _world){
         super(_x, _y, Stick.WIDTH, Stick.HEIGHT, _world);
@@ -96,16 +88,14 @@ class Stick extends Item{
         return new StickItem(this.amt);
     }
     render(){
-        stroke(148, 74, 0);
-        strokeWeight(5);
-        line(this.x, this.y, this.x + this.width, this.y + this.height);
+        image(getSprite("stick"), this.x, this.y, this.width, this.height);
     }
 }
 
 class Coal extends Item{
     amt;
-    static WIDTH=10;
-    static HEIGHT=10;
+    static WIDTH=20;
+    static HEIGHT=20;
     constructor(_x, _y, _world, _amt){
         super(_x, _y, Coal.WIDTH, Coal.HEIGHT, _world, false);
         this.amt = _amt;
@@ -120,10 +110,7 @@ class Coal extends Item{
     onInteract(player) {}
 
     render(){
-        fill(0);
-        strokeWeight(0);
-        ellipseMode(CORNER);
-        ellipse(this.x, this.y, this.width, this.height);
+        image(getSprite("coal"), this.x, this.y, this.width, this.height);
     }
 }
 
@@ -176,13 +163,7 @@ class GemItem extends InventoryItem{
         this.tier = _tier;
     }
     drawIcon(x, y, width, height){
-        fill(66, 239, 245);
-        noStroke();
-        ellipseMode(CORNER);
-        ellipse(x, y, width, height);
-        textAlign(CENTER, CENTER);
-        fill(0);
-        text(this.tier === 1 ? "I" : this.tier === 2 ? "II" : this.tier === 3 ? "III" : "IV", x, y + height / 2, width);
+        image(getSprite("gem-t" + this.tier), x, y, width, height);
     }
     physicalItem(x, y, world){
         return new Gem(x - Gem.WIDTH / 2, y - Gem.HEIGHT / 2, this.tier, world);
@@ -195,10 +176,7 @@ class StoneItem extends InventoryItem {
         this.amt = _amt;
     }
     drawIcon(x, y, width, height){
-        fill(100, 100, 100);
-        noStroke();
-        ellipseMode(CORNER);
-        ellipse(x, y, width, height);
+        image(getSprite("stone"), x, y, width, height);
     }
     physicalItem(x, y, world){
         return new Stone(x, y, this.amt, world);
@@ -211,9 +189,7 @@ class FeatherItem extends InventoryItem {
         this.amt = _amt;
     }
     drawIcon(x, y, width, height){
-        stroke(0);
-        strokeWeight(5);
-        line(x, y, x + width, y + height);
+        image(getSprite("feather"), x, y, width, height);
     }
     physicalItem(x, y, world){
         return new Feather(x, y, this.amt, world);
@@ -226,9 +202,7 @@ class StickItem extends InventoryItem {
         this.amt = _amt;
     }
     drawIcon(x, y, width, height){
-        stroke(148, 74, 0);
-        strokeWeight(5);
-        line(x, y, x + width, y + height);
+        image(getSprite("stick"), x, y, width, height);
     }
     physicalItem(x, y, world){
         return new Stick(x, y, this.amt, world);

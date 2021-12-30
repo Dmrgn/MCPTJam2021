@@ -1,3 +1,17 @@
 {
-  "player": "sprites/player.png"
+  "image": {
+    "player": "sprites/player.png",
+    "gem-t1": "sprites/gems/T1.png",
+    "gem-t2": "sprites/gems/T2.png",
+    "gem-t3": "sprites/gems/T3.png",
+    "gem-t4": "sprites/gems/T4.png",
+    "anvil": "sprites/anvil.png",
+    "feather": "sprites/feather.png",
+    "stick": "sprites/stick.png",
+    "stone": "sprites/stone.png",
+    "coal": "sprites/coal.png"
+  },
+  "video": {
+    "splash": "sprites/splash.png"
+  }
 }
