@@ -85,13 +85,15 @@ class Tile {
             const thistile = playerunder && player.x < (this.x)*Tile.WIDTH+Tile.WIDTH && player.x > (this.x)*Tile.WIDTH;
             const thisblockedr = player.x > this.x * Tile.WIDTH + Tile.WIDTH && (curState.world.getTile(this.x, this.y-1).walls[2]);
             const thisblockedl = player.x < this.x * Tile.WIDTH && (curState.world.getTile(this.x, this.y-1).walls[0]);
-            if ((thistile || nexttile || prevtile) || ((thisblockedl || thisblockedr) && playerunder)) { // tile is behind player
+            const playerfar = ((abs(player.x) - abs(this.x*Tile.WIDTH+Tile.WIDTH/2)) + (abs(player.y) - abs(this.y*Tile.HEIGHT+Tile.HEIGHT/2))) > Tile.WIDTH*2;
+            if ((thistile || nexttile || prevtile) || ((thisblockedl || thisblockedr) && playerunder) || (playerfar && playerunder)) { // tile is behind player
                 this.topwallfull = true;
                 image(texture,this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                 // if the wall to the left is disabled
                 if (!curState.world.getTile(this.x-1,this.y).walls[1]) {
                     litscreen.line(this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT-20, this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT+Tile.HEIGHT-20); // left side
                 }
+                // if the wall to the right is disabled
                 if (!curState.world.getTile(this.x+1,this.y).walls[1]) {
                     litscreen.line(this.x*Tile.WIDTH+Tile.WIDTH,(this.y-1)*Tile.HEIGHT-20, this.x*Tile.WIDTH+Tile.WIDTH,(this.y-1)*Tile.HEIGHT+Tile.HEIGHT-20); // right side
                 }
@@ -101,27 +103,31 @@ class Tile {
         if (this.walls[0]) { // if tile has left wall
             const texture = this.type.textures[wallMap[0]];
             if (this.walls[1]) { // if the top wall is active
-                if (playerunder) { // if the full top wall is being drawn
+                if (this.topwallfull) { // if the full top wall is being drawn
                     image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                     litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                 }
             }
             if (!curState.world.getTile(this.x,this.y+1).topwallfull) { // if the tile beneath has an active top wall
                 image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
-                litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+                if (player.x < this.x * Tile.WIDTH) {
+                    litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+                }
             }
         }
         if (this.walls[2]) { // if tile has right wall
             const texture = this.type.textures[wallMap[2]];
             if (this.walls[1]) { // if the top wall is active
-                if (playerunder) { // if the full top wall is being drawn
+                if (this.topwallfull) { // if the full top wall is being drawn
                     image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                     litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                 }
             }
-            if (!curState.world.getTile(this.x,this.y+1).topwallfull) { // if the tile beneath has an active top wall
+            if (!curState.world.getTile(this.x,this.y+1).topwallfull) { // if the tile beneath doesnt have an active top wall
                 image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
-                litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+                if (player.x > this.x * Tile.WIDTH + Tile.WIDTH ) {
+                    litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
+                }
             }
         }
         if (this.walls[3]) { // if tile has bottom wall
