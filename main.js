@@ -39,6 +39,7 @@ let didAutoplay = false;
 function mousePressed() {
     if(!didAutoplay){
         getSprite("splash").play();
+        getSprite("torch").loop();
         didAutoplay = true;
     } else {
         curState.mousePressed();

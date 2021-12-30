@@ -118,7 +118,9 @@ class World {
     drawInteract() {
         let closest = this.closestInteract(this.curPlayer);
         if (closest && this.dist(this.curPlayer, closest) <= ExplorationWorld.interactRadius) {
-            fill(0);
+            fill(255);
+            textSize(10);
+            textFont(getFont("roboto"));
             noStroke();
             textAlign(CENTER);
             text("Press 'g' to interact", closest.x - 100, closest.y - 10, closest.width + 200);

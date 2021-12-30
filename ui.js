@@ -75,13 +75,15 @@ class Default extends UIState{
     }
     render(){
         this.updateSlots();
-        fill(255);
-        rect(10, 10, 60, 30, 5);
+        fill(72,52,68)
+        rect(10, 10, 90, 30, 5);
         fill(255, 0, 0);
         noStroke();
         textAlign(LEFT, CENTER);
+        textFont(getFont("pacifico"));
         textSize(20);
-        text(Math.floor(this.curPlayer.playerData.health), 15, 25);
+        text(Math.floor(this.curPlayer.playerData.health), 15, 17);
+        image(getSprite("torch"), 70, 10, 20, 30);
 
         let itemWidth = width / 2 / PlayerData.ITEMS;
         let innerMargin = 6;

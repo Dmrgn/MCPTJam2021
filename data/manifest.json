@@ -14,7 +14,8 @@
     "basic-sword": "sprites/swords/basic-sword.png"
   },
   "video": {
-    "splash": "splash.mov"
+    "splash": "splash.mov",
+    "torch":  "sprites/torch.mov"
   },
   "font": {
     "roboto": "fonts/roboto.ttf",
