@@ -77,12 +77,15 @@ class Tile {
         //     }
         // });
         this.topwallfull = false;
+        const playerunder = (player.y+player.height > this.y*Tile.HEIGHT);
         if (this.walls[1]) { // if tile has top wall
             const texture = this.type.textures[wallMap[1]];
-            const nexttile = (player.y+player.height > this.y*Tile.HEIGHT) && player.x < (this.x+1)*Tile.WIDTH+Tile.WIDTH && player.x > (this.x+1)*Tile.WIDTH && curState.world.getTile(this.x+1,this.y).walls[1];
-            const prevtile = (player.y+player.height > this.y*Tile.HEIGHT) && player.x < (this.x-1)*Tile.WIDTH+Tile.WIDTH && player.x > (this.x-1)*Tile.WIDTH && curState.world.getTile(this.x-1,this.y).walls[1];
-            const thistile = (player.y+player.height > this.y*Tile.HEIGHT) && player.x < (this.x)*Tile.WIDTH+Tile.WIDTH && player.x > (this.x)*Tile.WIDTH;
-            if (thistile || nexttile || prevtile) { // tile is behind player
+            const nexttile = playerunder && player.x < (this.x+1)*Tile.WIDTH+Tile.WIDTH && player.x > (this.x+1)*Tile.WIDTH && curState.world.getTile(this.x+1,this.y).walls[1];
+            const prevtile = playerunder && player.x < (this.x-1)*Tile.WIDTH+Tile.WIDTH && player.x > (this.x-1)*Tile.WIDTH && curState.world.getTile(this.x-1,this.y).walls[1];
+            const thistile = playerunder && player.x < (this.x)*Tile.WIDTH+Tile.WIDTH && player.x > (this.x)*Tile.WIDTH;
+            const thisblockedr = player.x > this.x * Tile.WIDTH + Tile.WIDTH && (curState.world.getTile(this.x, this.y-1).walls[2]);
+            const thisblockedl = player.x < this.x * Tile.WIDTH && (curState.world.getTile(this.x, this.y-1).walls[0]);
+            if ((thistile || nexttile || prevtile) || ((thisblockedl || thisblockedr) && playerunder)) { // tile is behind player
                 this.topwallfull = true;
                 image(texture,this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                 // if the wall to the left is disabled
@@ -98,7 +101,7 @@ class Tile {
         if (this.walls[0]) { // if tile has left wall
             const texture = this.type.textures[wallMap[0]];
             if (this.walls[1]) { // if the top wall is active
-                if ((player.y+player.height > this.y*Tile.HEIGHT)) { // if the full top wall is being drawn
+                if (playerunder) { // if the full top wall is being drawn
                     image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                     litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                 }
@@ -111,7 +114,7 @@ class Tile {
         if (this.walls[2]) { // if tile has right wall
             const texture = this.type.textures[wallMap[2]];
             if (this.walls[1]) { // if the top wall is active
-                if ((player.y+player.height > this.y*Tile.HEIGHT)) { // if the full top wall is being drawn
+                if (playerunder) { // if the full top wall is being drawn
                     image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                     litscreen.image(texture,this.x*Tile.WIDTH,this.y*Tile.HEIGHT-Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                 }
