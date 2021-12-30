@@ -1,4 +1,4 @@
-const useShader = true;
+const useShader = false;
 
 class World{
     camera;

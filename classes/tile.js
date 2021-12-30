@@ -15,8 +15,7 @@ class Tile {
         this.type = _type;
         // left top right and bottom
         // wall values respectively
-        this.walls = _walls;
-        this.wallEntities = []
+        this.updateWalls(_walls)
     }
     updateWalls(walls){
         let [rx, ry] = [this.x * Tile.WIDTH, this.y * Tile.HEIGHT];
