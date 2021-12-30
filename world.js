@@ -135,7 +135,7 @@ class World {
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
-        // runShader(sx, sy);
+        runShader(sx, sy);
     }
 
     strOf(x, y){
