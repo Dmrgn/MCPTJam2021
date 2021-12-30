@@ -30,7 +30,7 @@ class GameState extends State{
     constructor(_seed){
         super();
         this.seed = _seed;
-        this.playerData = new PlayerData(1);
+        this.playerData = new PlayerData(100);
         this.world = new ExplorationWorld(this.seed, this.playerData);
         this.curUI = new Default(this.world);
         this.world.curPlayer.equipWeapon(new SwordItem(1, []))
