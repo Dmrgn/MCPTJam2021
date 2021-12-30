@@ -11,7 +11,12 @@
     "stone": "sprites/stone.png",
     "coal": "sprites/coal.png",
     "basic-sword-icon": "sprites/swords/basic-sword-icon.png",
-    "basic-sword": "sprites/swords/basic-sword.png"
+    "basic-sword": "sprites/swords/basic-sword.png",
+    "snowman-r-1": "sprites/enemy/snowman-r-1.png",
+    "snowman-r-2": "sprites/enemy/snowman-r-2.png",
+    "snowman-l-1": "sprites/enemy/snowman-l-1.png",
+    "snowman-l-2": "sprites/enemy/snowman-l-2.png",
+    "snowball": "sprites/enemy/snowball.png"
   },
   "video": {
     "splash": "splash.mov",

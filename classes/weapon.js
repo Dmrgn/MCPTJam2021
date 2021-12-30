@@ -142,11 +142,15 @@ class Projectile extends Entity{
     attack(other){}
 }
 
+/**
+ * basic enemy's projectile
+ */
 class Spinny extends Projectile{
     static WIDTH = 10;
     static HEIGHT = 10;
     static DEFAULT_DAMAGE = 5;
     damage;
+    curSpin = 0;
     constructor(_x, _y, _vx, _vy, _playerFired, _damage, _world){
         super(_x, _y, Spinny.WIDTH, Spinny.HEIGHT, _vx, _vy, _playerFired, _world);
         if(_damage) this.damage = _damage;
@@ -161,9 +165,12 @@ class Spinny extends Projectile{
         }
     }
     render(){
-        fill(0);
-        noStroke();
-        ellipseMode(CORNER);
-        ellipse(this.x, this.y, this.width, this.height);
+        this.curSpin += PI / 6;
+        let [x, y, w, h] = [this.x, this.y, this.width, this.height];
+        push();
+        translate(x + w / 2, y + h / 2);
+        rotate(this.curSpin);
+        image(getSprite("snowball"),-w / 2, -h / 2, w, h);
+        pop();
     }
 }

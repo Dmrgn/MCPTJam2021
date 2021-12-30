@@ -18,7 +18,7 @@ function loadSprites(){
                     images.set(name, loadImage("data/" + path));
                 } else if (type === "video"){
                     videos.set(name, createVideo("data/" + path));
-                    getSprite("splash").hide();
+                    getSprite(name).hide();
                 } else if (type === "font"){
                     fonts.set(name, loadFont("data/" + path));
                 }

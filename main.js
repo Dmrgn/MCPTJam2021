@@ -38,14 +38,16 @@ let didAutoplay = false;
 
 function mousePressed() {
     if(!didAutoplay){
-        getSprite("splash").play();
+        getSprite("splash").loop();
         getSprite("torch").loop();
         didAutoplay = true;
     } else {
         curState.mousePressed();
     }
-    let mouseworld = curState.world.camera.toWorld(mouseX,mouseY);
-    console.log(curState.world.getTile(floor(mouseworld[0]/Tile.WIDTH), floor(mouseworld[1]/Tile.HEIGHT)));
+    if(curState === GameState || curState === BossState){
+        let mouseworld = curState.world.camera.toWorld(mouseX,mouseY);
+        console.log(curState.world.getTile(floor(mouseworld[0]/Tile.WIDTH), floor(mouseworld[1]/Tile.HEIGHT)));
+    }
 }
 
 function mouseReleased(){

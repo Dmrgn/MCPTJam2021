@@ -10,14 +10,21 @@ class State{
 }
 
 class MainMenuState extends State{
+    lastTime = 0;
     constructor(shader) {
         super();
         this.shader=shader;
-        getSprite("splash").onended(function(){
-            if(curState instanceof MainMenuState){
-                curState.exit();
-            }
-        });
+    }
+    enterState() {
+        getSprite("splash").time(0);
+    }
+
+    tick(){
+        if(getSprite("splash").time() < this.lastTime){
+            this.exit();
+        } else {
+            this.lastTime = getSprite("splash").time();
+        }
     }
     render(){
         background(0);
@@ -27,9 +34,10 @@ class MainMenuState extends State{
             textFont(getFont("roboto"));
             fill(255);
             text("Click the screen to play", width / 2, height / 2);
+        } else {
+            let dim = min(width, height);
+            image(getSprite("splash"), width / 2 - dim / 2, height / 2 - dim / 2, dim, dim);
         }
-        let dim = min(width, height);
-        image(getSprite("splash"), width / 2 - dim / 2, height / 2 - dim / 2, dim, dim);
     }
     exit(){
         changeState(new GameState(this.shader));
@@ -45,7 +53,7 @@ class GameState extends State{
     playerData;
     constructor(shader){
         super();
-        this.playerData = new PlayerData(1000);
+        this.playerData = new PlayerData(100);
         this.world = new ExplorationWorld(this.playerData, shader);
         this.curUI = new Default(this.world);
         this.world.curPlayer.addItem(new SwordItem(1, []))
@@ -114,6 +122,9 @@ class BossState extends State {
     tick(){
         this.world.tick();
         this.curUI.tick();
+        if(this.world.curPlayer.playerData.health <= 0){
+            this.playerDied();
+        }
     }
     render(){
         background(0);
@@ -121,7 +132,7 @@ class BossState extends State {
         this.curUI.render();
     }
     playerDied(){
-        changeState(new FadeState(this, new MainMenuState()));
+        changeState(new FadeState(this, new MainMenuState(new Shader(litshader))));
     }
     keyPressed() {
         if(keyCode === 27){
