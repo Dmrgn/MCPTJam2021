@@ -338,14 +338,20 @@ class BossWorld extends World{
         for(let chunk of this.entities) for(let entity of chunk[1]) entity.tick();
         tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
             floor((this.curPlayer.y + this.curPlayer.height / 2) / Tile.HEIGHT));
+        this.centerCamera();
     }
 
     render(){
-        this.centerCamera();
+        litscreen.background(0);
         this.camera.alterMatrix();
         tileController.drawTiles();
         for(let chunk of this.entities) for(let entity of chunk[1]) entity.render();
         pop();
+        litscreen.pop();
+
+        let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
+            this.curPlayer.y + this.curPlayer.height / 2);
+        runShader(sx, sy);
     }
 
     attack(){
