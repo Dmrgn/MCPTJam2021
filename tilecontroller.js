@@ -77,7 +77,6 @@ class TileController {
             
         // blendMode(MULTIPLY);
         renderedTiles.forEach((tile, index)=>{
-            console.log(perimeterTiles);
             tile.draw();
         })
         // blendMode(BLEND);

@@ -29,7 +29,6 @@ class Tile {
     // draw this tile to the screen
     draw() {
         // draw the floor
-        console.log("here");
         image(this.type.textures["0000"],this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
         // draw each wall
         litscreen.strokeWeight(8);
