@@ -132,6 +132,8 @@ class FadeState extends State {
         super();
         this.prev = _prev;
         this.next = _next;
+        this.world = _prev.world;
+        this.curPlayer = this.world.curPlayer;
     }
     tick(){
         this.screenOpacity += 5;
