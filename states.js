@@ -30,7 +30,7 @@ class GameState extends State{
     constructor(_seed){
         super();
         this.seed = _seed;
-        this.playerData = new PlayerData(9999);
+        this.playerData = new PlayerData(100);
         this.world = new ExplorationWorld(this.seed, this.playerData);
         this.curUI = new Default(this.world);
         this.world.curPlayer.playerData.weapons[0] = new Sword(this.world.curPlayer, this.world,1, []);
@@ -88,6 +88,7 @@ class BossState extends State {
         this.playerData = playerData;
         if(level === 1) this.world = new BossWorld(12, 12, playerData);
         this.curUI = new Default(this.world);
+        this.world.addEntity(new BasicEnemy(100, 100, this.world));
     }
     enterState(){
         this.curUI.enterState();

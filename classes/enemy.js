@@ -20,10 +20,12 @@ class Enemy extends Entity{
 class BasicEnemy extends Enemy{
     static TIME = 40;
     static HEALTH = 40;
+    static WIDTH = 100;
+    static HEIGHT = 100;
     timer;
     velocity = 5;
-    constructor(_x, _y, _width, _height, _world){
-        super(_x, _y, _width, _height, BasicEnemy.HEALTH, _world);
+    constructor(_x, _y, _world){
+        super(_x, _y, BasicEnemy.WIDTH, BasicEnemy.HEIGHT, BasicEnemy.HEALTH, _world);
         this.timer = BasicEnemy.TIME;
     }
     tick(){
@@ -33,7 +35,7 @@ class BasicEnemy extends Enemy{
             let dy = this.player.y + this.player.height / 2 - (this.y + this.height / 2);
             let mag = sqrt(dx * dx + dy * dy);
             this.world.addEntity(new Spinny(this.x + this.width / 2, this.y + this.height / 2,
-                this.velocity * dx / mag, this.velocity * dy / mag, false, 3));
+                this.velocity * dx / mag, this.velocity * dy / mag, false, 3,this.world));
             this.timer = BasicEnemy.TIME;
         }
     }
