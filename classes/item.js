@@ -1,3 +1,6 @@
+/**
+ * Items are drops found on the floor
+ */
 class Item extends Entity{
     world;
     constructor(_x, _y, _width, _height, _world, _canInteract){
@@ -154,6 +157,9 @@ class SwordDrop extends Item {
     }
 }
 
+/**
+ * InventoryItems are items found in the inventory (Not weapons)
+ */
 class InventoryItem{
     drawIcon(x, y, width, height){
 

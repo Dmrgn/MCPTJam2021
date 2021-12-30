@@ -1,4 +1,5 @@
 let curState;
+let seed = Math.floor(Math.random() * 71828123897187231);
 
 function preload() {
     tileController.init();

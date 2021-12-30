@@ -74,6 +74,9 @@ class Sword extends Weapon{
     }
 }
 
+/**
+ * Weapon inside the inventory
+ */
 class WeaponItem{
     tier;
     enhance;

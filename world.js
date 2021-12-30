@@ -179,14 +179,11 @@ class ExplorationWorld extends World {
         ["feather", 0.1],
         ["stick", 0.1]
     ]
-    spawnSeed;
 
-    constructor(seed, playerData, shader) {
+    constructor(playerData, shader) {
         super(playerData, 20, 20, shader);
         this.maze = new Maze(seed);
         this.coldness = 1 / frameRate();
-
-        this.spawnSeed = Math.floor(Math.random() * 127833219183);
     }
 
     tick() {
@@ -273,7 +270,7 @@ class ExplorationWorld extends World {
         for (let cx = x * Maze.CHUNKSIZE; cx < (x + 1) * Maze.CHUNKSIZE; cx++) {
             for (let cy = y * Maze.CHUNKSIZE; cy < (y + 1) * Maze.CHUNKSIZE; cy++) {
                 this.tiles.set(this.strOf(cx, cy), new Tile(cx, cy, tileController.tileData.brick, this.maze.getTile(cx, cy)));
-                let randNum = new MazeRand(cx, cy, this.spawnSeed).rand();
+                let randNum = new MazeRand(cx, cy, seed).rand();
                 for (let el of this.probabilities) {
                     randNum -= el[1];
                     if (randNum <= 0) {

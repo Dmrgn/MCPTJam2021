@@ -22,20 +22,18 @@ class MainMenuState extends State{
         text("Press the screen to continue", width / 2, height / 2);
     }
     mousePressed(){
-        changeState(new GameState(Math.floor(Math.random() * 187287231281), this.shader));
+        changeState(new GameState(this.shader));
     }
 }
 
 class GameState extends State{
     world;
     curUI;
-    seed;
     playerData;
-    constructor(_seed, shader){
+    constructor(shader){
         super();
-        this.seed = _seed;
         this.playerData = new PlayerData(1000);
-        this.world = new ExplorationWorld(this.seed, this.playerData, shader);
+        this.world = new ExplorationWorld(this.playerData, shader);
         this.curUI = new Default(this.world);
         this.world.curPlayer.addItem(new SwordItem(1, []))
     }
