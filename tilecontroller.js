@@ -62,49 +62,15 @@ class TileController {
             });
         });
     }
-    // // random function which returns whether a wall
-    // // should be generated based on predefined odds
-    // // see const airation above
-    // odds() {
-    //     return floor(random(0, 100)) <= airation ? 0 : 1;
-    // }
-    // generates a static grid of tiles
-    // super temporary
-    // generateMap() {
-    //     tilesMap = [];
-    //     for(let i = 0 ; i*Tile.WIDTH < width; i++) {
-    //         tilesMap.push([]);
-    //         for(let j = 0 ; j*Tile.HEIGHT < height; j++) {
-    //             // FIX
-    //             // currently each tile is hard coded to have type brick
-    //             // in the future, create mechanism of determining which
-    //             // types are availible based on which walls are present
-    //             tilesMap[i].push(new Tile(i,j,this.tileData.brick, [this.odds(),this.odds(),this.odds(),this.odds()]));
-    //             tiles.push(tilesMap[i][j]);
-    //         }
-    //     }
-    // }
-    // Uses the maze generator to generate and push tiles
-    // around the passed point in a box with side length
-    // k (Controls the logic distance)
-    preparePerimeter(r, c, k){
-        perimeterTiles = [];
-        for (let i = r-floor(k/2); i < r+floor(k/2)+1; i++) {
-            for (let j = c-floor(k/2); j < c+floor(k/2)+1; j++) {
-                perimeterTiles.push(this.world.getTile(i, j));
-            }
-        }
-    }
     // Gets all perimeter tiles that should be visible from a
     // given point and adds them to the renderedTiles array
-    prepareRendered(c, r) {
-        worms = [];
-        worms.push(new Worm(c,r,0));
-        // set all tiles that the worms visited to rendered
-        renderedTiles = [];
-        worms.forEach((worm)=>{
-            renderedTiles.push(this.world.getTile(worm.x, worm.y));
-        });
+    prepareRendered(x, y) {
+        renderedTiles = []
+        for(let i = floor(x - width / Tile.WIDTH) - 1; i <= floor(x + width / Tile.WIDTH) + 1; i++){
+            for(let c = floor(y - height / Tile.HEIGHT) - 1; c <= floor(y + height / Tile.HEIGHT) + 1; c++){
+                renderedTiles.push(this.world.getTile(i, c));
+            }
+        }
     }
     // display tiles to the screen
     drawTiles() {
