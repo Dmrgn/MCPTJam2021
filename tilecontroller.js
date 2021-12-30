@@ -65,22 +65,19 @@ class TileController {
     // Gets all perimeter tiles that should be visible from a
     // given point and adds them to the renderedTiles array
     prepareRendered(x, y) {
-        renderedTiles = []
-        for(let i = floor(x - width / Tile.WIDTH) - 1; i <= floor(x + width / Tile.WIDTH) + 1; i++){
-            for(let c = floor(y - height / Tile.HEIGHT) - 1; c <= floor(y + height / Tile.HEIGHT) + 1; c++){
+        renderedTiles = [];
+        for(let i = floor(this.world.curPlayer.x/Tile.WIDTH - 2);  i < floor(this.world.curPlayer.x/Tile.WIDTH + 3); i++) {
+            for(let c = floor(this.world.curPlayer.y/Tile.HEIGHT - 2);  c < floor(this.world.curPlayer.y/Tile.HEIGHT + 3); c++) {
                 renderedTiles.push(this.world.getTile(i, c));
             }
         }
     }
     // display tiles to the screen
     drawTiles() {
-        // iterate through each tile cell
-        // perimeterTiles.forEach(tile=>{
-        //     tile.draw();
-        // })
-
+            
         // blendMode(MULTIPLY);
-        perimeterTiles.forEach((tile, index)=>{
+        renderedTiles.forEach((tile, index)=>{
+            console.log(perimeterTiles);
             tile.draw();
         })
         // blendMode(BLEND);

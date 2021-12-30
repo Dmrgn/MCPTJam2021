@@ -29,8 +29,8 @@ class Tile {
     // draw this tile to the screen
     draw() {
         // draw the floor
+        console.log("here");
         image(this.type.textures["0000"],this.x*Tile.WIDTH,this.y*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
-        background(200);
         // draw each wall
         litscreen.strokeWeight(8);
         litscreen.stroke(255);
@@ -42,10 +42,12 @@ class Tile {
 
                 } else {
                     if (index == 1) { //this is backwall
-                        const wl = {x:this.tile.x*Tile.WIDTH, y:this.tile.y*Tile.HEIGHT};
-                        const wr = {x:(this.tile.x+Tile.WIDTH)*Tile.WIDTH, y:this.tile.y*Tile.HEIGHT};
-                        const diff = {x:player.x}
-                        if (player.y+player.height > this.y*Tile.HEIGHT) { // tile is behind player
+                        const wl = {x:this.x*Tile.WIDTH, y:this.y*Tile.HEIGHT};
+                        const wr = {x:(this.x+Tile.WIDTH)*Tile.WIDTH, y:this.y*Tile.HEIGHT};
+                        const diffl = {x:player.x-wl.x,y:player.y+player.height-wl.y};
+                        const diffr = {x:player.x-wr.x,y:player.y+player.height-wr.y};
+                        const diff = (diffl.x+diffl.y) > (diffr.x+diffr.y) ? diffr : diffl;
+                        if ((diff.x < diff.y) && (player.y+player.height > this.y*Tile.HEIGHT)) { // tile is behind player
                             image(texture,this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                             // if the wall to the left is disabled
                             // const getTile = curState.world.getTile;
