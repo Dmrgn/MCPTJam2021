@@ -87,7 +87,7 @@ class Projectile extends Entity{
     vy;
     world;
     constructor(_x, _y, _width, _height, _vx, _vy, _playerFired, _world){
-        super(_x, _y, _width, _height);
+        super(_x, _y, _width, _height, [], false);
         this.vx = _vx;
         this.vy = _vy;
         this.hitEnemy = _playerFired;
@@ -113,8 +113,8 @@ class Spinny extends Projectile{
     static HEIGHT = 10;
     static DEFAULT_DAMAGE = 5;
     damage;
-    constructor(_x, _y, _vx, _vy, _playerFired, _damage){
-        super(_x, _y, Spinny.WIDTH, Spinny.HEIGHT, _vx, _vy, _playerFired);
+    constructor(_x, _y, _vx, _vy, _playerFired, _damage, _world){
+        super(_x, _y, Spinny.WIDTH, Spinny.HEIGHT, _vx, _vy, _playerFired, _world);
         if(_damage) this.damage = _damage;
         else this.damage = Spinny.DEFAULT_DAMAGE;
     }

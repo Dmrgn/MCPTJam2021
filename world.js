@@ -337,7 +337,11 @@ class BossWorld extends World{
 
     tick(){
         this.movePlayer();
-        for(let chunk of this.entities) for(let entity of chunk[1]) entity.tick();
+        let inRange = new Set();
+        for(let chunk of this.entities) for(let entity of chunk[1]) inRange.add(entity);
+        for(let entity of inRange){
+            entity.tick();
+        }
         tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
             floor((this.curPlayer.y + this.curPlayer.height / 2) / Tile.HEIGHT));
         this.centerCamera();
