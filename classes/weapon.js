@@ -20,9 +20,8 @@ class Sword extends Weapon{
     static ANIM_TIME = 10;
     timer;
     atkProgress;
-    constructor(_player, _tier, _enhance){
-        console.assert(curState instanceof GameState);
-        super(_player, curState.world);
+    constructor(_player, _world, _tier, _enhance){
+        super(_player, _world);
         this.timer = Sword.TIME;
         if(_tier) this.tier = _tier;
         else this.tier = 1;

@@ -109,7 +109,7 @@ class Coal extends Item{
     }
     onTouch(other){
         if(other instanceof Player){
-            other.timeLeft += this.amt;
+            other.playerData.health += this.amt;
             this.destroy();
         }
     }

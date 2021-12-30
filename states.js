@@ -30,9 +30,10 @@ class GameState extends State{
     constructor(_seed){
         super();
         this.seed = _seed;
-        this.playerData = new PlayerData(100);
+        this.playerData = new PlayerData(5);
         this.world = new ExplorationWorld(this.seed, this.playerData);
         this.curUI = new Default(this.world);
+        this.world.curPlayer.playerData.weapons[0] = new Sword(this.world.curPlayer, this.world,1, []);
     }
     switchUI(to){
         this.curUI.exitState();
@@ -41,7 +42,6 @@ class GameState extends State{
     }
     enterState(){
         this.curUI.enterState();
-        this.world.curPlayer.playerData.weapons[0] = new Sword(this.world.curPlayer, 1, []);
     }
     tick(){
         this.world.tick();
@@ -57,11 +57,7 @@ class GameState extends State{
         this.world.attack();
     }
     explorationDone(){
-        console.assert(this.world instanceof ExplorationWorld);
-        // TODO switch to boss world
-    }
-    playerDied(){
-        changeState(new FadeState(this, new MainMenuState()));
+        changeState(new FadeState(this, new BossState(1, this.world.curPlayer.playerData)));
     }
     mouseReleased() {
         this.curUI.mouseReleased();
@@ -77,6 +73,53 @@ class GameState extends State{
         } else if (key === ' '){
             this.world.switchWeapon();
         }
+    }
+}
+
+class BossState extends State {
+    world;
+    curUI;
+    playerData;
+    static playerHealth = 100;
+
+    constructor(level, playerData){
+        super();
+        playerData.health = BossState.playerHealth;
+        this.playerData = playerData;
+        if(level === 1) this.world = new BossWorld(12, 12, playerData);
+        this.curUI = new Default(this.world);
+    }
+    enterState(){
+        this.curUI.enterState();
+    }
+    exitState(){
+        this.curUI.exitState();
+    }
+    tick(){
+        this.world.tick();
+        this.curUI.tick();
+    }
+    render(){
+        background(0);
+        this.world.render();
+        this.curUI.render();
+    }
+    playerDied(){
+        changeState(new FadeState(this, new MainMenuState()));
+    }
+    keyPressed() {
+        if(keyCode === 27){
+            changeState(new MenuState(this));
+        } else if (key === ' '){
+            this.world.switchWeapon();
+        }
+    }
+    mouseReleased() {
+        this.curUI.mouseReleased();
+    }
+    mousePressed() {
+        this.curUI.mousePressed();
+        this.world.attack();
     }
 }
 

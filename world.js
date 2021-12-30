@@ -11,6 +11,7 @@ class World{
         this.camera = new Camera(0, 0);
         this.curPlayer = new Player(playerData, px, py);
         this.entities = new Map();
+        this.addEntity(this.curPlayer);
         tileController.setWorld(this);
         this.tiles = new Map();
         this.chunks = new Set();
@@ -20,7 +21,7 @@ class World{
         let tiles = [];
         for (let tx = floor((toMove.x - abs(x)) / Tile.WIDTH) - 2; tx <= floor((toMove.x + toMove.width + abs(x)) / Tile.WIDTH) + 2; tx++) {
             for (let ty = floor((toMove.y - abs(y)) / Tile.HEIGHT) - 2; ty <= floor((toMove.y + toMove.height + abs(y)) / Tile.HEIGHT) + 2; ty++) {
-                tiles.push(new Tile(tx, ty, tileController.tileData.brick, this.maze.getTile(tx, ty)));
+                tiles.push(this.getTile(tx, ty));
             }
         }
         let valid = [-Infinity, Infinity, -Infinity, Infinity];
@@ -150,9 +151,16 @@ class World{
         return x + " " + y;
     }
 
+    movePlayer(){
+        if (keyIsDown(87)) this.move(this.curPlayer, 0, -5);
+        if (keyIsDown(65)) this.move(this.curPlayer, -5, 0);
+        if (keyIsDown(83)) this.move(this.curPlayer, 0, 5);
+        if (keyIsDown(68)) this.move(this.curPlayer, 5, 0);
+    }
+
     tick(){}
     render(){}
-    getTile(){}
+    getTile(x, y){}
 }
 
 class ExplorationWorld extends World{
@@ -181,10 +189,7 @@ class ExplorationWorld extends World{
     }
 
     tick() {
-        if (keyIsDown(87)) this.move(this.curPlayer, 0, -5);
-        if (keyIsDown(65)) this.move(this.curPlayer, -5, 0);
-        if (keyIsDown(83)) this.move(this.curPlayer, 0, 5);
-        if (keyIsDown(68)) this.move(this.curPlayer, 5, 0);
+        this.movePlayer();
         this.centerCamera();
         tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
             floor((this.curPlayer.y + this.curPlayer.height / 2) / Tile.HEIGHT));
@@ -236,7 +241,7 @@ class ExplorationWorld extends World{
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
-        // runShader(sx, sy);
+        runShader(sx, sy);
     }
 
     createEl(type, x, y){
@@ -302,13 +307,54 @@ class BossWorld extends World{
     width;
     height;
     constructor(width, height, playerData){
-        super(playerData);
+        super(playerData, width * Tile.WIDTH / 2, height * Tile.HEIGHT / 2);
         this.width = width;
         this.height = height;
+        let hasWall = [] // hasWall[x][y][dir]
+        for(let i = 0; i < width; i++) {
+            let col = [];
+            for(let c = 0; c < height; c++){
+                col.push(new Array(4).fill(false));
+            }
+            hasWall.push(col);
+        }
+        for(let i = 0; i < width; i++){
+            hasWall[i][0][1] = true;
+            hasWall[i][height - 1][3] = true;
+        }
+        for(let i = 0; i < height; i++){
+            hasWall[0][i][0] = true;
+            hasWall[width - 1][i][2] = true;
+        }
+        for(let x = 0; x < width; x++){
+            for(let y = 0; y < height; y++){
+                this.tiles.set(this.strOf(x, y), new Tile(x, y, tileController.tileData.brick, hasWall[x][y]));
+            }
+        }
+    }
+
+    tick(){
+        this.movePlayer();
+        for(let chunk of this.entities) for(let entity of chunk[1]) entity.tick();
+        tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
+            floor((this.curPlayer.y + this.curPlayer.height / 2) / Tile.HEIGHT));
+    }
+
+    render(){
+        this.centerCamera();
+        this.camera.alterMatrix();
+        tileController.drawTiles();
+        for(let chunk of this.entities) for(let entity of chunk[1]) entity.render();
+        pop();
+    }
+
+    attack(){
+        this.curPlayer.attack();
     }
 
     getTile(x, y){
-
+        if(this.tiles.has(this.strOf(x, y))) return this.tiles.get(this.strOf(x, y));
+        else return new Tile(x, y, tileController.tileData.brick, [true, true, true, true]);
     }
 }
 
