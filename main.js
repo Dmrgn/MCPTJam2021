@@ -34,15 +34,17 @@ function draw() {
         document.title = "FrameRate: " + fr;
     }
 }
-
 let didAutoplay = false;
 
 function mousePressed() {
-    getSprite("splash").play();
-    if(didAutoplay){
+    if(!didAutoplay){
+        getSprite("splash").play();
+        didAutoplay = true;
+    } else {
         curState.mousePressed();
     }
-    didAutoplay = true;
+    let mouseworld = curState.world.camera.toWorld(mouseX,mouseY);
+    console.log(curState.world.getTile(floor(mouseworld[0]/Tile.WIDTH), floor(mouseworld[1]/Tile.HEIGHT)));
 }
 
 function mouseReleased(){

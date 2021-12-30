@@ -1,4 +1,4 @@
-const useShader = false;
+const useShader = true;
 
 class World {
     camera;
@@ -239,9 +239,9 @@ class ExplorationWorld extends World {
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
-        this.shader.addLight(sx,sy,150,150,150);
+        this.shader.addLight(sx,sy,200,200,200);
         if (useShader) {
-            if (frameCount%2 == 0) {
+            if (frameCount%1 == 0) {
                 this.shader.runShader();
             }
             this.shader.pushShader();
