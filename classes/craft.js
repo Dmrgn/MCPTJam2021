@@ -360,6 +360,16 @@ class WeaponUpgrade extends Recipe{
             vertex(x + w, y + h);
             endShape();
         }
+
+        fill(0);
+        stroke(0);
+        strokeWeight(5);
+        let [x, y, w, h] = this.gemSlot;
+        line(x + w / 2, y + h, x + w / 2, this.y + this.height / 2);
+        line(this.weaponSlot[0] + this.weaponSlot[2], this.y + this.height / 2, this.resultSlot[0], this.y + this.height / 2);
+        for(let [x, y, w, h] of this.enhanceSlots){
+            line(x + w / 2, y, x + w / 2, this.y + this.height / 2);
+        }
     }
 
 }
