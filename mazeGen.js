@@ -192,7 +192,7 @@ class WeaponRoom extends RoomGen{
     static COLS = 3;
     static tierWeight = [100, 23, 8, 2]
     constructor(){
-        super(500, WeaponRoom.ROWS, WeaponRoom.COLS);
+        super(2, WeaponRoom.ROWS, WeaponRoom.COLS);
     }
     fillRoom(world, x, y){
         let chunksAway = x / Maze.CHUNKSIZE + y / Maze.CHUNKSIZE;
