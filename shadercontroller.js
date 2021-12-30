@@ -6,8 +6,10 @@ let offscreen;
 
 let litshader;
 
-// function initShader() {
-//     litshader = loadShader("glsl/vert.glsl", "glsl/frag.glsl");
+// class Shader {
+//     constructor(shader,) {
+
+//     }
 // }
 
 function runShader (lightX, lightY) {
@@ -16,11 +18,10 @@ function runShader (lightX, lightY) {
     litshader.setUniform('reso',width/height);
     litshader.setUniform('texture',litscreen);
     litshader.setUniform('texOffset',[1/(width/2), 1/(height/2)]);
-    litshader.setUniform('lightscontain',[lightX/width,1-(-(lightY-height)/height),0.5,0.5,0.5]);
-    offscreen.rect(0,0,width,height);
+    litshader.setUniform('lightscontain',[lightX/width,1-(-(lightY-height)/height),0.5,0.5,0.6]);
+    offscreen.rect(0,0,offscreen.width,offscreen.height);
     offscreen.resetShader();
     litscreen.drawingContext.drawImage(offscreen.drawingContext.canvas,0,0,width,height);
-    // litscreen.filter(BLUR,1);
     blendMode(MULTIPLY);
     drawingContext.drawImage(litscreen.drawingContext.canvas,0,0,width,height);
     blendMode(BLEND);

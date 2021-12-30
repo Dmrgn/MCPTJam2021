@@ -15,7 +15,7 @@ function setup() {
     curState = new MainMenuState();
 
     litscreen = createGraphics(width, height);
-    offscreen = createGraphics(width/4, height/4, WEBGL);
+    offscreen = createGraphics(width/2, height/2, WEBGL);
 
 }
 
@@ -31,10 +31,12 @@ function draw() {
         fr /= 2;
         document.title = "FrameRate: " + fr;
     }
+    frameRate(60);
 }
 
 function mousePressed() {
     curState.mousePressed();
+    console.log(curState.world.getTile(floor(mouseX/Tile.WIDTH), floor(mouseY/Tile.HEIGHT)));
 }
 
 function mouseReleased(){

@@ -19,7 +19,7 @@ void main () {
     
     vec3 col = vec3(0);
     float stepReduce = texOffset.x*reso;
-    for (int li = 5; li >= 0; li--) {
+    for (int li = 0; li >= 0; li--) {
       vec2 loc = vec2(lightscontain[li*5],  lightscontain[li*5+1]);
       vec2 distVec = ((loc - vec2(vertTexCoord.x,1.0-vertTexCoord.y))*2.0);
     //   loc = vec2(lightscontain[li*5] - distVec.x,  lightscontain[li*5+1] - distVec.y);
