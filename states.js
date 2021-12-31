@@ -56,7 +56,7 @@ class GameState extends State{
         super();
         curLevel = _level;
         this.shader = shader;
-        this.playerData = new PlayerData(50);
+        this.playerData = new PlayerData(0);
         this.world = new ExplorationWorld(this.playerData, shader);
         this.curUI = new Default(this.world);
         this.world.curPlayer.addItem(new SwordItem(1, []))
@@ -154,7 +154,19 @@ class BossState extends State {
         this.playerData = playerData;
         this.world = new BossWorld(12, 12, playerData, shader);
         this.curUI = new Default(this.world);
-        this.world.addEntity(new Dragon(100, 100, this.world, [Tile.WIDTH, Tile.HEIGHT, (this.world.width - 1) * Tile.WIDTH, (this.world.height - 1) * Tile.HEIGHT]));
+        if(curLevel === 1){
+            this.world.addEntity(new BasicEnemy(100, 100, this.world));
+        } else if (curLevel === 2){
+            this.world.addEntity(new Dragon(100, 100, this.world, [Tile.WIDTH, Tile.HEIGHT, (this.world.width - 1) * Tile.WIDTH, (this.world.height - 1) * Tile.HEIGHT]));
+        } else if (curLevel === 3){
+            this.world.addEntity(new Dragon(100, 100, this.world, [Tile.WIDTH, Tile.HEIGHT, (this.world.width - 1) * Tile.WIDTH, (this.world.height - 1) * Tile.HEIGHT]));
+            this.world.addEntity(new BasicEnemy(Tile.WIDTH * (this.world.width - 4), Tile.HEIGHT * (this.world.height - 4), this.world));
+            this.world.addEntity(new BasicEnemy(Tile.WIDTH * (this.world.width - 4), 100, this.world));
+            this.world.addEntity(new BasicEnemy(Tile.WIDTH * (this.world.width / 2), Tile.HEIGHT * (this.world.height - 4), this.world));
+            this.world.addEntity(new BasicEnemy(Tile.WIDTH * (this.world.width / 2), 100, this.world));
+            this.world.addEntity(new BasicEnemy(100, Tile.HEIGHT * (this.world.height / 2), this.world));
+            this.world.addEntity(new BasicEnemy(100, Tile.HEIGHT * (this.world.height - 4), this.world));
+        }
     }
     enterState(){
         this.curUI.enterState();
