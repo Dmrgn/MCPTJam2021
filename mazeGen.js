@@ -268,7 +268,7 @@ function compCoords(r, c, cols) {
     return (r + 5) * (cols + 7) + (c + 5);
 }
 
-const roomGens = [new BlankRoom(), new AnvilRoom(), new WeaponCraftRoom(), new ChestRoom()]
+const roomGens = [new AnvilRoom(), new WeaponCraftRoom(), new ChestRoom()]
 const roomProb = 1;
 
 /**
