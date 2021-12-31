@@ -73,3 +73,7 @@ class BasicEnemy extends Enemy{
         }
     }
 }
+
+class Dragon extends Enemy{
+
+}

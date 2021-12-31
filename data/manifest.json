@@ -42,7 +42,11 @@
     "spear-icon": "sprites/swords/spear-icon.png",
     "snow-cannon": "sprites/swords/snow-cannon.png",
     "snow-cannon-icon": "sprites/swords/snow-cannon-icon.png",
-    "snow-bomb": "sprites/swords/snowball.png"
+    "snow-bomb": "sprites/swords/snowball.png",
+    "dragon-r-1": "sprites/enemy/dragon-r-1.png",
+    "dragon-r-2": "sprites/enemy/dragon-r-2.png",
+    "dragon-l-1": "sprites/enemy/dragon-l-1.png",
+    "dragon-l-2": "sprites/enemy/dragon-l-2.png"
   },
   "video": {
     "splash": "splash.mov",
