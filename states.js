@@ -68,6 +68,8 @@ class GameState extends State{
     }
     enterState(){
         this.curUI.enterState();
+        getSound("maze").jump(0);
+        getSound("maze").setVolume(1);
     }
     tick(){
         this.world.tick();
@@ -91,6 +93,7 @@ class GameState extends State{
     }
     exitState() {
         this.curUI.exitState();
+        sounds.get("maze").setVolume(0);
     }
     keyPressed() {
         if(keyCode === 27){
@@ -170,9 +173,21 @@ class BossState extends State {
     }
     enterState(){
         this.curUI.enterState();
+        if(curLevel === 3) {
+            getSound("sarajevo").jump(0);
+            getSound("sarajevo").setVolume(1);
+        } else {
+            getSound("sarajevo-8").jump(0);
+            getSound("sarajevo-8").setVolume(1);
+        }
     }
     exitState(){
         this.curUI.exitState();
+        if(curLevel === 3) {
+            getSound("sarajevo").setVolume(0);
+        } else {
+            getSound("sarajevo-8").setVolume(0);
+        }
     }
     tick(){
         this.world.tick();

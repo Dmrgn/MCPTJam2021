@@ -41,6 +41,10 @@ function mousePressed() {
     if(!didAutoplay){
         getSprite("splash").loop();
         getSprite("torch").loop();
+        for(let [name, thing] of sounds){
+            thing.loop();
+            thing.setVolume(0);
+        }
         didAutoplay = true;
     } else {
         curState.mousePressed();

@@ -56,5 +56,10 @@
     "roboto": "fonts/roboto.ttf",
     "pacifico": "fonts/pacifico.ttf",
     "v-script": "fonts/v-script.ttf"
+  },
+  "audio": {
+    "maze": "music/maze.wav",
+    "sarajevo": "music/sarajevo.wav",
+    "sarajevo-8": "music/sarajevo-8.wav"
   }
 }
