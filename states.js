@@ -183,11 +183,8 @@ class BossState extends State {
     }
     exitState(){
         this.curUI.exitState();
-        if(curLevel === 3) {
-            getSound("sarajevo").setVolume(0);
-        } else {
-            getSound("sarajevo-8").setVolume(0);
-        }
+        getSound("sarajevo").setVolume(0);
+        getSound("sarajevo-8").setVolume(0);
     }
     tick(){
         this.world.tick();
