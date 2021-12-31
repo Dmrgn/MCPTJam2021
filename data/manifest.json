@@ -32,7 +32,8 @@
     "player-l-2": "sprites/player/player-l-2.png",
     "player-r-1": "sprites/player/player-r-1.png",
     "player-r-idle": "sprites/player/player-r-idle.png",
-    "player-r-2": "sprites/player/player-r-2.png"
+    "player-r-2": "sprites/player/player-r-2.png",
+    "bench": "sprites/bench.png"
   },
   "video": {
     "splash": "splash.mov",

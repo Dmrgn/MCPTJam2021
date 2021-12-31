@@ -25,8 +25,6 @@ class CraftBench extends Entity{
         changeState(new CraftState(new WeaponUpgrade(0, 0, 0, 0), curState));
     }
     render(){
-        fill(120, 84, 0);
-        noStroke();
-        rect(this.x, this.y, this.width, this.height);
+        image(getSprite("bench"), this.x, this.y, this.width, this.height);
     }
 }
