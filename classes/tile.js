@@ -51,11 +51,11 @@ class Tile {
                 this.topwallfull = true;
                 image(texture,this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT,Tile.WIDTH,Tile.HEIGHT);
                 // if the wall to the left is disabled
-                if (!curState.world.getTile(this.x-1,this.y).walls[1]) {
+                if (!curState.world.getTile(this.x-1,this.y).walls[1] && player.x > this.x*Tile.WIDTH) {
                     litscreen.line(this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT-20, this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT+Tile.HEIGHT-20); // left side
                 }
                 // if the wall to the right is disabled
-                if (!curState.world.getTile(this.x+1,this.y).walls[1]) {
+                if (!curState.world.getTile(this.x+1,this.y).walls[1] && player.x < this.x*Tile.WIDTH+Tile.WIDTH) {
                     litscreen.line(this.x*Tile.WIDTH+Tile.WIDTH,(this.y-1)*Tile.HEIGHT-20, this.x*Tile.WIDTH+Tile.WIDTH,(this.y-1)*Tile.HEIGHT+Tile.HEIGHT-20); // right side
                 }
                 litscreen.line(this.x*Tile.WIDTH,(this.y-1)*Tile.HEIGHT, this.x*Tile.WIDTH+Tile.WIDTH,(this.y-1)*Tile.HEIGHT); // top side side

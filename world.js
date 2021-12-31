@@ -214,13 +214,18 @@ class ExplorationWorld extends World {
         }
         this.curPlayer.tick();
         for (let entity of this.getEntitiesAround(this.curPlayer)) {
-            entity.tick();
-            if (this.curPlayer.isTouching(entity)) {
-                this.curPlayer.onTouch(entity);
-                entity.onTouch(this.curPlayer);
+            if (entity != this.curPlayer) {
+                entity.tick();
+                if (this.curPlayer.isTouching(entity)) {
+                    this.curPlayer.onTouch(entity);
+                    entity.onTouch(this.curPlayer);
+                }
             }
         }
         this.coldness += 0.00002;
+
+        // console.trace();
+        // console.error();
     }
 
     syncTile(x, y) {
@@ -370,7 +375,6 @@ class BossWorld extends World {
         for (let entity of inRange) {
             entity.tick();
         }
-        this.curPlayer.tick();
         tileController.prepareRendered(floor((this.curPlayer.x + this.curPlayer.width / 2) / Tile.WIDTH),
             floor((this.curPlayer.y + this.curPlayer.height / 2) / Tile.HEIGHT));
         this.centerCamera();

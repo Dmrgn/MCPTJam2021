@@ -74,6 +74,8 @@ class Player extends Entity {
         this.curWeapon = this.playerData.weapons[this.weaponInd] ? this.playerData.weapons[this.weaponInd].weaponOf(this, this.world) : undefined;
     }
 
+    prevtime;
+
     tick(){
         let preDir = this.dir;
         this.moving = true;
@@ -87,11 +89,18 @@ class Player extends Entity {
             this.frame = 1;
         }
 
+        console.log(Date.now()-this.prevtime);
+        // console.trace();
+        this.prevtime = Date.now();
+
         if(this.curWeapon){
             this.curWeapon.tick();
         }
+        if (this.prevtime == null) {
+            this.prevtime = Date.now();
+        }
         this.world.move(this, this.velocity.x, this.velocity.y);
-        this.velocity = this.velocity.mult(0.9);
+        this.velocity = this.velocity.mult(0.8);
     }
 
     render() {
@@ -156,8 +165,8 @@ class Player extends Entity {
     }
 
     move(dirx, diry) {
-        this.velocity.x += dirx * 0.4;
-        this.velocity.y += diry * 0.4;
-        this.velocity = this.velocity.limit(1.8);
+        this.velocity.x += dirx * 0.6;
+        this.velocity.y += diry * 0.6;
+        this.velocity = this.velocity.limit(3);
     }
 }
