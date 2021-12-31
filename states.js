@@ -154,7 +154,7 @@ class BossState extends State {
         this.playerData = playerData;
         this.world = new BossWorld(12, 12, playerData, shader);
         this.curUI = new Default(this.world);
-        this.world.addEntity(new BasicEnemy(100, 100, this.world));
+        this.world.addEntity(new Dragon(100, 100, this.world, [Tile.WIDTH, Tile.HEIGHT, (this.world.width - 1) * Tile.WIDTH, (this.world.height - 1) * Tile.HEIGHT]));
     }
     enterState(){
         this.curUI.enterState();
