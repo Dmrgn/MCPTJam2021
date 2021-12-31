@@ -309,6 +309,12 @@ class MenuState extends State{
         [x, y, w, h] = this.mainMenu;
         text("Restart", x + w / 2, y + h);
     }
+    enterState() {
+        getSound("maze").setVolume(1);
+    }
+    exitState(){
+        getSound("maze").setVolume(0);
+    }
     isPressed(rect){
         let [x, y, w, h] = rect;
         return x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h;
@@ -362,12 +368,16 @@ class CraftState extends State {
             this.itemSlots[i] = [x + slotWidth * (extra + i) + margin, y + margin, slotWidth - 2 * margin, slotWidth - 2 * margin];
         }
     }
+    enterState(){
+        getSound("maze").setVolume(1);
+    }
     exitState(){
         for(let item of this.curRecipe.onExit()){
             if(!this.playerData.addItem(item)){
                 this.throwInWorld(item);
             }
         }
+        getSound("maze").setVolume(0);
     }
     inBox(x, y, w, h){
         return x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h;
