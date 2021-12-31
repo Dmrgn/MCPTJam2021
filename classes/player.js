@@ -158,6 +158,6 @@ class Player extends Entity {
     move(dirx, diry) {
         this.velocity.x += dirx * 0.4;
         this.velocity.y += diry * 0.4;
-        this.velocity = this.velocity.limit(8);
+        this.velocity = this.velocity.limit(1.8);
     }
 }
