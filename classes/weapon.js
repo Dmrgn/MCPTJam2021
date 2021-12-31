@@ -232,7 +232,7 @@ class SpearItem extends WeaponItem{
         return new SpearDrop(x, y, world, this.tier, this.enhance);
     }
     copy(tier, enhance){
-        return new SwordItem(tier, enhance);
+        return new SpearItem(tier, enhance);
     }
 }
 
