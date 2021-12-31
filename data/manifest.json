@@ -35,7 +35,9 @@
     "player-r-2": "sprites/player/player-r-2.png",
     "bench": "sprites/bench.png",
     "game-over": "sprites/game-over-screen.png",
-    "win-screen": "sprites/win-screen.jpg"
+    "win-screen": "sprites/win-screen.jpg",
+    "chest-closed": "sprites/chest-closed.png",
+    "chest-open": "sprites/chest-open.png"
   },
   "video": {
     "splash": "splash.mov",

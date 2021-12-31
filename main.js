@@ -1,5 +1,6 @@
 let curState;
 let seed = Math.floor(Math.random() * 71828123897187231);
+let curLevel; // stores the current level
 
 function preload() {
     tileController.init();

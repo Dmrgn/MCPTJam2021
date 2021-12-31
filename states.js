@@ -52,10 +52,9 @@ class GameState extends State{
     curUI;
     playerData;
     shader;
-    level;
     constructor(shader, _level){
         super();
-        this.level = _level;
+        curLevel = _level;
         this.shader = shader;
         this.playerData = new PlayerData(50);
         this.world = new ExplorationWorld(this.playerData, shader);
@@ -84,7 +83,7 @@ class GameState extends State{
         this.world.attack();
     }
     explorationDone(){
-        changeState(new FadeState(this, new MessageState(new BossState(this.level, this.world.curPlayer.playerData, this.shader),
+        changeState(new FadeState(this, new MessageState(new BossState(this.world.curPlayer.playerData, this.shader),
             "As your torch burns out|You hear rumbling - the walls falling down|... and the coldness becomes alive")));
     }
     mouseReleased() {
@@ -145,14 +144,12 @@ class BossState extends State {
     world;
     curUI;
     playerData;
-    level;
     shader;
     static playerHealth = 100;
 
-    constructor(level, playerData, shader){
+    constructor(playerData, shader){
         super();
         playerData.health = BossState.playerHealth;
-        this.level = level;
         this.shader = shader;
         this.playerData = playerData;
         this.world = new BossWorld(12, 12, playerData, shader);
@@ -184,8 +181,8 @@ class BossState extends State {
         }
     }
     completed(){
-        if(this.level < 3){
-            changeState(new FadeState(this, new MessageState(new GameState(this.world.shader, this.level + 1),
+        if(curLevel < 3){
+            changeState(new FadeState(this, new MessageState(new GameState(this.world.shader, curLevel + 1),
                 "The monster fades away - and the entire area crumbles|You wake up at the next level|Of This Labyrinth.")));
         } else {
             changeState(new Won(this.shader));

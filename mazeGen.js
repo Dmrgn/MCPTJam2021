@@ -217,11 +217,58 @@ class WeaponRoom extends RoomGen{
     }
 }
 
+class ChestRoom extends RoomGen{
+    static ROWS = 4;
+    static COLS = 4;
+    // inventory items sorted by "tier" in terms of the chest
+    byTier = [new GemItem(1), new FeatherItem(5), new StickItem(5), new StoneItem(5),
+    new SwordItem(1, []), new GemItem(2), new FeatherItem(5)]
+
+    constructor(){
+        super(4, ChestRoom.ROWS, ChestRoom.COLS);
+    }
+
+    fillRoom(world, x, y){
+        let gen = new MazeRand(x, y, seed);
+        let numItems = Math.floor(gen.rand() * min(6, curLevel * 2)) + 2;
+        let items = []
+        let [cw, ch] = [Chest.WIDTH, Chest.HEIGHT];
+        let [cx, cy] = [(x + ChestRoom.COLS / 2) * Tile.WIDTH - cw / 2, (y + ChestRoom.ROWS / 2) * Tile.HEIGHT - ch / 2]
+
+        let angle = 2 * PI / numItems;
+        let curAngle = 0;
+        let dist = 2 * sqrt(Chest.WIDTH * Chest.WIDTH / 4 + Chest.HEIGHT * Chest.HEIGHT / 4);
+        for(let i = 0; i < numItems; i++){
+            let start = Math.floor(this.byTier.length / 3 * (curLevel - 1))
+            let weight = new Array(this.byTier.length);
+            let totWeight = 0;
+            for(let i = start, curWeight = (weight.length - start); i < weight.length; i++){
+                weight[i] = curWeight;
+                totWeight += curWeight;
+                curWeight--;
+            }
+            let randWeight = gen.rand() * totWeight;
+            let item = undefined;
+            for(let i = start; i < weight.length; i++){
+                randWeight -= weight[i];
+                if(randWeight <= 0){
+                    item = this.byTier[i].physicalItem(cx + cw / 2 + cos(curAngle) * dist, cy + ch / 2 + sin(curAngle) * dist, world)
+                    break;
+                }
+            }
+            console.assert(item !== undefined);
+            items.push(item)
+            curAngle += angle;
+        }
+        world.addEntity(new Chest(cx, cy, items, world));
+    }
+}
+
 function compCoords(r, c, cols) {
     return (r + 5) * (cols + 7) + (c + 5);
 }
 
-const roomGens = [new BlankRoom(), new AnvilRoom(), new WeaponCraftRoom(), new WeaponRoom()]
+const roomGens = [new BlankRoom(), new AnvilRoom(), new WeaponCraftRoom(), new ChestRoom()]
 const roomProb = 1;
 
 /**
