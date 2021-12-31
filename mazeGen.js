@@ -166,30 +166,30 @@ class BlankRoom extends RoomGen {
 }
 
 class AnvilRoom extends RoomGen{
-    static ROWS = 3;
-    static COLS = 3;
+    static ROWS = 5;
+    static COLS = 5;
     constructor(){
         super(2, AnvilRoom.ROWS, AnvilRoom.COLS);
     }
     fillRoom(world, x, y){
-        world.addEntity(new Anvil((x + 1) * Tile.WIDTH, (y + 1) * Tile.HEIGHT));
+        world.addEntity(new Anvil((x + AnvilRoom.COLS / 2) * Tile.WIDTH - Anvil.WIDTH / 2, (y + AnvilRoom.ROWS / 2) * Tile.HEIGHT - Anvil.HEIGHT / 2));
     }
 }
 
 class WeaponCraftRoom extends RoomGen{
-    static ROWS = 3;
-    static COLS = 3;
+    static ROWS = 5;
+    static COLS = 5;
     constructor(){
         super(2, WeaponCraftRoom.ROWS, WeaponCraftRoom.COLS);
     }
     fillRoom(world, x, y){
-        world.addEntity(new CraftBench((x + 1) * Tile.WIDTH, (y + 1) * Tile.HEIGHT));
+        world.addEntity(new CraftBench((x + WeaponCraftRoom.COLS / 2) * Tile.WIDTH - CraftBench.WIDTH / 2, (y + WeaponCraftRoom.ROWS / 2) * Tile.HEIGHT - CraftBench.HEIGHT / 2));
     }
 }
 
 class WeaponRoom extends RoomGen{
-    static ROWS = 3;
-    static COLS = 3;
+    static ROWS = 5;
+    static COLS = 5;
     static tierWeight = [100, 23, 8, 2]
     constructor(){
         super(2, WeaponRoom.ROWS, WeaponRoom.COLS);
