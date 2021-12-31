@@ -47,8 +47,19 @@ class Default extends UIState{
             this.weaponSlots[i] = [i * itemWidth + hm, height - slotWidth - vm, slotWidth, slotWidth];
         }
     }
+    inBox(x, y, w, h){
+        return x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h;
+    }
     mousePressed(){
         this.updateMouse();
+        for(let i in this.weaponSlots){
+            let [x, y, w, h] = this.weaponSlots[i];
+            if(x <= this.mouseX && this.mouseX <= x + w && y <= this.mouseY && this.mouseY <= y + h && !this.selectedItem){
+                this.selectedItem = this.curPlayer.playerData.weapons[i];
+                this.curPlayer.playerData.weapons[[i]] = undefined;
+                this.curPlayer.setWeapon();
+            }
+        }
         for(let i in this.slots){
             let [x, y, w, h] = this.slots[i];
             if(x <= this.mouseX && this.mouseX <= x + w && y <= this.mouseY && this.mouseY <= y + h && !this.selectedItem){
@@ -58,13 +69,25 @@ class Default extends UIState{
         }
     }
     mouseReleased() {
-        for(let i in this.slots){
-            let [x, y, w, h] = this.slots[i];
-            if(x <= mouseX && mouseX <= x + w && y <= mouseY && mouseY <= y + h && this.selectedItem && !this.curPlayer.playerData.items[i]){
-                this.curPlayer.playerData.items[i] = this.selectedItem;
-                this.selectedItem = undefined;
+        if(this.selectedItem && this.selectedItem instanceof WeaponItem){
+            for(let i in this.weaponSlots){
+                let [x, y, w, h] = this.weaponSlots[i];
+                if(this.inBox(x, y, w, h) && this.selectedItem && !this.curPlayer.playerData.weapons[i]){
+                    this.curPlayer.playerData.weapons[i] = this.selectedItem;
+                    this.curPlayer.setWeapon();
+                    this.selectedItem = undefined;
+                }
+            }
+        } else if (this.selectedItem && this.selectedItem instanceof InventoryItem){
+            for(let i in this.slots){
+                let [x, y, w, h] = this.slots[i];
+                if(this.inBox(x, y, w, h) && this.selectedItem && !this.curPlayer.playerData.items[i]){
+                    this.curPlayer.playerData.items[i] = this.selectedItem;
+                    this.selectedItem = undefined;
+                }
             }
         }
+
         if(this.selectedItem){
             this.world.addEntity(this.selectedItem.physicalItem(this.curPlayer.x + this.curPlayer.width / 2, this.curPlayer.y + this.curPlayer.height / 2, this.world));
             this.selectedItem = undefined;
