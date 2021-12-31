@@ -2,11 +2,13 @@ class Enemy extends Entity{
     health;
     player;
     world;
+    totHealth;
     constructor(_x, _y, _width, _height, _health, _world){
         super(_x, _y, _width, _height, ["Foreground"]);
         this.health = _health;
         this.world = _world;
         this.player = _world.curPlayer;
+        this.totHealth = _health;
     }
     damage(amt){
         this.health -= amt;
@@ -56,6 +58,14 @@ class BasicEnemy extends Enemy{
         } else {
             image(getSprite("snowman-l-" + this.curAnim), this.x, this.y, this.width, this.height);
         }
+        let [x, y, w, h] = [this.x, this.y, this.width, this.height];
+        fill(0, 0, 0, 0);
+        stroke(255);
+        strokeWeight(2);
+        rect(x, y - 15, w, 10);
+        fill(255, 0, 0);
+        let amtFill = this.health / this.totHealth;
+        rect(x, y - 15, w * amtFill, 10);
         this.animTimer--;
         if(this.animTimer <= 0){
             this.curAnim = this.curAnim % 2 + 1;
