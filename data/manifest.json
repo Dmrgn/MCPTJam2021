@@ -41,6 +41,7 @@
   },
   "font": {
     "roboto": "fonts/roboto.ttf",
-    "pacifico": "fonts/pacifico.ttf"
+    "pacifico": "fonts/pacifico.ttf",
+    "v-script": "fonts/v-script.ttf"
   }
 }

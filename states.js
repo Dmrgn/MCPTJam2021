@@ -40,7 +40,7 @@ class MainMenuState extends State{
         }
     }
     exit(){
-        changeState(new GameState(this.shader));
+        changeState(new GameState(this.shader, 1));
     }
     mousePressed(){
         this.exit();
@@ -52,8 +52,10 @@ class GameState extends State{
     curUI;
     playerData;
     shader;
-    constructor(shader){
+    level;
+    constructor(shader, _level){
         super();
+        this.level = _level;
         this.shader = shader;
         this.playerData = new PlayerData(50);
         this.world = new ExplorationWorld(this.playerData, shader);
@@ -82,7 +84,8 @@ class GameState extends State{
         this.world.attack();
     }
     explorationDone(){
-        changeState(new FadeState(this, new BossState(1, this.world.curPlayer.playerData, this.shader)));
+        changeState(new FadeState(this, new MessageState(new BossState(this.level, this.world.curPlayer.playerData, this.shader),
+            "As your torch burns out|You hear rumbling - the walls falling down|... and the coldness becomes alive")));
     }
     mouseReleased() {
         this.curUI.mouseReleased();
@@ -101,6 +104,43 @@ class GameState extends State{
     }
 }
 
+class MessageState extends State {
+    next;
+    // "Line 1|Line 2|Line 3|"
+    message;
+    curFrame = 0;
+    static FRAMES_PER_CHAR = 5;
+    static PAUSE_FRAMES = 100;
+
+    constructor(_next, message){
+        super();
+        this.next = _next;
+        this.message = message;
+    }
+    tick(){
+        this.curFrame++;
+        if(this.curFrame > this.message.length * MessageState.FRAMES_PER_CHAR + MessageState.PAUSE_FRAMES){
+            changeState(this.next);
+        }
+    }
+    render(){
+        background(0);
+        let toDisplay = this.message.substr(0, Math.floor(this.curFrame / MessageState.FRAMES_PER_CHAR)).split("|");
+        textFont(getFont("v-script"));
+        textSize(24);
+        fill(255);
+        textAlign(CENTER, BOTTOM);
+        let spacing = 30;
+        let start = height / 2 - spacing * toDisplay.length / 2;
+        for(let i = 0; i < toDisplay.length; i++){
+            text(toDisplay[i], width / 2, start + spacing * i);
+        }
+    }
+    mousePressed(){
+        this.curFrame = max(this.curFrame, this.message.length * MessageState.FRAMES_PER_CHAR);
+    }
+}
+
 class BossState extends State {
     world;
     curUI;
@@ -111,7 +151,7 @@ class BossState extends State {
         super();
         playerData.health = BossState.playerHealth;
         this.playerData = playerData;
-        if(level === 1) this.world = new BossWorld(12, 12, playerData, shader);
+        this.world = new BossWorld(12, 12, playerData, shader);
         this.curUI = new Default(this.world);
         this.world.addEntity(new BasicEnemy(100, 100, this.world));
     }
@@ -127,6 +167,21 @@ class BossState extends State {
         if(this.world.curPlayer.playerData.health <= 0){
             this.playerDied();
         }
+        let enemies = new Set();
+        for(let [coord, entities] of this.world.entities){
+            for(let entity of entities){
+                if(entity instanceof Enemy){
+                    enemies.add(entity);
+                }
+            }
+        }
+        if(enemies.size === 0){
+            this.completed();
+        }
+    }
+    completed(){
+        changeState(new FadeState(this, new MessageState(new GameState(this.world.shader, this.level + 1),
+            "The monster fades away - and the entire area crumbles|You wake up at the next level|Of This Labyrinth.")));
     }
     render(){
         background(0);
