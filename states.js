@@ -56,7 +56,7 @@ class GameState extends State{
         super();
         curLevel = _level;
         this.shader = shader;
-        this.playerData = new PlayerData(0);
+        this.playerData = new PlayerData(50);
         this.world = new ExplorationWorld(this.playerData, shader);
         this.curUI = new Default(this.world);
         this.world.curPlayer.addItem(new SwordItem(1, []))
