@@ -225,7 +225,7 @@ class ChestRoom extends RoomGen{
     new SwordItem(1, []), new GemItem(2), new FeatherItem(5)]
 
     constructor(){
-        super(4, ChestRoom.ROWS, ChestRoom.COLS);
+        super(2, ChestRoom.ROWS, ChestRoom.COLS);
     }
 
     fillRoom(world, x, y){
