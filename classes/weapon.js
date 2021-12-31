@@ -1,9 +1,13 @@
 class Weapon {
     player;
     world;
-    constructor(_player, _world){
+    tier;
+    enhance;
+    constructor(_player, _world, _tier, _enhance){
         this.player = _player;
         this.world = _world;
+        this.tier = _tier;
+        this.enhance = _enhance;
     }
     tick(){}
     render(){}
@@ -14,19 +18,13 @@ class Weapon {
 class Sword extends Weapon{
     static DAMAGE = 10;
     static RANGE = 30;
-    tier;
-    enhance;
     static TIME = 30;
     static ANIM_TIME = 20;
     timer;
     atkProgress;
     constructor(_player, _world, _tier, _enhance){
-        super(_player, _world);
+        super(_player, _world, _tier ? _tier : 1, _enhance ? _enhance : []);
         this.timer = Sword.TIME;
-        if(_tier) this.tier = _tier;
-        else this.tier = 1;
-        if(_enhance) this.enhance = _enhance;
-        else this.enhance = [];
         this.atkProgress = -1;
     }
     tick(){
@@ -77,6 +75,104 @@ class Sword extends Weapon{
     }
 }
 
+class Spear extends Weapon{
+    static ATK_TIME = 5;
+    static ATK_RETURN = 5;
+    static ATK_COOL = 10;
+    static RANGE = 90;
+    static LENGTH = 30;
+    static WIDTH = 10;
+    static DAMAGE = 3;
+    timer;
+    atkProgress;
+    dir;
+    enemiesAttacked;
+
+    range;
+    damage;
+    timeLeft;
+
+    constructor(_player, _world, _tier, _enhance){
+        super(_player, _world, _tier ? _tier : 1, _enhance ? _enhance : []);
+        this.timer = Spear.ATK_COOL;
+        this.atkProgress = -1;
+    }
+    spearOff(){
+        console.assert(this.atkProgress >= 0);
+        if(this.atkProgress <= Spear.ATK_TIME){
+            return [this.dir[0] * this.atkProgress / Spear.ATK_TIME, this.dir[1] * this.atkProgress / Spear.ATK_TIME];
+        } else {
+            let progress = this.atkProgress - Spear.ATK_TIME - 1;
+            return [this.dir[0] - this.dir[0] * progress / Spear.ATK_RETURN, this.dir[1] - this.dir[1] * progress / Spear.ATK_RETURN]
+        }
+    }
+    tick(){
+        if(this.atkProgress !== -1){
+            let [px, py, pw, ph] = [this.player.x, this.player.y, this.player.width, this.player.height];
+            let [offX, offY] = this.spearOff();
+            let [bw, bh] = [30, 30];
+            let [bx, by] = [px + pw / 2 + offX - bw / 2, py + ph / 2 + offY - bh / 2];
+            for(let entity of this.world.getEntitiesAround(this.player)){
+                if(entity instanceof Enemy && entity.isTouching(new Entity(bx, by, bw, bh)) && !this.enemiesAttacked.has(entity)){
+                    entity.damage(this.damage);
+                    this.enemiesAttacked.add(entity);
+                }
+            }
+            this.atkProgress++;
+            if(this.atkProgress === Spear.ATK_TIME + Spear.ATK_RETURN){
+                this.atkProgress = -1;
+            }
+        }
+        this.timer = max(0, this.timer - 1);
+    }
+    render(){
+        let [px, py, pw, ph] = [this.player.x, this.player.y, this.player.width, this.player.height];
+        if(this.atkProgress !== -1){
+            let [offX, offY] = this.spearOff();
+            let [x, y] = [px + pw / 2 + offX, py + ph / 2 + offY];
+            let angle = atan2(offY, offX);
+            push();
+            translate(x, y);
+            rotate(angle);
+            image(getSprite("spear"), -Spear.LENGTH, -Spear.WIDTH / 2, Spear.LENGTH, Spear.WIDTH);
+            pop();
+        } else {
+            let [wmx, wmy] = this.world.camera.toWorld(mouseX, mouseY);
+            push();
+            translate(px + pw / 2, py + ph / 2);
+            let angle = atan2(wmy - (py + ph / 2), wmx - (px + pw / 2));
+            rotate(angle);
+            image(getSprite("spear"), 0, -Spear.WIDTH / 2, Spear.LENGTH, Spear.WIDTH);
+            pop();
+        }
+    }
+    attack(_wielder, _world){
+        if(this.timer <= 0){
+            this.player = _wielder;
+            this.world = _world;
+            this.atkProgress = 0;
+            this.range = Spear.RANGE + 5 * (this.tier - 1);
+            this.damage = Spear.DAMAGE + 3 * (this.tier - 1);
+            this.timeLeft = Spear.ATK_COOL - 2 * (this.tier - 1);
+            for(let item of this.enhance){
+                if(item instanceof StoneItem){
+                    this.damage += item.amt;
+                } else if (item instanceof FeatherItem){
+                    this.timeLeft = max(0, this.timeLeft - item.amt);
+                } else if (item instanceof StickItem){
+                    this.range += item.amt;
+                }
+            }
+            let [wmx, wmy] = _world.camera.toWorld(mouseX, mouseY);
+            let [dx, dy] = [wmx - (_wielder.x + _wielder.width / 2), wmy - (_wielder.y + _wielder.height / 2)];
+            let mag = sqrt(dx * dx + dy * dy);
+            this.dir = [this.range * dx / mag, this.range * dy / mag];
+            this.enemiesAttacked = new Set();
+            this.timer = this.timeLeft;
+        }
+    }
+}
+
 /**
  * Weapon inside the inventory
  */
@@ -91,6 +187,13 @@ class WeaponItem{
     weaponOf(_player, _world){}
     copy(tier, enhance){}
     physicalItem(x, y, world){}
+    drawEnhancers(x, y, w, h){
+        image(getSprite("tier-" + this.tier), x, y, w / 3, h / 3);
+        let smallSideLen = min(w / 6, h / 2 / this.enhance.length);
+        for(let i = 0; i < this.enhance.length; i++){
+            this.enhance[i].drawIcon(x + w - smallSideLen, y + h - (i + 1) * smallSideLen, smallSideLen, smallSideLen);
+        }
+    }
 }
 
 class SwordItem extends WeaponItem{
@@ -102,17 +205,32 @@ class SwordItem extends WeaponItem{
     }
     drawIcon(x, y, w, h){
         image(getSprite("basic-sword-icon"), x, y, w, h);
-        image(getSprite("tier-" + this.tier), x, y, w / 3, h / 3);
-        let smallSideLen = min(w / 6, h / 2 / this.enhance.length);
-        for(let i = 0; i < this.enhance.length; i++){
-            this.enhance[i].drawIcon(x + w - smallSideLen, y + h - (i + 1) * smallSideLen, smallSideLen, smallSideLen);
-        }
+        this.drawEnhancers(x, y, w, h);
     }
 
     physicalItem(x, y, world) {
         return new SwordDrop(x, y, world, this.tier, this.enhance);
     }
 
+    copy(tier, enhance){
+        return new SwordItem(tier, enhance);
+    }
+}
+
+class SpearItem extends WeaponItem{
+    constructor(tier, enhancers){
+        super(tier, enhancers);
+    }
+    weaponOf(_player, _world){
+        return new Spear(_player, _world, this.tier, this.enhance);
+    }
+    drawIcon(x, y, w, h){
+        image(getSprite("spear-icon"), x, y, w, h);
+        this.drawEnhancers(x, y, w, h);
+    }
+    physicalItem(x, y, world){
+        return new SpearDrop(x, y, world, this.tier, this.enhance);
+    }
     copy(tier, enhance){
         return new SwordItem(tier, enhance);
     }

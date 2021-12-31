@@ -37,7 +37,9 @@
     "game-over": "sprites/game-over-screen.png",
     "win-screen": "sprites/win-screen.jpg",
     "chest-closed": "sprites/chest-closed.png",
-    "chest-open": "sprites/chest-open.png"
+    "chest-open": "sprites/chest-open.png",
+    "spear": "sprites/swords/spear.png",
+    "spear-icon": "sprites/swords/spear-icon.png"
   },
   "video": {
     "splash": "splash.mov",

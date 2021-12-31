@@ -136,6 +136,28 @@ class SwordDrop extends Item {
         image(getSprite("basic-sword-icon"), x, y, w, h);
     }
 }
+class SpearDrop extends Item{
+    static WIDTH = 20;
+    static HEIGHT = 20;
+    tier;
+    enhance;
+    constructor(_x, _y, _world, _tier, _enhance){
+        super(_x, _y, SpearDrop.WIDTH, SpearDrop.HEIGHT, _world);
+        this.tier = _tier;
+        this.enhance = _enhance;
+    }
+
+    onInteract(player) {
+        if(player.addItem(new SpearItem(this.tier, this.enhance))){
+            this.destroy();
+        }
+    }
+
+    render(){
+        let [x, y, w, h] = [this.x, this.y, this.width, this.height];
+        image(getSprite("spear-icon"), x, y, w, h);
+    }
+}
 
 /**
  * InventoryItems are items found in the inventory (Not weapons)

@@ -13,7 +13,7 @@ class World {
 
     constructor(playerData, px, py, shader) {
         this.camera = new Camera(0, 0, World.ZOOM);
-        this.curPlayer = new Player(playerData, px, py);
+        this.curPlayer = new Player(playerData, this, px, py);
         this.entities = new Map();
         this.addEntity(this.curPlayer);
         tileController.setWorld(this);

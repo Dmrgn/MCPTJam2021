@@ -54,16 +54,18 @@ class Player extends Entity {
     frame = 1;
     dir = 'd';
     moving = false;
+    world;
 
-    constructor(_playerData, _x, _y) {
+    constructor(_playerData, _world, _x, _y) {
         super(_x, _y, Player.WIDTH, Player.HEIGHT, ["Foreground"]);
         this.playerData = _playerData;
         this.weaponInd = 0;
+        this.world = _world;
         this.setWeapon();
     }
 
     setWeapon(){
-        this.curWeapon = this.playerData.weapons[this.weaponInd] ? this.playerData.weapons[this.weaponInd].weaponOf(this, curState.world) : undefined;
+        this.curWeapon = this.playerData.weapons[this.weaponInd] ? this.playerData.weapons[this.weaponInd].weaponOf(this, this.world) : undefined;
     }
 
     tick(){
@@ -126,7 +128,7 @@ class Player extends Entity {
 
     attack(){
         if(this.curWeapon){
-            this.curWeapon.attack(this, curState.world);
+            this.curWeapon.attack(this, this.world);
         }
     }
 }
