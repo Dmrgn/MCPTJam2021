@@ -1,7 +1,7 @@
 /**
  * PlayerData stores the data for the player - this is useful for when we switch between states
  */
-class PlayerData {
+ class PlayerData {
     health;
     items;
     weapons;
@@ -50,14 +50,20 @@ class Player extends Entity {
     weaponInd;
     curWeapon;
     static ANIM_TIME = 25;
+    static MAX_SPEED = 4;
     animTimer = Player.ANIM_TIME;
     frame = 1;
     dir = 'd';
     moving = false;
     world;
+    velocity;
+    static HEADLIGHT_RANGE = 30;
+    headlightx = null;
+    headlighty = null;
 
     constructor(_playerData, _world, _x, _y) {
         super(_x, _y, Player.WIDTH, Player.HEIGHT, ["Foreground"]);
+        this.velocity = createVector(0,0);
         this.playerData = _playerData;
         this.weaponInd = 0;
         this.world = _world;
@@ -84,6 +90,8 @@ class Player extends Entity {
         if(this.curWeapon){
             this.curWeapon.tick();
         }
+        this.world.move(this, this.velocity.x, this.velocity.y);
+        this.velocity = this.velocity.mult(0.9);
     }
 
     render() {
@@ -96,6 +104,21 @@ class Player extends Entity {
         image(displayImg, this.x, this.y, this.width, this.height);
         if(this.curWeapon){
             this.curWeapon.render();
+        }
+        const frontx = min( max(mouseX,width/2-Player.HEADLIGHT_RANGE), width/2+Player.HEADLIGHT_RANGE);
+        const fronty = min( max(mouseY,height/2-Player.HEADLIGHT_RANGE), height/2+Player.HEADLIGHT_RANGE);
+        if (this.headlightx == null) {
+            this.headlightx = frontx;
+            this.headlighty = fronty;
+        } else {
+            this.headlightx = lerp(this.headlightx, frontx, 0.03);
+            this.headlighty = lerp(this.headlighty, fronty, 0.03);
+        }
+        if (curState?.world?.shader) {
+            curState.world.shader.addLight(
+                this.headlightx,
+                this.headlighty,
+                200,200,200);
         }
     }
 
@@ -130,5 +153,11 @@ class Player extends Entity {
         if(this.curWeapon){
             this.curWeapon.attack(this, this.world);
         }
+    }
+
+    move(dirx, diry) {
+        this.velocity.x += dirx * 0.4;
+        this.velocity.y += diry * 0.4;
+        this.velocity = this.velocity.limit(1.8);
     }
 }

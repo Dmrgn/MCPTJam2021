@@ -17,6 +17,15 @@ class Shader {
         blendMode(MULTIPLY);
         drawingContext.drawImage(litscreen.drawingContext.canvas,0,0,width,height);
         blendMode(BLEND);
+        // blendMode(MULTIPLY);
+        // image(offscreen,0,0,width,height);
+        // blendMode(LIGHTEST);
+        // litscreen.background(255);
+        // litscreen.blendMode(DIFFERENCE);
+        // litscreen.image(offscreen,0,0,width,height);
+        // litscreen.blendMode(BLEND);
+        // image(litscreen,0,0,width,height);
+        // blendMode(BLEND)
         this.lights=[];
     }
     // runs the shader and stores the output on offscreen
