@@ -1,7 +1,7 @@
 /**
  * PlayerData stores the data for the player - this is useful for when we switch between states
  */
-class PlayerData {
+ class PlayerData {
     health;
     items;
     weapons;
@@ -57,6 +57,9 @@ class Player extends Entity {
     moving = false;
     world;
     velocity;
+    static HEADLIGHT_RANGE = 30;
+    headlightx = null;
+    headlighty = null;
 
     constructor(_playerData, _world, _x, _y) {
         super(_x, _y, Player.WIDTH, Player.HEIGHT, ["Foreground"]);
@@ -101,6 +104,21 @@ class Player extends Entity {
         image(displayImg, this.x, this.y, this.width, this.height);
         if(this.curWeapon){
             this.curWeapon.render();
+        }
+        const frontx = min( max(mouseX,width/2-Player.HEADLIGHT_RANGE), width/2+Player.HEADLIGHT_RANGE);
+        const fronty = min( max(mouseY,height/2-Player.HEADLIGHT_RANGE), height/2+Player.HEADLIGHT_RANGE);
+        if (this.headlightx == null) {
+            this.headlightx = frontx;
+            this.headlighty = fronty;
+        } else {
+            this.headlightx = lerp(this.headlightx, frontx, 0.03);
+            this.headlighty = lerp(this.headlighty, fronty, 0.03);
+        }
+        if (curState?.world?.shader) {
+            curState.world.shader.addLight(
+                this.headlightx,
+                this.headlighty,
+                200,200,200);
         }
     }
 

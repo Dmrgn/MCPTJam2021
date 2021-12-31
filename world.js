@@ -261,7 +261,9 @@ class ExplorationWorld extends World {
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
-        this.shader.addLight(sx,sy,200,200,200);
+        if (this?.shader) {
+            this.shader.addLight(sx,sy,100,100,100);
+        }
         if (useShader) {
             if (frameCount%1 === 0) {
                 this.shader.runShader();
@@ -385,7 +387,7 @@ class BossWorld extends World {
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
-        this.shader.addLight(sx,sy,200,200,200);
+        this.shader.addLight(sx,sy,100,100,100);
         if (useShader) {
             if (frameCount%1 === 0) {
                 this.shader.runShader();
