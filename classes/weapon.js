@@ -178,8 +178,8 @@ class SnowCannon extends Weapon{
     static ATK_TIME = 40;
     static DAMAGE = 5;
     static RANGE = 600;
-    static LENGTH = 30;
-    static WIDTH = 20;
+    static LENGTH = 20;
+    static WIDTH = 15;
     static B_WIDTH = 30;
     static B_HEIGHT = 30;
     static NUM_BALLS = 10;
