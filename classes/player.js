@@ -50,14 +50,17 @@ class Player extends Entity {
     weaponInd;
     curWeapon;
     static ANIM_TIME = 25;
+    static MAX_SPEED = 4;
     animTimer = Player.ANIM_TIME;
     frame = 1;
     dir = 'd';
     moving = false;
     world;
+    velocity;
 
     constructor(_playerData, _world, _x, _y) {
         super(_x, _y, Player.WIDTH, Player.HEIGHT, ["Foreground"]);
+        this.velocity = createVector(0,0);
         this.playerData = _playerData;
         this.weaponInd = 0;
         this.world = _world;
@@ -84,6 +87,8 @@ class Player extends Entity {
         if(this.curWeapon){
             this.curWeapon.tick();
         }
+        this.world.move(this, this.velocity.x, this.velocity.y);
+        this.velocity = this.velocity.mult(0.9);
     }
 
     render() {
@@ -130,5 +135,11 @@ class Player extends Entity {
         if(this.curWeapon){
             this.curWeapon.attack(this, this.world);
         }
+    }
+
+    move(dirx, diry) {
+        this.velocity.x += dirx * 0.4;
+        this.velocity.y += diry * 0.4;
+        this.velocity = this.velocity.limit(8);
     }
 }

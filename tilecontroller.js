@@ -72,12 +72,19 @@ class TileController {
             }
         }
     }
+    drawFloors() {
+        for(let i = floor(this.world.curPlayer.x/Tile.WIDTH - 3);  i < floor(this.world.curPlayer.x/Tile.WIDTH + 4); i++) {
+            for(let c = floor(this.world.curPlayer.y/Tile.HEIGHT - 3);  c < floor(this.world.curPlayer.y/Tile.HEIGHT + 4); c++) {
+                this.world.getTile(i, c).drawFloor();
+            }
+        }
+    }
     // display tiles to the screen
-    drawTiles() {
+    drawWalls() {
             
         // blendMode(MULTIPLY);
         renderedTiles.forEach((tile, index)=>{
-            tile.draw();
+            tile.drawWalls();
         })
         // blendMode(BLEND);
     }

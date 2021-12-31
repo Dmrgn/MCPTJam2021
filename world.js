@@ -171,10 +171,10 @@ class World {
     }
 
     movePlayer() {
-        if (keyIsDown(87)) this.move(this.curPlayer, 0, -5);
-        if (keyIsDown(65)) this.move(this.curPlayer, -5, 0);
-        if (keyIsDown(83)) this.move(this.curPlayer, 0, 5);
-        if (keyIsDown(68)) this.move(this.curPlayer, 5, 0);
+        if (keyIsDown(87)) this.curPlayer.move(0, -1);
+        if (keyIsDown(65)) this.curPlayer.move(-1, 0);
+        if (keyIsDown(83)) this.curPlayer.move(0, 1);
+        if (keyIsDown(68)) this.curPlayer.move(1, 0);
     }
 
     tick() {}
@@ -231,15 +231,17 @@ class ExplorationWorld extends World {
     render() {
         litscreen.background(0);
         this.camera.alterMatrix();
-        tileController.drawTiles();
-        this.curPlayer.render();
-
+        tileController.drawFloors();
+        
         let [chunkL, chunkT] = this.getChunk(this.camera.toWorld(0, 0)[0], this.camera.toWorld(0, 0)[1]);
         let [chunkR, chunkB] = this.getChunk(this.camera.toWorld(width, height)[0], this.camera.toWorld(width, height)[1]);
         for (let entity of this.entityInChunks(chunkL - 2, chunkT - 2, chunkR + 2, chunkB + 2)) {
             entity.render();
         }
-
+        
+        tileController.drawWalls();
+        this.curPlayer.render();
+        
         fill(0);
         noStroke();
         for (let cx = Math.floor(this.camera.x / Tile.WIDTH) - 1; cx <= Math.floor((this.camera.x + width) / Tile.WIDTH) + 3; cx++) {
@@ -374,11 +376,12 @@ class BossWorld extends World {
     render() {
         litscreen.background(0);
         this.camera.alterMatrix();
-        tileController.drawTiles();
+        tileController.drawFloors();
         for (let chunk of this.entities)
             for (let entity of chunk[1]) entity.render();
         pop();
         litscreen.pop();
+        tileController.drawWalls();
 
         let [sx, sy] = this.camera.toScreen(this.curPlayer.x + this.curPlayer.width / 2,
             this.curPlayer.y + this.curPlayer.height / 2);
