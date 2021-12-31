@@ -174,7 +174,7 @@ class Spear extends Weapon{
 }
 
 class SnowCannon extends Weapon{
-    static ATK_COOL = 70;
+    static ATK_COOL = 180;
     static ATK_TIME = 40;
     static DAMAGE = 5;
     static RANGE = 600;
@@ -203,9 +203,9 @@ class SnowCannon extends Weapon{
             if(item instanceof StoneItem){
                 this.damage += item.amt;
             } else if (item instanceof FeatherItem){
-                this.cooldown = max(0, this.cooldown - item.amt);
+                this.cooldown = max(0, this.cooldown - 2 * item.amt);
             } else if (item instanceof StickItem){
-                this.range += item.amt;
+                this.range += 3 * item.amt;
             }
         }
     }
