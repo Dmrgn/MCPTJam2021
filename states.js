@@ -145,11 +145,15 @@ class BossState extends State {
     world;
     curUI;
     playerData;
+    level;
+    shader;
     static playerHealth = 100;
 
     constructor(level, playerData, shader){
         super();
         playerData.health = BossState.playerHealth;
+        this.level = level;
+        this.shader = shader;
         this.playerData = playerData;
         this.world = new BossWorld(12, 12, playerData, shader);
         this.curUI = new Default(this.world);
@@ -180,8 +184,12 @@ class BossState extends State {
         }
     }
     completed(){
-        changeState(new FadeState(this, new MessageState(new GameState(this.world.shader, this.level + 1),
-            "The monster fades away - and the entire area crumbles|You wake up at the next level|Of This Labyrinth.")));
+        if(this.level < 3){
+            changeState(new FadeState(this, new MessageState(new GameState(this.world.shader, this.level + 1),
+                "The monster fades away - and the entire area crumbles|You wake up at the next level|Of This Labyrinth.")));
+        } else {
+            changeState(new Won(this.shader));
+        }
     }
     render(){
         background(0);
@@ -189,7 +197,7 @@ class BossState extends State {
         this.curUI.render();
     }
     playerDied(){
-        changeState(new FadeState(this, new MainMenuState(new Shader(litshader))));
+        changeState(new FadeState(this, new GameOver(new Shader(litshader))));
     }
     keyPressed() {
         if(keyCode === 27){
@@ -392,6 +400,60 @@ class CraftState extends State {
     keyPressed() {
         if(keyCode === 27){
             changeState(this.prev);
+        }
+    }
+}
+
+class GameOver extends State {
+    curFrame = 0;
+    static WAIT_FRAMES = 120;
+    shader;
+    constructor(_shader){
+        super();
+        this.shader = _shader;
+    }
+    render(){
+        this.curFrame++;
+        image(getSprite("game-over"), 0, 0, width, height);
+        fill(0);
+        noStroke();
+        rect(0, height - 40, width, 40);
+        textAlign(CENTER, CENTER);
+        textFont(getFont("roboto"));
+        textSize(26);
+        fill(255);
+        text("Oh no! You lost - click the screen to try again :D", width / 2, height - 20);
+    }
+    mousePressed(){
+        if(this.curFrame > GameOver.WAIT_FRAMES){
+            changeState(new MainMenuState(this.shader))
+        }
+    }
+}
+
+class Won extends State {
+    shader;
+    curFrame = 0;
+    static WAIT_FRAMES = 120;
+    constructor(_shader){
+        super();
+        this.shader = _shader;
+    }
+    render(){
+        ++this.curFrame;
+        image(getSprite("win-screen"), 0, 0, width, height);
+        fill(0);
+        noStroke();
+        rect(0, height - 40, width, 40);
+        textAlign(CENTER, CENTER);
+        textFont(getFont("roboto"));
+        textSize(26);
+        fill(255);
+        text("You won! Here's a triumphant screen! Press the screen to play again :)", width / 2, height - 20);
+    }
+    mousePressed(){
+        if(this.curFrame > Won.WAIT_FRAMES){
+            changeState(new MainMenuState(this.shader))
         }
     }
 }
