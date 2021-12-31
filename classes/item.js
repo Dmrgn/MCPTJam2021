@@ -95,7 +95,7 @@ class Stick extends Item{
 class Coal extends Item{
     amt;
     static WIDTH=20;
-    static HEIGHT=20;
+    static HEIGHT=30;
     constructor(_x, _y, _world, _amt){
         super(_x, _y, Coal.WIDTH, Coal.HEIGHT, _world, false);
         this.amt = _amt;
