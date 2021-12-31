@@ -7,81 +7,26 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
-<link rel="stylesheet" href="style.css" type="text/css">
 
 <style>
-	body,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5 {
-		font-family: "Poppins", sans-serif;
-	}
-
-	body {
-		font-size: 16px;
-	}
-
-	.w3-theme-d4 {
-		color: #fff !important;
-		background-color: #2c93cf !important
-	}
-
-	.w3-heading-theme {
-		color: #7ebee4 !important
-	}
-
-  .container .playButton {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  background-color: #555;
-  color: white;
-  font-size: 60px;
-  padding: 12px 24px;
-  border: none;
-  cursor: pointer;
-  border-radius: 25px;
-  text-align: center;
+body, h1, h2, h3, h4, h5 {
+  font-family: "Poppins", sans-serif;
 }
+body {font-size:16px;}
+.w3-half img{margin-bottom:-6px;margin-top:16px;opacity:0.8;cursor:pointer}
+.w3-half img:hover{opacity:1}
 
-.playButton span {
-  cursor: pointer;
-  display: inline-block;
-  position: relative;
-  transition: 0.5s;
-}
+.w3-theme-d4 {
+  color:#fff !important; background-color:#2c93cf !important}
 
-.playButton span:after {
-  content: '\00bb';
-  position: absolute;
-  opacity: 0;
-  top: 0;
-  right: -20px;
-  transition: 0.5s;
-}
+.w3-heading-theme {
+  color:#7ebee4 !important}
 
-.playButton:hover span {
-  padding-right: 25px;
-}
-
-.playButton:hover span:after {
-  opacity: 1;
-  right: 0;
-}
-
-//img {
-  //  overflow:hidden;
-//}
 </style>
 
-<body style="height:100vh !important;">
+<body>
 
-	<div class="w3-sidebar w3-animate-left w3-bar-block w3-theme-d4 w3-xlarge w3-padding" style="display:none;z-index:3;width:300px;"
-	 id="leftSidebar"><br>
+<div class="w3-sidebar w3-animate-left w3-bar-block w3-theme-d4 w3-xlarge w3-padding" style="display:none;z-index:3;width:300px;" id="leftSidebar"><br>
   <a href="javascript:void(0)" class="w3-button w3-xlarge w3-display-topleft" style="font-weight:bold; width:100%;font-size:22px" onclick="w3_close()">Close Menu</a>
    <div class="w3-container" style="font-weight:bold">
     <h3 class="w3-padding-32"><b>3Daniel(s)<br>1Pradyumn</b></h3>
@@ -102,15 +47,18 @@
 </div> -->
 
 <!-- **PAGE CONTENT** -->
-
-<div class="w3-main">
-<!-- style="margin-left:340px;margin-right:40px">-->
+<div class="w3-main" style="margin-left:340px;margin-right:40px">
 
   <!-- Header -->
-  <div class="container w3-container">
-  <!-- style="margin-top:80px" -->
-    <img src= "gameBanner.jpg" class="w3-round" style="height: 86vh; width: 100%; object-fit: contain">
-    <a class="playButton w3-btn w3-ripple w3-theme-d4 " href="game.html"><span>Play  </span></a>
+  <div class="w3-container" style="margin-top:80px" id="showcase">
+    <h1 class="w3-jumbo"><b>Maze Marauder</b></h1>
+    <h1 class="w3-xxxlarge w3-heading-theme"><b>About Us</b></h1>
+    <p>Hi there! This game was developed by Daniel Y, Daniel M, Daniel T, and Pradyumn J, and we are high school students graduating in '24.</p>
+    <p> 3Daniel(s)1Pradyumn Studios presents ... Maze Marauder!</p>
+    <p>Our game, Maze Marauder, is a unique blend of maze exploration and dungeon fighting. In a race against time, the player must skillfully navigate the sub-zero maze in an effort to gather resources and materials. With twists and turns every direction, compelling boss levels, and fun gameplay, Maze Marauder is a game for the bold :D</p>
+    <p>Check out the instructions by navigating the menu through the top-left hamburger icon, and you can play the game by clicking on the 'play' button found on the Main Menu page. Good luck adventurer!</p>
+
+
   </div>
 
 
@@ -118,8 +66,7 @@
 </div>
 
 <!-- Footer -->
-<div class="w3-light-grey w3-container" style="height:8vh; padding-right:58px"><p class="w3-right">© 2021 3Daniel(s)1Pradyumn </p></div>
-<!-- margin-top:75px; -->
+<div class="w3-light-grey w3-container w3-padding-32" style="margin-top:75px;padding-right:58px"><p class="w3-right">© 2021 3Daniel(s)1Pradyumn </p></div>
 
 <script>
 // Script to open and close sidebar
