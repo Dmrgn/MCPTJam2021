@@ -222,7 +222,8 @@ class ChestRoom extends RoomGen{
     static COLS = 4;
     // inventory items sorted by "tier" in terms of the chest
     byTier = [new GemItem(1), new FeatherItem(5), new StickItem(5), new StoneItem(5),
-    new SwordItem(1, []), new GemItem(2), new FeatherItem(5)]
+    new SwordItem(1, []), new GemItem(2),  new SpearItem(1, []), new SwordItem(2, [new FeatherItem(5)])
+    , new CannonItem(1, []), new CannonItem(2, [new StoneItem(5)])]
 
     constructor(){
         super(2, ChestRoom.ROWS, ChestRoom.COLS);
