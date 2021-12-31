@@ -39,7 +39,10 @@
     "chest-closed": "sprites/chest-closed.png",
     "chest-open": "sprites/chest-open.png",
     "spear": "sprites/swords/spear.png",
-    "spear-icon": "sprites/swords/spear-icon.png"
+    "spear-icon": "sprites/swords/spear-icon.png",
+    "snow-cannon": "sprites/swords/snow-cannon.png",
+    "snow-cannon-icon": "sprites/swords/snow-cannon-icon.png",
+    "snow-bomb": "sprites/swords/snowball.png"
   },
   "video": {
     "splash": "splash.mov",

@@ -59,7 +59,7 @@ class GameState extends State{
         this.playerData = new PlayerData(50);
         this.world = new ExplorationWorld(this.playerData, shader);
         this.curUI = new Default(this.world);
-        this.world.curPlayer.addItem(new SpearItem(1, []))
+        this.world.curPlayer.addItem(new CannonItem(1, []))
     }
     switchUI(to){
         this.curUI.exitState();

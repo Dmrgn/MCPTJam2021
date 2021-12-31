@@ -23,12 +23,7 @@ class World {
     }
 
     move(toMove, x, y) {
-        let tiles = [];
-        for (let tx = floor((toMove.x - abs(x)) / Tile.WIDTH) - 2; tx <= floor((toMove.x + toMove.width + abs(x)) / Tile.WIDTH) + 2; tx++) {
-            for (let ty = floor((toMove.y - abs(y)) / Tile.HEIGHT) - 2; ty <= floor((toMove.y + toMove.height + abs(y)) / Tile.HEIGHT) + 2; ty++) {
-                tiles.push(this.getTile(tx, ty));
-            }
-        }
+        let tiles = this.getTilesAround(toMove, x, y);
         let valid = [-Infinity, Infinity, -Infinity, Infinity];
         tiles.forEach((tile) => tile.wallEntities.forEach((el) => {
             let bounds = toMove.valid(el);
@@ -74,6 +69,25 @@ class World {
                 this.entities.get( of ).add(toAdd);
             }
         }
+    }
+
+    getTilesAround(query, x, y){
+        let tiles = [];
+        for (let tx = floor((query.x - abs(x)) / Tile.WIDTH) - 2; tx <= floor((query.x + query.width + abs(x)) / Tile.WIDTH) + 2; tx++) {
+            for (let ty = floor((query.y - abs(y)) / Tile.HEIGHT) - 2; ty <= floor((query.y + query.height + abs(y)) / Tile.HEIGHT) + 2; ty++) {
+                tiles.push(this.getTile(tx, ty));
+            }
+        }
+        return tiles;
+    }
+
+    inTile(toAdd){
+        let tiles = this.getTilesAround(toAdd, 0, 0);
+        let can = false;
+        tiles.forEach((tile) => tile.wallEntities.forEach((el) => {
+            if(el.isTouching(toAdd)) can = can || true;
+        }));
+        return can;
     }
 
     getEntitiesAround(query) {
@@ -200,6 +214,7 @@ class ExplorationWorld extends World {
         }
         this.curPlayer.tick();
         for (let entity of this.getEntitiesAround(this.curPlayer)) {
+            entity.tick();
             if (this.curPlayer.isTouching(entity)) {
                 this.curPlayer.onTouch(entity);
                 entity.onTouch(this.curPlayer);
@@ -221,7 +236,7 @@ class ExplorationWorld extends World {
 
         let [chunkL, chunkT] = this.getChunk(this.camera.toWorld(0, 0)[0], this.camera.toWorld(0, 0)[1]);
         let [chunkR, chunkB] = this.getChunk(this.camera.toWorld(width, height)[0], this.camera.toWorld(width, height)[1]);
-        for (let entity of this.entityInChunks(chunkL - 1, chunkT - 1, chunkR + 1, chunkB + 1)) {
+        for (let entity of this.entityInChunks(chunkL - 2, chunkT - 2, chunkR + 2, chunkB + 2)) {
             entity.render();
         }
 
@@ -406,9 +421,9 @@ class Camera {
         litscreen.translate(-bx, -by);
     }
     toWorld(x, y) {
-        return [x + this.x, y + this.y];
+        return [x / this.zoom + this.x + width / 2 - width / 2 / this.zoom, y / this.zoom + this.y + height / 2 - height / 2 / this.zoom];
     }
     toScreen(x, y) {
-        return [x - this.x, y - this.y];
+        return [this.zoom * (x - (this.x + width / 2 - width / 2 / this.zoom)), this.zoom * (y - (this.y + height / 2 - height / 2 / this.zoom))];
     }
 }
