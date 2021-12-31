@@ -271,13 +271,19 @@ class MenuState extends State{
 
         fill(0);
         noStroke();
-        textAlign(CENTER, BOTTOM);
+        textSize(26);
+        textFont(getFont("pacifico"));
+        textAlign(CENTER, TOP);
         [x, y, w, h] = this.background;
-        text("MENU", x + w / 2, y + 20);
+        text("MENU", x + w / 2, y + 2);
+
+        textFont(getFont("roboto"))
+        textAlign(CENTER, BOTTOM)
+        textSize(14);
         [x, y, w, h] = this.returnTo;
         text("Return to Game", x + w / 2, y + h);
         [x, y, w, h] = this.mainMenu;
-        text("Return to Main Menu", x + w / 2, y + h);
+        text("Restart", x + w / 2, y + h);
     }
     isPressed(rect){
         let [x, y, w, h] = rect;
@@ -288,7 +294,7 @@ class MenuState extends State{
         if(this.isPressed(this.returnTo)){
             changeState(this.prev);
         } else if (this.isPressed(this.mainMenu)){
-            changeState(new MainMenuState());
+            changeState(new MainMenuState(this.world.shader));
         }
     }
 }
